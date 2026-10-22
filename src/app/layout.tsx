@@ -1,12 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
+import { DM_Sans, Fraunces } from "next/font/google";
 import { site } from "@/config/site";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({
+// Fraunces : serif variable expressif, adouci (axe SOFT) pour un ton gourmand et premium.
+const display = Fraunces({
   subsets: ["latin"],
-  variable: "--font-bricolage",
-  weight: ["600", "700", "800"],
+  variable: "--font-fraunces",
+  axes: ["SOFT", "opsz"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -36,7 +38,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0f2a22",
+  themeColor: "#302019",
 };
 
 /** Racine minimale : polices et styles. Le site public et l'admin ont chacun leur layout. */

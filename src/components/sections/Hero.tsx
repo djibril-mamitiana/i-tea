@@ -1,82 +1,69 @@
-import { ArrowRight, Banknote, Store } from "lucide-react";
+import { ArrowRight, Bike, Sparkles } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { activePayments, site } from "@/config/site";
-import type { ProductArt } from "@/lib/types";
-import { ArtSvg } from "../ProductArt";
+import { site } from "@/config/site";
+import { HeroScene } from "../art/Scenes";
 
-const center: ProductArt = { kind: "cup", color: "#F3E3CF", color2: "#9B5B34", topping: "pearls", garnish: "none", bg: "" };
-const left: ProductArt = { kind: "cup", color: "#B8D77A", color2: "#7FA83E", topping: "pearls", garnish: "none", bg: "" };
-const right: ProductArt = { kind: "cup", color: "#FFC59A", color2: "#FF9A6B", topping: "jelly", garnish: "orange", bg: "" };
-
+/** Première impression : titre éditorial à gauche, grande composition à droite qui déborde du cadre. */
 export function Hero() {
-  const payment = activePayments()[0];
-  return (
-    <section className="relative isolate overflow-hidden bg-ink text-cream" aria-labelledby="hero-title">
-      {/* Décor : deux grands disques de couleur, rien de plus. */}
-      <div className="absolute -right-24 -top-24 -z-10 size-[28rem] rounded-full bg-ink-2" aria-hidden="true" />
-      <div className="absolute -bottom-40 -left-32 -z-10 size-[26rem] rounded-full bg-ink-2/70" aria-hidden="true" />
+  const { pickup, delivery } = site.ordering;
+  const serviceLabel =
+    pickup.enabled && delivery.enabled ? "À emporter ou livré" : delivery.enabled ? "Livraison" : "À emporter";
 
-      <div className="mx-auto grid max-w-7xl items-center gap-4 px-4 pt-10 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:px-8 lg:py-16">
+  return (
+    <section className="relative overflow-hidden" aria-labelledby="hero-title">
+      {/* grand disque de fond, décalé : il donne de la profondeur sans charger la page */}
+      <div className="absolute -right-32 -top-24 -z-10 size-[26rem] rounded-full bg-caramel-soft/70 lg:-right-40 lg:-top-40 lg:size-[44rem]" aria-hidden="true" />
+
+      <div className="mx-auto grid max-w-7xl items-center gap-2 px-4 pb-10 pt-6 sm:px-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-6 lg:px-8 lg:pb-20 lg:pt-8">
         <div className="animate-rise">
-          <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-cream/90">
-            <span className="size-2 rounded-full bg-matcha" aria-hidden="true" />
+          <p className="eyebrow flex items-center gap-2">
+            <span className="h-px w-8 bg-accent" aria-hidden="true" />
             Bubble tea · Thés fruités · Snacks
           </p>
-          <h1 id="hero-title" className="mt-5 text-[3.1rem] font-extrabold leading-[0.92] sm:text-7xl lg:text-[5.5rem]">
-            Ton thé,
+          <h1 id="hero-title" className="display-xl mt-5">
+            Ton thé.
             <br />
-            version <span className="text-accent">gourmande.</span>
+            Tes envies.
+            <br />
+            <span className="display-em text-accent-text">Ton moment.</span>
           </h1>
-          <p className="mt-5 max-w-md text-lg leading-relaxed text-cream/80">
-            Compose ta boisson à ta façon : sucre, glace, garnitures. On la prépare, tu la savoures.
+          <p className="mt-6 max-w-md text-lg leading-relaxed text-muted">
+            Bubble teas, thés fruités, snacks et desserts. Compose ta boisson à ta façon, puis commande en ligne :
+            à emporter ou livrée.
           </p>
 
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href="#menu" className="btn btn-accent btn-lg">
               Commander maintenant
               <ArrowRight size={20} aria-hidden="true" />
             </Link>
-            <Link href="#categories" className="btn btn-ghost btn-lg text-cream">
-              Découvrir le menu
+            <Link href="#categories" className="btn btn-ghost btn-lg">
+              Découvrir la carte
             </Link>
           </div>
 
-          <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-cream/80">
+          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-ink/80">
             <li className="inline-flex items-center gap-2">
-              <Store size={18} aria-hidden="true" />
-              {site.ordering.pickup.enabled && site.ordering.delivery.enabled
-                ? "À emporter ou livré"
-                : site.ordering.delivery.enabled
-                  ? "Livraison"
-                  : "À emporter"}
+              <Sparkles size={18} className="text-accent-text" aria-hidden="true" />
+              Sucre, glace, toppings : à ta façon
             </li>
-            {payment && (
-              <li className="inline-flex items-center gap-2">
-                <Banknote size={18} aria-hidden="true" />
-                {payment.label}
-              </li>
-            )}
+            <li className="inline-flex items-center gap-2">
+              <Bike size={18} className="text-accent-text" aria-hidden="true" />
+              {serviceLabel}
+            </li>
           </ul>
         </div>
 
-        {/* Composition produits */}
-        <div className="relative mx-auto mt-4 aspect-[6/5] w-full max-w-lg lg:mt-0 lg:max-w-none" aria-hidden="true">
-          <div className="absolute inset-x-[22%] bottom-0 top-[2%] rounded-t-full bg-peach/95" />
-          <div className="absolute bottom-0 left-[1%] aspect-[5/6] h-[60%]" style={{ ["--r" as string]: "-9deg" }}>
-            <div className="h-full animate-float" style={{ animationDelay: "-2s" }}>
-              <ArtSvg art={left} className="h-full w-auto drop-shadow-xl" />
+        {/* Visuel : la photo fournie dans site.media.hero, sinon l'illustration de démonstration */}
+        <div className="relative mx-auto w-full max-w-2xl lg:max-w-none lg:-mr-4">
+          {site.media.hero ? (
+            <div className="relative aspect-[6/5] overflow-hidden rounded-t-[999px] rounded-b-[2.5rem] shadow-pop">
+              <Image src={site.media.hero} alt="Bubble teas I Tea" fill priority sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
             </div>
-          </div>
-          <div className="absolute bottom-0 right-[1%] aspect-[5/6] h-[56%]" style={{ ["--r" as string]: "8deg" }}>
-            <div className="h-full animate-float" style={{ animationDelay: "-4s" }}>
-              <ArtSvg art={right} className="h-full w-auto drop-shadow-xl" />
-            </div>
-          </div>
-          <div className="absolute bottom-0 left-1/2 aspect-[5/6] h-[84%] -translate-x-1/2">
-            <div className="h-full animate-float" style={{ ["--r" as string]: "0deg" }}>
-              <ArtSvg art={center} className="h-full w-auto drop-shadow-2xl" />
-            </div>
-          </div>
+          ) : (
+            <HeroScene className="h-auto w-full" />
+          )}
         </div>
       </div>
     </section>

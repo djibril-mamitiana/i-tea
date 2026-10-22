@@ -129,37 +129,37 @@ export const categories: Category[] = [
     id: "bubble-tea",
     name: "Bubble tea",
     tagline: "Thé, lait et perles",
-    art: { kind: "cup", color: "#C69A6B", color2: "#8A5A36", topping: "pearls", bg: "#F6E3CC" },
+    art: { kind: "cup", color: "#C69A6B", color2: "#8A5A36", topping: "pearls", bg: "#F3DFC6" },
   },
   {
     id: "the-fruite",
     name: "Thés fruités",
     tagline: "Frais et pétillants",
-    art: { kind: "cup", color: "#FFB27A", color2: "#FF7A4D", topping: "jelly", garnish: "orange", bg: "#FFE0CC" },
+    art: { kind: "cup", color: "#FFB27A", color2: "#FF7A4D", topping: "jelly", garnish: "orange", bg: "#F8D9C4" },
   },
   {
     id: "boissons-fraiches",
     name: "Boissons fraîches",
     tagline: "Smoothies et limonades",
-    art: { kind: "cup", color: "#FF8FA3", color2: "#E8537A", topping: "none", garnish: "strawberry", bg: "#FFD9E0" },
+    art: { kind: "cup", color: "#FF8FA3", color2: "#E8537A", topping: "none", garnish: "strawberry", bg: "#FBDCE3" },
   },
   {
     id: "snacks",
     name: "Snacks",
     tagline: "Croustillants et salés",
-    art: { kind: "nuggets", color: "#E7A63A", bg: "#FBE7B5" },
+    art: { kind: "nuggets", color: "#E7A63A", bg: "#F6E1B0" },
   },
   {
     id: "desserts",
     name: "Desserts",
     tagline: "Pour finir en douceur",
-    art: { kind: "mochi", color: "#F4C6DA", color2: "#CDB8F5", bg: "#EADFFB" },
+    art: { kind: "mochi", color: "#F4C6DA", color2: "#CDB8F5", bg: "#FBDCE3" },
   },
   {
     id: "formules",
     name: "Formules",
     tagline: "Boisson + gourmandise",
-    art: { kind: "combo", color: "#A8CF5C", color2: "#E7A63A", topping: "pearls", bg: "#E1F0C4" },
+    art: { kind: "combo", color: "#A8CF5C", color2: "#E7A63A", topping: "pearls", bg: "#DDE8D3" },
   },
 ];
 
@@ -174,7 +174,7 @@ const bubbleTeas: Product[] = [
     price: 5.5,
     available: true,
     popular: true,
-    art: { kind: "cup", color: "#D9B48A", color2: "#A9744A", topping: "pearls", bg: "#F6E3CC" },
+    art: { kind: "cup", color: "#D9B48A", color2: "#A9744A", topping: "pearls", bg: "#F3DFC6" },
     groups: [size, sugar, ice, baseTopping, extraToppings],
   },
   {
@@ -186,7 +186,7 @@ const bubbleTeas: Product[] = [
     available: true,
     popular: true,
     badge: "Signature",
-    art: { kind: "cup", color: "#F3E3CF", color2: "#9B5B34", topping: "pearls", bg: "#F2D9BC" },
+    art: { kind: "cup", color: "#F6E7D3", color2: "#A9693A", topping: "pearls", streaks: true, bg: "#EACBA3" },
     groups: [size, sugar, ice, extraToppings],
   },
   {
@@ -197,7 +197,7 @@ const bubbleTeas: Product[] = [
     price: 6.9,
     available: true,
     popular: true,
-    art: { kind: "cup", color: "#B8D77A", color2: "#7FA83E", topping: "pearls", bg: "#E1F0C4" },
+    art: { kind: "cup", color: "#B8D77A", color2: "#7FA83E", topping: "pearls", bg: "#DDE8D3" },
     groups: [size, sugar, ice, baseTopping, extraToppings],
   },
   {
@@ -207,7 +207,7 @@ const bubbleTeas: Product[] = [
     description: "Crème de taro violette, lait, douceur de vanille.",
     price: 6.5,
     available: true,
-    art: { kind: "cup", color: "#D9C7F5", color2: "#B197E6", topping: "pearls", bg: "#EADFFB" },
+    art: { kind: "cup", color: "#D9C7F5", color2: "#B197E6", topping: "pearls", bg: "#FBDCE3" },
     groups: [size, sugar, ice, baseTopping, extraToppings],
   },
   {
@@ -217,7 +217,7 @@ const bubbleTeas: Product[] = [
     description: "Thé épicé orangé, lait concentré, perles.",
     price: 5.9,
     available: false,
-    art: { kind: "cup", color: "#FFB067", color2: "#E27A2B", topping: "pearls", bg: "#FFE0CC" },
+    art: { kind: "cup", color: "#FFB067", color2: "#E27A2B", topping: "pearls", bg: "#F8D9C4" },
     groups: [size, sugar, ice, baseTopping],
   },
 ];
@@ -231,7 +231,7 @@ const fruitTeas: Product[] = [
     price: 5.5,
     available: true,
     popular: true,
-    art: { kind: "cup", color: "#FFC59A", color2: "#FF9A6B", topping: "jelly", garnish: "orange", bg: "#FFE0CC" },
+    art: { kind: "cup", color: "#FFC59A", color2: "#FF9A6B", topping: "jelly", garnish: "orange", bg: "#F8D9C4" },
     groups: [size, sugar, ice, extraToppings],
   },
   {
@@ -241,7 +241,7 @@ const fruitTeas: Product[] = [
     description: "Thé vert léger, litchi, pétales de rose.",
     price: 5.5,
     available: true,
-    art: { kind: "cup", color: "#FFD2DC", color2: "#F59BB3", topping: "jelly", garnish: "strawberry", bg: "#FFD9E0" },
+    art: { kind: "cup", color: "#FFD2DC", color2: "#F59BB3", topping: "jelly", garnish: "strawberry", bg: "#FBDCE3" },
     groups: [size, sugar, ice, extraToppings],
   },
   {
@@ -251,7 +251,7 @@ const fruitTeas: Product[] = [
     description: "Thé vert, fruit de la passion, gelée coco.",
     price: 5.5,
     available: true,
-    art: { kind: "cup", color: "#FFE27A", color2: "#F5B731", topping: "jelly", garnish: "lemon", bg: "#FFF1B8" },
+    art: { kind: "cup", color: "#FFE27A", color2: "#F5B731", topping: "jelly", garnish: "lemon", bg: "#F6E6BE" },
     groups: [size, sugar, ice, extraToppings],
   },
   {
@@ -262,7 +262,7 @@ const fruitTeas: Product[] = [
     price: 3.9,
     available: true,
     upsell: true,
-    art: { kind: "cup", color: "#F2C27A", color2: "#D9903A", topping: "none", garnish: "lemon", bg: "#FFF1B8" },
+    art: { kind: "cup", color: "#F2C27A", color2: "#D9903A", topping: "none", garnish: "lemon", bg: "#F6E6BE" },
     groups: [size, sugar, ice],
   },
 ];
@@ -275,7 +275,7 @@ const freshDrinks: Product[] = [
     description: "Mangue mûre mixée, une pointe de citron vert.",
     price: 5.9,
     available: true,
-    art: { kind: "cup", color: "#FFC94D", color2: "#FF9F1C", topping: "none", garnish: "orange", bg: "#FFF1B8" },
+    art: { kind: "cup", color: "#FFC94D", color2: "#FF9F1C", topping: "none", garnish: "orange", bg: "#F6E6BE" },
     groups: [size, ice],
   },
   {
@@ -285,7 +285,7 @@ const freshDrinks: Product[] = [
     description: "Fraises mixées, yaourt, glace pilée.",
     price: 5.9,
     available: true,
-    art: { kind: "cup", color: "#FF9DB1", color2: "#E8537A", topping: "none", garnish: "strawberry", bg: "#FFD9E0" },
+    art: { kind: "cup", color: "#FF9DB1", color2: "#E8537A", topping: "none", garnish: "strawberry", bg: "#FBDCE3" },
     groups: [size, ice],
   },
   {
@@ -296,7 +296,7 @@ const freshDrinks: Product[] = [
     price: 4.2,
     available: true,
     upsell: true,
-    art: { kind: "cup", color: "#E4F2A8", color2: "#B9D95A", topping: "none", garnish: "mint", bg: "#E1F0C4" },
+    art: { kind: "cup", color: "#E4F2A8", color2: "#B9D95A", topping: "none", garnish: "mint", bg: "#DDE8D3" },
     groups: [size, sugar, ice],
   },
 ];
@@ -312,7 +312,7 @@ const snacks: Product[] = [
     price: 6.9,
     available: true,
     popular: true,
-    art: { kind: "nuggets", color: "#E7A63A", bg: "#FBE7B5" },
+    art: { kind: "nuggets", color: "#E7A63A", bg: "#F6E1B0" },
     groups: [portion, snackSauce],
   },
   {
@@ -322,7 +322,7 @@ const snacks: Product[] = [
     description: "Six raviolis dorés, farce poulet-légumes.",
     price: 5.9,
     available: true,
-    art: { kind: "gyoza", color: "#F4DFB4", bg: "#FBE7B5" },
+    art: { kind: "gyoza", color: "#F4DFB4", bg: "#F6E1B0" },
     groups: [snackSauce],
   },
   {
@@ -333,7 +333,7 @@ const snacks: Product[] = [
     price: 4.5,
     available: true,
     upsell: true,
-    art: { kind: "fries", color: "#F0A04B", bg: "#FFE0CC" },
+    art: { kind: "fries", color: "#F0A04B", bg: "#F8D9C4" },
     groups: [portion, snackSauce],
   },
   {
@@ -343,7 +343,7 @@ const snacks: Product[] = [
     description: "Pain vapeur moelleux, poulet croustillant, sauce maison.",
     price: 6.5,
     available: true,
-    art: { kind: "bao", color: "#FFF4E2", color2: "#E7A63A", bg: "#F6E3CC" },
+    art: { kind: "bao", color: "#FFF4E2", color2: "#E7A63A", bg: "#F3DFC6" },
     groups: [],
   },
 ];
@@ -373,7 +373,7 @@ const desserts: Product[] = [
     price: 4.5,
     available: true,
     upsell: true,
-    art: { kind: "mochi", color: "#F4C6DA", color2: "#CDB8F5", bg: "#EADFFB" },
+    art: { kind: "mochi", color: "#F4C6DA", color2: "#CDB8F5", bg: "#FBDCE3" },
     groups: [mochiFlavors],
   },
   {
@@ -384,7 +384,7 @@ const desserts: Product[] = [
     price: 4.9,
     available: true,
     upsell: true,
-    art: { kind: "cake", color: "#FFF1D6", color2: "#E8537A", bg: "#FFD9E0" },
+    art: { kind: "cake", color: "#FFF1D6", color2: "#E8537A", bg: "#FBDCE3" },
     groups: [],
   },
   {
@@ -394,7 +394,7 @@ const desserts: Product[] = [
     description: "Gaufre à la bulle, chantilly, perles et sirop.",
     price: 5.5,
     available: true,
-    art: { kind: "waffle", color: "#E8B66B", color2: "#8A5A36", bg: "#F6E3CC" },
+    art: { kind: "waffle", color: "#E8B66B", color2: "#8A5A36", bg: "#F3DFC6" },
     groups: [
       {
         id: "syrup",
@@ -427,7 +427,7 @@ const formulas: Product[] = [
     available: true,
     popular: true,
     badge: "Formule",
-    art: { kind: "combo", color: "#D9B48A", color2: "#E7A63A", topping: "pearls", bg: "#E1F0C4" },
+    art: { kind: "combo", color: "#D9B48A", color2: "#E7A63A", topping: "pearls", bg: "#DDE8D3" },
     groups: [
       pickProduct("drink", "Ta boisson", allDrinks, { supplements: { "matcha-boba": 0.5, "brown-sugar": 0.5 } }),
       pickProduct("snack", "Ton snack", snacks),
@@ -442,7 +442,7 @@ const formulas: Product[] = [
     description: "1 boisson au choix + 1 dessert au choix.",
     price: 8.9,
     available: true,
-    art: { kind: "combo", color: "#F4C6DA", color2: "#CDB8F5", topping: "pearls", bg: "#EADFFB" },
+    art: { kind: "combo", color: "#F4C6DA", color2: "#CDB8F5", topping: "pearls", bg: "#FBDCE3" },
     groups: [
       pickProduct("drink", "Ta boisson", allDrinks, { supplements: { "matcha-boba": 0.5, "brown-sugar": 0.5 } }),
       pickProduct("dessert", "Ton dessert", desserts),
@@ -458,7 +458,7 @@ const formulas: Product[] = [
     price: 21.9,
     available: true,
     badge: "À deux",
-    art: { kind: "combo", color: "#FFB27A", color2: "#E7A63A", topping: "pearls", bg: "#FFE0CC" },
+    art: { kind: "combo", color: "#FFB27A", color2: "#E7A63A", topping: "pearls", bg: "#F8D9C4" },
     groups: [
       pickProduct("drinks", "Tes 2 boissons", allDrinks, {
         min: 2,

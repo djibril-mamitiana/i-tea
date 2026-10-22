@@ -93,14 +93,15 @@ function ProductForm({
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <div ref={scroller} className="relative min-h-0 flex-1 overflow-y-auto px-5 pb-4 pt-5">
-          <h2 className="pr-10 text-2xl font-extrabold leading-tight">{product.name}</h2>
+          <h2 className="pr-10 font-display text-3xl font-bold leading-tight">{product.name}</h2>
           <p className="mt-1 text-sm text-muted">{product.description}</p>
-          <p className="mt-2 font-display text-lg font-extrabold">{formatPrice(product.price)}</p>
+          <p className="mt-2 font-display text-xl font-bold text-accent-text">{formatPrice(product.price)}</p>
 
           <div className="mt-5 space-y-6">
-            {product.groups.map((group) => (
+            {product.groups.map((group, index) => (
               <GroupField
                 key={group.id}
+                step={index + 1}
                 group={group}
                 chosen={selections[group.id] ?? []}
                 invalid={showErrors && missing.includes(group)}
@@ -134,11 +135,13 @@ function ProductForm({
 }
 
 function GroupField({
+  step,
   group,
   chosen,
   invalid,
   onToggle,
 }: {
+  step: number;
   group: OptionGroup;
   chosen: string[];
   invalid: boolean;
@@ -151,9 +154,14 @@ function GroupField({
 
   return (
     <fieldset data-group={group.id} className="min-w-0">
-      <legend className="mb-2 flex w-full flex-wrap items-baseline gap-x-2">
-        <span className="text-base font-bold">{group.label}</span>
-        {group.hint && <span className="text-sm text-muted">{group.hint}</span>}
+      <legend className="mb-2.5 flex w-full flex-wrap items-center gap-x-2.5 gap-y-0.5">
+        <span className="grid size-7 shrink-0 place-items-center rounded-full bg-ink text-xs font-extrabold text-cream" aria-hidden="true">
+          {step}
+        </span>
+        <span className="font-display text-xl font-bold leading-none">{group.label}</span>
+        <span className="text-sm text-muted">
+          {group.hint ?? (group.min > 0 ? "Obligatoire" : "Facultatif")}
+        </span>
       </legend>
       {invalid && (
         <p className="mb-2 text-sm font-semibold text-danger" role="alert">
@@ -171,7 +179,7 @@ function GroupField({
               className={`relative flex items-center gap-3 border-2 transition has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-accent/50 ${
                 compact ? "min-h-11 rounded-full px-4" : "min-h-14 rounded-2xl px-4 py-2"
               } ${
-                checked ? (compact ? "border-ink bg-ink text-cream" : "border-ink bg-white") : "border-line bg-white"
+                checked ? (compact ? "border-ink bg-ink text-cream" : "border-ink bg-matcha-soft") : "border-line bg-white"
               } ${blocked ? "cursor-not-allowed opacity-45" : "cursor-pointer hover:border-ink/50"}`}
             >
               <input

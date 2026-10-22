@@ -30,6 +30,17 @@ export interface PaymentMethod {
   integrated: boolean;
 }
 
+export interface Review {
+  author: string;
+  text: string;
+  /** Note de 1 à 5, si la plateforme d'origine en fournit une. */
+  rating?: 1 | 2 | 3 | 4 | 5;
+  /** Origine de l'avis (ex. « Google »). */
+  source?: string;
+  /** Date lisible (ex. « Octobre 2026 »). */
+  date?: string;
+}
+
 export const site = {
   name: "I Tea",
   /** Affiche le bandeau « menu de démonstration ». Passez à false au lancement. */
@@ -64,6 +75,26 @@ export const site = {
     instagram: null as string | null,
     facebook: null as string | null,
     tiktok: null as string | null,
+  },
+
+  /**
+   * Visuels de la page d'accueil. Laissez `null` pour l'illustration de démonstration, ou indiquez
+   * le chemin d'une vraie photo placée dans /public (ex. "/media/hero.jpg", format paysage, 1600 px minimum).
+   */
+  media: {
+    hero: null as string | null,
+    brand: null as string | null,
+  },
+
+  /**
+   * Avis clients : uniquement de VRAIS avis, copiés tels quels avec leur source.
+   * Tant que la liste est vide, la section n'est pas affichée en production
+   * (en mode démo, un emplacement explicite la remplace).
+   */
+  reviews: {
+    items: [] as Review[],
+    /** Lien « Voir tous les avis » (page Google, etc.). */
+    seeMoreUrl: null as string | null,
   },
 
   /** Horaires d'ouverture (de démonstration). */

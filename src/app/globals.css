@@ -1,43 +1,56 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
-   I Tea — design tokens
-   ink    : vert thé profond (structure, texte)
-   cream  : crème chaude (fond)
-   accent : persimmon, réservé aux actions principales
+   I Tea — design system
+   ink     : brun profond (structure, texte, sections sombres)
+   cream   : crème chaude (fond du site)
+   caramel : actions principales (boutons « Commander », « Ajouter »)
+   matcha  : vert tendre, pour les repères positifs et les accents frais
+   pink    : rose fruité, pour la gourmandise et les fonds de cartes
+   Les couleurs « soft » sont des fonds de cartes ; « accent-text » est
+   le caramel assombri pour le texte (contraste ≥ 4,5 sur la crème).
    ------------------------------------------------------------------ */
 @theme {
-  --color-ink: #0f2a22;
-  --color-ink-2: #1b3d32;
-  --color-ink-3: #2c5446;
-  --color-cream: #fff8ec;
-  --color-sand: #f6ecda;
-  --color-line: #e8dcc6;
-  --color-muted: #4f6259;
-  --color-accent: #ff6a3d;
-  --color-accent-deep: #f1521f;
-  --color-accent-text: #c2410c;
-  --color-matcha: #a8cf5c;
-  --color-taro: #cdb8f5;
-  --color-peach: #ffc9a3;
-  --color-lemon: #ffd95a;
-  --color-berry: #e8537a;
+  --color-ink: #302019;
+  --color-ink-2: #43302a;
+  --color-ink-3: #5c443a;
+  --color-cream: #fff8ef;
+  --color-sand: #f7ebdd;
+  --color-line: #ebdccb;
+  --color-muted: #6a564b;
+
+  --color-accent: #c58a50;
+  --color-accent-deep: #b3763b;
+  --color-accent-text: #8a5726;
+  --color-caramel-soft: #f3dfc6;
+
+  --color-matcha: #78966a;
+  --color-matcha-soft: #dde8d3;
+  --color-pink: #f1a6b6;
+  --color-pink-soft: #fbdce3;
+
+  /* Alias historiques : toutes les couleurs du site viennent de cette palette. */
+  --color-peach: #f3c9a5;
+  --color-lemon: #f5e2bd;
+  --color-berry: #d0586f;
+  --color-taro: #d9c7f5;
   --color-danger: #b42318;
 
-  --font-display: var(--font-bricolage), "Segoe UI", system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-sans: var(--font-dm-sans), "Segoe UI", system-ui, sans-serif;
 
-  --radius-card: 1.5rem;
-  --shadow-card: 0 1px 0 rgb(15 42 34 / 0.04), 0 12px 32px -16px rgb(15 42 34 / 0.28);
-  --shadow-pop: 0 24px 60px -20px rgb(15 42 34 / 0.45);
+  --radius-card: 1.75rem;
+  --shadow-card: 0 1px 0 rgb(48 32 25 / 0.04), 0 14px 34px -18px rgb(48 32 25 / 0.32);
+  --shadow-pop: 0 28px 64px -24px rgb(48 32 25 / 0.5);
 
   --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 11s ease-in-out infinite;
   --animate-bump: bump 0.45s ease;
-  --animate-rise: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 
   @keyframes float {
     0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
-    50% { transform: translateY(-10px) rotate(var(--r, 0deg)); }
+    50% { transform: translateY(var(--float, -10px)) rotate(var(--r, 0deg)); }
   }
   @keyframes bump {
     0% { transform: scale(1); }
@@ -45,7 +58,7 @@
     100% { transform: scale(1); }
   }
   @keyframes rise {
-    from { opacity: 0; transform: translateY(14px); }
+    from { opacity: 0; transform: translateY(16px); }
     to { opacity: 1; transform: translateY(0); }
   }
 }
@@ -71,19 +84,50 @@ body.scroll-locked {
   overflow: hidden;
 }
 
+/* Titres : serif expressif et arrondi (Fraunces), adouci pour coller à l'univers gourmand. */
 h1, h2, h3, .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  font-variation-settings: "SOFT" 100;
+  letter-spacing: -0.015em;
+}
+
+::selection {
+  background: var(--color-pink);
+  color: var(--color-ink);
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-accent);
+  outline: 3px solid var(--color-ink);
   outline-offset: 2px;
   border-radius: 0.5rem;
 }
 
 /* Les composants vivent dans leur couche : les utilitaires Tailwind (px-4, min-h-12…) les surchargent. */
 @layer components {
+/* ---------- Typographie éditoriale ---------- */
+.display-xl {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(3.1rem, 9.2vw, 6.6rem);
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+}
+.display-lg {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.1rem, 5.2vw, 3.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+.display-em { font-style: italic; font-weight: 600; }
+.eyebrow {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-accent-text);
+}
+
 /* ---------- Boutons ---------- */
 .btn {
   display: inline-flex;
@@ -97,7 +141,7 @@ h1, h2, h3, .font-display {
   font-size: 1rem;
   line-height: 1;
   cursor: pointer;
-  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.2s ease, color 0.15s ease;
+  transition: transform 0.15s ease, background-color 0.18s ease, box-shadow 0.2s ease, color 0.15s ease;
   white-space: nowrap;
   user-select: none;
 }
@@ -107,19 +151,24 @@ h1, h2, h3, .font-display {
 .btn-accent {
   background: var(--color-accent);
   color: var(--color-ink);
-  box-shadow: 0 10px 24px -10px rgb(255 106 61 / 0.7);
+  box-shadow: 0 10px 24px -12px rgb(138 87 38 / 0.8);
 }
-.btn-accent:hover:not(:disabled) { background: var(--color-accent-deep); box-shadow: 0 14px 28px -10px rgb(255 106 61 / 0.8); }
+.btn-accent:hover:not(:disabled) { background: var(--color-accent-deep); box-shadow: 0 14px 28px -12px rgb(138 87 38 / 0.9); }
 
 .btn-ink { background: var(--color-ink); color: var(--color-cream); }
 .btn-ink:hover:not(:disabled) { background: var(--color-ink-2); }
+
+/* Sur fond sombre */
+.btn-cream { background: var(--color-cream); color: var(--color-ink); }
+.btn-cream:hover:not(:disabled) { background: #fff; }
 
 .btn-ghost {
   background: transparent;
   color: inherit;
   box-shadow: inset 0 0 0 2px currentColor;
 }
-.btn-ghost:hover:not(:disabled) { background: rgb(255 255 255 / 0.1); }
+.btn-ghost:hover:not(:disabled) { background: rgb(48 32 25 / 0.06); }
+.on-dark .btn-ghost:hover:not(:disabled), .btn-ghost.on-dark:hover:not(:disabled) { background: rgb(255 255 255 / 0.12); }
 
 .btn-lg { min-height: 3.5rem; padding: 0 2rem; font-size: 1.0625rem; }
 
@@ -135,13 +184,13 @@ h1, h2, h3, .font-display {
   font-size: 1rem; /* 16px : évite le zoom automatique d'iOS */
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.field::placeholder { color: #7b8a82; }
-.field:hover { border-color: #d2c3a6; }
-.field:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 0 0 4px rgb(15 42 34 / 0.12); }
+.field::placeholder { color: #86746a; }
+.field:hover { border-color: #dcc9b2; }
+.field:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 0 0 4px rgb(48 32 25 / 0.12); }
 .field[aria-invalid="true"] { border-color: var(--color-danger); }
 }
 
-/* ---------- Boîtes de dialogue (modale produit, panier) ---------- */
+/* ---------- Boîtes de dialogue (modale produit, panier, menu mobile) ---------- */
 dialog.sheet {
   margin: 0;
   padding: 0;
@@ -155,12 +204,13 @@ dialog.sheet {
   overflow: hidden;
 }
 dialog.sheet::backdrop {
-  background: rgb(8 24 19 / 0.6);
+  background: rgb(36 22 16 / 0.62);
   backdrop-filter: blur(3px);
 }
 dialog.sheet[open]::backdrop { animation: fade-in 0.2s ease both; }
 dialog.sheet[open] .sheet-panel { animation: sheet-up 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 dialog.sheet.from-right[open] .sheet-panel { animation: sheet-left 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+dialog.sheet.from-top[open] .sheet-panel { animation: sheet-down 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 
 @media (min-width: 768px) {
   dialog.sheet.modal[open] .sheet-panel { animation: pop-in 0.26s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
@@ -168,6 +218,7 @@ dialog.sheet.from-right[open] .sheet-panel { animation: sheet-left 0.32s cubic-b
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes sheet-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes sheet-left { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes sheet-down { from { transform: translateY(-24px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes pop-in { from { transform: scale(0.96) translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
 
 /* ---------- Défilement horizontal discret ---------- */
@@ -175,8 +226,16 @@ dialog.sheet.from-right[open] .sheet-panel { animation: sheet-left 0.32s cubic-b
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
 /* ---------- Apparition au scroll (activée par JS, jamais bloquante) ---------- */
-.reveal { transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.reveal[data-state="hidden"] { opacity: 0; transform: translateY(18px); }
+.reveal { transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.reveal[data-state="hidden"] { opacity: 0; transform: translateY(20px); }
+
+/* Éléments décoratifs SVG animés : rotation autour de leur propre centre. */
+.svg-float {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: float var(--dur, 8s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
 
 /* Barre fixe mobile : respecte l'encoche / la barre d'accueil des iPhone. */
 .safe-bottom { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }

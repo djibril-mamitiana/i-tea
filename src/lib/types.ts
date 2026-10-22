@@ -24,6 +24,10 @@ export interface ProductArt {
   color2?: string;
   topping?: "pearls" | "jelly" | "foam" | "none";
   garnish?: "orange" | "strawberry" | "mint" | "lemon" | "none";
+  /** Traînées de caramel sur les parois (brown sugar boba). */
+  streaks?: boolean;
+  /** Couleur de la mousse (topping « foam »). */
+  foam?: string;
   /** Fond doux de la carte. */
   bg: string;
 }
@@ -75,6 +79,8 @@ export interface Category {
   id: string;
   name: string;
   tagline: string;
+  /** Vraie photo de la catégorie (ex. /categories/snacks.jpg). */
+  image?: string;
   art: ProductArt;
 }
 

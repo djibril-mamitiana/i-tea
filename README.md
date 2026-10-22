@@ -61,6 +61,27 @@ Tout se règle dans **deux fichiers** :
 
 Les prix sont recalculés **côté serveur** à partir de ce même fichier : le navigateur n'est jamais cru sur parole.
 
+## Identité visuelle et photos
+
+- **Palette** (dans `src/app/globals.css`, bloc `@theme`) : brun profond `#302019`, crème `#FFF8EF`, caramel `#C58A50`
+  (actions), vert matcha `#78966A`, rose fruité `#F1A6B6`. Le caramel est assombri (`accent-text`) pour le texte, afin de
+  garder un contraste suffisant.
+- **Typographie** : titres en *Fraunces* (serif expressif, arrondi), texte en *DM Sans*. Classes utilitaires : `display-xl`,
+  `display-lg`, `display-em` (italique d'accent), `eyebrow`.
+- **Visuels** : le site livre des **illustrations vectorielles originales de démonstration** (gobelets, perles, fruits,
+  snacks), pas des photographies. Elles sont remplacées par vos vraies photos, sans rien casser :
+  | Où | Comment |
+  | --- | --- |
+  | Produit | champ `image: "/products/brown-sugar.jpg"` dans `src/data/menu.ts` |
+  | Catégorie | champ `image: "/categories/snacks.jpg"` sur la catégorie |
+  | Hero de l'accueil | `site.media.hero = "/media/hero.jpg"` dans `src/config/site.ts` (paysage, 1600 px mini) |
+  | Section « L'univers I Tea » | `site.media.brand = "/media/brand.jpg"` (portrait, 1200 px mini) |
+
+  Déposez les fichiers dans `public/products`, `public/categories` ou `public/media` : `next/image` les optimise (AVIF/WebP)
+  et réserve leur place pour éviter les sauts de mise en page. Utilisez vos propres photos ou des images dont vous avez les droits.
+- **Avis clients** : `site.reviews.items` accepte de vrais avis (auteur, texte, note et source facultatives). Vide : la section
+  est masquée en production et remplacée par un emplacement explicite en mode démo. Aucun avis n'est jamais inventé.
+
 ## Commandes : ce qui est réellement en place
 
 | Élément | État |

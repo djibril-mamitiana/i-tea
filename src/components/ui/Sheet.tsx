@@ -5,8 +5,8 @@ import { useEffect, useRef } from "react";
 interface SheetProps {
   open: boolean;
   onClose: () => void;
-  /** "modal" : centré sur ordinateur. "drawer" : tiroir à droite sur ordinateur. */
-  variant: "modal" | "drawer";
+  /** "modal" : centré sur ordinateur. "drawer" : tiroir à droite. "menu" : volet qui descend du haut. */
+  variant: "modal" | "drawer" | "menu";
   label: string;
   children: React.ReactNode;
 }
@@ -25,16 +25,18 @@ export function Sheet({ open, onClose, variant, label, children }: SheetProps) {
     if (!open && el.open) el.close();
   }, [open]);
 
-  const align =
-    variant === "drawer"
-      ? "items-end md:items-stretch md:justify-end"
-      : "items-end md:items-center md:justify-center";
+  const align = {
+    drawer: "items-end md:items-stretch md:justify-end",
+    modal: "items-end md:items-center md:justify-center",
+    menu: "items-start",
+  }[variant];
+  const dialogClass = { drawer: "from-right", modal: "modal", menu: "from-top" }[variant];
 
   return (
     <dialog
       ref={ref}
       aria-label={label}
-      className={`sheet ${variant === "drawer" ? "from-right" : "modal"}`}
+      className={`sheet ${dialogClass}`}
       onCancel={(e) => {
         e.preventDefault();
         onClose();

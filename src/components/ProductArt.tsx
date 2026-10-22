@@ -1,5 +1,7 @@
 import { useId } from "react";
 import type { ProductArt as Art } from "@/lib/types";
+import { Cup } from "./art/Cup";
+import { INK } from "./art/primitives";
 
 /**
  * Illustrations vectorielles de démonstration (légères, nettes sur tous les écrans,
@@ -7,142 +9,7 @@ import type { ProductArt as Art } from "@/lib/types";
  * dès qu'un produit a un champ `image`, la photo la remplace automatiquement.
  */
 
-const INK = "#0f2a22";
 const PEARL = "#2a1912";
-
-const PEARL_POSITIONS: [number, number][] = [
-  [74, 214], [86, 216], [98, 216], [110, 216], [122, 214],
-  [80, 204], [92, 205], [104, 205], [116, 204],
-  [86, 194], [98, 195], [110, 194],
-];
-
-function Pearls() {
-  return (
-    <g>
-      {PEARL_POSITIONS.map(([x, y]) => (
-        <g key={`${x}-${y}`}>
-          <circle cx={x} cy={y} r={6.2} fill={PEARL} />
-          <circle cx={x - 2} cy={y - 2.2} r={1.7} fill="#fff" opacity={0.4} />
-        </g>
-      ))}
-    </g>
-  );
-}
-
-function Jelly({ color }: { color: string }) {
-  const cubes: [number, number, number][] = [
-    [72, 206, -8], [88, 210, 6], [104, 207, -4], [119, 209, 9], [80, 192, 5], [97, 195, -7], [112, 193, 4],
-  ];
-  return (
-    <g>
-      {cubes.map(([x, y, r]) => (
-        <g key={`${x}-${y}`} transform={`rotate(${r} ${x} ${y})`}>
-          <rect x={x - 7} y={y - 7} width={14} height={14} rx={3.5} fill={color} stroke="#fff" strokeOpacity={0.65} />
-          <rect x={x - 4.5} y={y - 4.5} width={4} height={4} rx={1.5} fill="#fff" opacity={0.45} />
-        </g>
-      ))}
-    </g>
-  );
-}
-
-function Ice() {
-  const cubes: [number, number, number][] = [[84, 126, -12], [116, 118, 10], [100, 150, 6]];
-  return (
-    <g>
-      {cubes.map(([x, y, r]) => (
-        <g key={`${x}-${y}`} transform={`rotate(${r} ${x} ${y})`}>
-          <rect x={x - 15} y={y - 15} width={30} height={30} rx={8} fill="#fff" opacity={0.3} stroke="#fff" strokeOpacity={0.75} strokeWidth={1.5} />
-          <path d={`M${x - 9} ${y - 7} L${x - 3} ${y - 11}`} stroke="#fff" strokeWidth={2.5} strokeLinecap="round" opacity={0.8} />
-        </g>
-      ))}
-    </g>
-  );
-}
-
-function Garnish({ type }: { type: NonNullable<Art["garnish"]> }) {
-  if (type === "none") return null;
-  if (type === "orange" || type === "lemon") {
-    const rind = type === "orange" ? "#FF9A3D" : "#FFD43B";
-    const flesh = type === "orange" ? "#FFC27A" : "#FFEC8A";
-    return (
-      <g transform="translate(150 70) rotate(-14)">
-        <circle r={19} fill={rind} />
-        <circle r={16} fill="#FFF6E0" />
-        <circle r={13.5} fill={flesh} />
-        {[0, 45, 90, 135].map((a) => (
-          <line key={a} x1={0} y1={-13} x2={0} y2={13} stroke="#FFF6E0" strokeWidth={1.8} transform={`rotate(${a})`} />
-        ))}
-      </g>
-    );
-  }
-  if (type === "strawberry") {
-    return (
-      <g transform="translate(148 66) rotate(18)">
-        <path d="M0 18 C-20 6 -18 -14 -6 -14 C-2 -14 0 -11 0 -11 C0 -11 2 -14 6 -14 C18 -14 20 6 0 18Z" fill="#E8344F" />
-        <path d="M-9 -15 L-3 -22 L0 -15 L4 -23 L8 -15" fill="none" stroke="#3E9B4F" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" />
-        {[[-6, -3], [4, -4], [-1, 5], [7, 4], [-8, 6]].map(([x, y]) => (
-          <ellipse key={`${x}${y}`} cx={x} cy={y} rx={1} ry={1.7} fill="#FFD0D6" />
-        ))}
-      </g>
-    );
-  }
-  // mint
-  return (
-    <g transform="translate(112 44)">
-      <path d="M0 6 C-26 -4 -30 -30 -8 -34 C6 -24 8 -4 0 6Z" fill="#4BB35E" />
-      <path d="M2 6 C26 -6 32 -28 14 -36 C0 -26 -4 -6 2 6Z" fill="#6CCB6E" />
-      <path d="M-8 -30 C-4 -20 -2 -10 0 4" stroke="#2F8A44" strokeWidth={1.4} fill="none" />
-    </g>
-  );
-}
-
-function Cup({ art, uid }: { art: Art; uid: string }) {
-  const { color, color2 = color, topping = "none", garnish = "none" } = art;
-  const body = "M52 80 L148 80 L138 214 Q137 226 126 226 L74 226 Q63 226 62 214 Z";
-  const hasInside = topping === "pearls" || topping === "jelly";
-  return (
-    <g>
-      <defs>
-        <clipPath id={`clip-${uid}`}>
-          <path d={body} />
-        </clipPath>
-        <linearGradient id={`liquid-${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={color} />
-          <stop offset="1" stopColor={color2} />
-        </linearGradient>
-      </defs>
-
-      <ellipse cx={100} cy={233} rx={52} ry={6} fill={INK} opacity={0.14} />
-
-      {/* Gobelet transparent */}
-      <path d={body} fill="#fff" opacity={0.35} />
-      <g clipPath={`url(#clip-${uid})`}>
-        <rect x={40} y={104} width={120} height={130} fill={`url(#liquid-${uid})`} />
-        <path d="M40 104 Q70 96 100 104 T160 104 L160 112 L40 112Z" fill="#fff" opacity={0.28} />
-        {topping === "foam" && <path d="M40 100 Q70 90 100 100 T160 100 L160 116 L40 116Z" fill="#FFF6E6" />}
-        <Ice />
-        {topping === "pearls" && <Pearls />}
-        {topping === "jelly" && <Jelly color={color2} />}
-      </g>
-      <path d={body} fill="none" stroke={INK} strokeOpacity={0.18} strokeWidth={2} />
-
-      {/* Paille */}
-      <g>
-        <path d="M110 4 L121 7 L108 168 L97 165Z" fill="#FF6A3D" />
-        <path d="M113 8 L116 9 L104 160 L101 159Z" fill="#fff" opacity={0.35} />
-      </g>
-
-      {/* Couvercle */}
-      <path d="M49 82 Q49 52 100 50 Q151 52 151 82Z" fill="#fff" opacity={0.6} stroke={INK} strokeOpacity={0.15} strokeWidth={2} />
-      <rect x={44} y={78} width={112} height={10} rx={5} fill="#fff" stroke={INK} strokeOpacity={0.15} strokeWidth={2} />
-
-      {/* Reflet */}
-      <path d="M62 98 L71 98 L78 210 L71 210Z" fill="#fff" opacity={hasInside ? 0.35 : 0.4} />
-
-      <Garnish type={garnish} />
-    </g>
-  );
-}
 
 function Nuggets({ art }: { art: Art }) {
   const { color } = art;

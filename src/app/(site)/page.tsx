@@ -1,10 +1,12 @@
 import { Bestsellers } from "@/components/sections/Bestsellers";
+import { BrandSection } from "@/components/sections/BrandSection";
 import { Categories } from "@/components/sections/Categories";
 import { Hero } from "@/components/sections/Hero";
+import { InfoSection } from "@/components/sections/InfoSection";
 import { Menu } from "@/components/sections/Menu";
 import { Offers } from "@/components/sections/Offers";
-import { Reassurance } from "@/components/sections/Reassurance";
-import { ServiceStrip } from "@/components/sections/ServiceStrip";
+import { ReassuranceBar } from "@/components/sections/ReassuranceBar";
+import { Reviews } from "@/components/sections/Reviews";
 import { site } from "@/config/site";
 
 // Données structurées : uniquement les champs réellement renseignés.
@@ -26,12 +28,14 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <ServiceStrip />
+      <ReassuranceBar />
       <Categories />
       <Bestsellers />
+      <BrandSection />
       <Offers />
       <Menu />
-      <Reassurance />
+      <Reviews />
+      <InfoSection />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
     </>
   );
