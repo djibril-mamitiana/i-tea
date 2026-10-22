@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { buildOrder, parseOrderRequest } from "@/lib/order-validation";
 import { notifyRestaurant } from "@/lib/server/notify";
-import { newOrderNumber, saveOrder } from "@/lib/server/orders-store";
+import { newOrderNumber, OrderNumberTakenError, saveOrder } from "@/lib/server/orders-store";
 import type { OrderApiError } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -55,8 +55,18 @@ export async function POST(request: Request) {
   const result = buildOrder(parsed, newOrderNumber(now), now);
   if (!result.ok) return error(result.status, result.error);
 
+  // Numéro déjà pris (très improbable) : on en tire un autre, 3 essais maximum.
+  let order = result.order;
   try {
-    await saveOrder(result.order);
+    for (let attempt = 1; ; attempt++) {
+      try {
+        await saveOrder(order);
+        break;
+      } catch (err) {
+        if (!(err instanceof OrderNumberTakenError) || attempt >= 3) throw err;
+        order = { ...order, number: newOrderNumber(now) };
+      }
+    }
   } catch (err) {
     console.error("[orders] enregistrement impossible :", err);
     return error(503, {
@@ -67,7 +77,7 @@ export async function POST(request: Request) {
   saved.record(ip);
 
   // La commande est enregistrée ; la notification est un bonus qui ne doit jamais la faire échouer.
-  const notified = await notifyRestaurant(result.order);
+  const notified = await notifyRestaurant(order);
 
-  return NextResponse.json({ order: result.order, notified }, { status: 201 });
+  return NextResponse.json({ order, notified }, { status: 201 });
 }

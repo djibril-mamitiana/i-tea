@@ -1,3 +1,5 @@
+import type { OrderStatus } from "./order-status.ts";
+
 /** Types partagés entre le navigateur et le serveur. */
 
 export type OrderMode = "pickup" | "delivery";
@@ -138,6 +140,12 @@ export interface ConfirmedOrder {
     optionLabels: string[];
   }[];
   totals: Totals;
+}
+
+/** Commande telle qu'enregistrée en base : la commande confirmée + son suivi. */
+export interface StoredOrder extends ConfirmedOrder {
+  status: OrderStatus;
+  updatedAt: string;
 }
 
 export type OrderApiError = {

@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
   // En mode démo, on évite d'indexer une carte fictive.
   if (site.demoMode) return { rules: { userAgent: "*", disallow: "/" } };
   return {
-    rules: { userAgent: "*", allow: "/", disallow: ["/api/", "/commande"] },
+    rules: { userAgent: "*", allow: "/", disallow: ["/api/", "/commande", "/admin"] },
     sitemap: `${site.url}/sitemap.xml`,
   };
 }

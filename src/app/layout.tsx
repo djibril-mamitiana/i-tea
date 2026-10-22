@@ -1,13 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, DM_Sans } from "next/font/google";
-import { CartDrawer } from "@/components/cart/CartDrawer";
-import { CartProvider } from "@/components/cart/CartProvider";
-import { MobileCartBar } from "@/components/cart/MobileCartBar";
-import { ProductDialog } from "@/components/cart/ProductDialog";
-import { Toast } from "@/components/cart/Toast";
-import { DemoBanner } from "@/components/DemoBanner";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
 import { site } from "@/config/site";
 import "./globals.css";
 
@@ -47,27 +39,11 @@ export const viewport: Viewport = {
   themeColor: "#0f2a22",
 };
 
+/** Racine minimale : polices et styles. Le site public et l'admin ont chacun leur layout. */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${display.variable} ${body.variable}`}>
-      <body>
-        <a
-          href="#contenu"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:font-bold focus:text-cream"
-        >
-          Aller au contenu
-        </a>
-        <CartProvider>
-          <DemoBanner />
-          <Header />
-          <main id="contenu">{children}</main>
-          <Footer />
-          <ProductDialog />
-          <CartDrawer />
-          <Toast />
-          <MobileCartBar />
-        </CartProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

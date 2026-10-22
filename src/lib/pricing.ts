@@ -72,7 +72,9 @@ export function optionLabels(product: Product, selections: Selections): string[]
     for (const id of chosen) {
       const option = group.options.find((o) => o.id === id);
       if (!option) continue;
-      labels.push(group.id === "sugar" ? `Sucre ${option.label}` : option.label);
+      // Les suppléments facultatifs sont préfixés d'un « + » : « Perles » (incluses) ≠ « + Perles » (en plus).
+      const label = group.id === "sugar" ? `Sucre ${option.label}` : group.min === 0 ? `+ ${option.label}` : option.label;
+      labels.push(label);
     }
   }
   return labels;

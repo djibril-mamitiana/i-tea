@@ -2,7 +2,8 @@
 
 Site de commande pour le restaurant **I Tea** (bubble tea, thés fruités, snacks, desserts) :
 Next.js 16 · React 19 · TypeScript · Tailwind CSS 4. Mobile first, panier persistant,
-personnalisation des produits, checkout invité, enregistrement des commandes côté serveur.
+personnalisation des produits, checkout invité, enregistrement des commandes en base de données
+et espace admin pour le restaurant.
 
 > ⚠️ **Version de démonstration.** La carte, les prix, les horaires et les illustrations sont fictifs.
 > Rien n'est inventé en production : remplacez les données (voir ci-dessous) puis passez
@@ -17,14 +18,20 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-| Commande            | Rôle                                         |
-| ------------------- | -------------------------------------------- |
-| `npm run dev`       | serveur de développement                     |
-| `npm run build`     | build de production                          |
-| `npm start`         | sert le build de production                  |
-| `npm test`          | tests unitaires (prix, panier, validation)   |
-| `npm run typecheck` | vérification TypeScript                      |
-| `npm run lint`      | ESLint                                       |
+Pour tester l'espace admin en local, créez un fichier `.env.local` (ignoré par git) :
+
+```bash
+ADMIN_PASSWORD=une-phrase-de-passe-longue
+```
+
+| Commande            | Rôle                                             |
+| ------------------- | ------------------------------------------------ |
+| `npm run dev`       | serveur de développement                         |
+| `npm run build`     | build de production                              |
+| `npm start`         | sert le build de production                      |
+| `npm test`          | tests unitaires (prix, panier, commandes, admin) |
+| `npm run typecheck` | vérification TypeScript                          |
+| `npm run lint`      | ESLint                                           |
 
 ## Ce qu'il faut remplacer avant le lancement
 
@@ -59,27 +66,44 @@ Les prix sont recalculés **côté serveur** à partir de ce même fichier : le 
 | Élément | État |
 | --- | --- |
 | Validation serveur (produits, options, quantités, prix, frais, champs client) | ✅ implémentée et testée |
-| Enregistrement des commandes | ✅ fichier `data/orders/orders.jsonl` (une commande JSON par ligne) |
+| Enregistrement des commandes en **base de données** (libSQL / Turso) | ✅ testé en local (SQLite) ; connexion Turso distante **non testée avec un vrai compte** |
 | Numéro de commande unique (`IT-AAMMJJ-XXXX`) | ✅ |
-| Anti-abus (champ piège, limitation par IP, taille du corps) | ✅ (limitation en mémoire, voir plus bas) |
+| **Espace admin** `/admin` : connexion par mot de passe, liste des commandes, statuts | ✅ implémenté et testé (voir plus bas) |
+| Anti-abus (champ piège, limitation par IP, taille du corps) | ✅ (limitation des commandes en mémoire, voir plus bas) |
 | Notification restaurant par **webhook** (Slack, Discord, n8n, Make…) | ✅ implémentée, testée contre un serveur local |
 | Notification restaurant par **Telegram** | ⚙️ implémentée, **non testée avec un vrai bot** |
-| Paiement à la réception (espèces) | ✅ |
+| Paiement à la réception | ✅ |
 | Paiement mobile (Apple Pay, Google Pay…) | ❌ non intégré → masqué |
 | Carte bancaire en ligne | ❌ non intégré → masqué |
-| Interface de gestion des commandes pour le restaurant | ❌ non incluse (la notification sert de canal) |
+| Suivi de commande côté client, gestion de la carte depuis l'admin | ❌ non inclus |
 | Codes promo / remises | ❌ non implémentés (aucune fausse promotion n'est affichée) |
 
+## Espace admin (`/admin`)
+
+Réservé au restaurant : liste des commandes qui se met à jour toute seule (toutes les 15 s), alerte sonore
+et titre d'onglet « (2) Nouvelles commandes », fiche complète (client, téléphone cliquable, adresse, notes,
+articles et options, total), et suivi par statut : **Nouvelle → En préparation → Prête → Terminée**
+(ou **Annulée**). Onglets « À traiter », « Terminées », « Annulées ». Utilisable sur téléphone et tablette.
+
+**Activation** : définissez la variable `ADMIN_PASSWORD` (10 caractères minimum ; une phrase de passe longue
+est idéale), puis redémarrez / redéployez. Sans elle, `/admin` affiche « non configuré » et rien n'est accessible.
+
+**Sécurité** : session par cookie signé (HMAC-SHA256, `HttpOnly`, `SameSite=Strict`, `Secure` en HTTPS, 12 h),
+comparaison du mot de passe en temps constant, blocage après 8 échecs en 10 min par IP (compteur en base, donc
+efficace sur Vercel), vérification de l'origine sur chaque modification, réponses `no-store`, page jamais indexée.
+Changer `ADMIN_PASSWORD` déconnecte toutes les sessions. Limites assumées : un seul mot de passe partagé (pas de
+comptes individuels ni d'historique des actions) ; pensez à le changer si une personne quitte l'équipe.
+
 ### Notifications (recommandé : à configurer avant le lancement)
-Copiez `.env.example` en `.env.local` et renseignez **au moins un** canal :
+L'admin se met à jour en direct, mais une notification évite de devoir garder la page ouverte.
+Renseignez **au moins un** canal :
 
 ```bash
 ORDER_WEBHOOK_URL=https://hooks.slack.com/services/...   # Slack, Discord, n8n, Make, Zapier…
 TELEGRAM_BOT_TOKEN=123456:ABC...                          # ou Telegram
 TELEGRAM_CHAT_ID=123456789
 ```
-Sans canal configuré, la commande est tout de même enregistrée, mais personne n'est prévenu :
-l'écran de confirmation l'indique en mode démo, et le restaurant doit alors lire `orders.jsonl`.
+Sans canal configuré, la commande est tout de même enregistrée et visible dans l'admin, mais personne n'est prévenu.
 
 ### Paiement
 Seul le **paiement à la réception** est actif. Un moyen de paiement n'apparaît côté client que si
@@ -88,22 +112,31 @@ Pour ajouter un paiement en ligne : intégrer le prestataire (création de la se
 `src/app/api/orders/route.ts`, confirmation par webhook), puis passer `integrated: true`.
 
 ### Base de données
-Le stockage par fichier fonctionne en local et sur un serveur avec disque persistant (VPS, Docker + volume).
-Sur Vercel/Netlify (disque éphémère), **remplacez `saveOrder`** dans `src/lib/server/orders-store.ts`
-par un appel à une base (Supabase, Neon/Postgres, Firebase…) — l'interface ne change pas.
-De même, la limitation par IP de `route.ts` est en mémoire : utilisez un store partagé (Redis/Upstash)
-si le site tourne sur plusieurs instances.
+Un seul moteur, **libSQL (SQLite)**, pour le développement comme pour la production :
+
+- **Sans configuration** (développement, VPS avec disque persistant) : fichier local `data/itea.db`, créé tout seul.
+- **Vercel / production** : base **Turso** (offre gratuite) — Vercel n'a pas de disque persistant.
+  ```bash
+  turso db create i-tea
+  turso db show i-tea --url        # -> TURSO_DATABASE_URL  (libsql://…)
+  turso db tokens create i-tea     # -> TURSO_AUTH_TOKEN
+  ```
+  Les tables sont créées automatiquement au premier accès. Sur Vercel, sans `TURSO_DATABASE_URL`, les commandes
+  et l'admin renvoient une erreur explicite (rien n'est simulé).
+
+La limitation du nombre de commandes par IP (`api/orders/route.ts`) est en mémoire : suffisante contre les abus
+basiques, à remplacer par un store partagé (Redis/Upstash) si le site tourne sur plusieurs instances.
 
 ## Déploiement
 
 1. Renseigner `src/config/site.ts` et `src/data/menu.ts`, passer `demoMode: false`.
-2. Définir les variables d'environnement (`NEXT_PUBLIC_SITE_URL`, notifications, `ORDERS_DIR`).
-3. **VPS / serveur Node** : `npm ci && npm run build && npm start` (derrière nginx/Caddy en HTTPS,
-   process manager type `pm2`). Pointez `ORDERS_DIR` vers un dossier persistant et sauvegardé.
-4. **Vercel** : importer le dépôt, ajouter les variables ; **brancher d'abord une base de données**
-   (stockage fichier non persistant, cf. ci-dessus).
-5. Compléter `/mentions-legales` et `/confidentialite` (textes modèles à valider juridiquement).
-6. Faire une vraie commande de test de bout en bout et vérifier la réception de la notification.
+2. **Vercel** : importer le dépôt, puis dans *Settings → Environment Variables* ajouter :
+   `NEXT_PUBLIC_SITE_URL`, `ADMIN_PASSWORD`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` et un canal de notification.
+   Redéployer, puis ouvrir `https://votre-site/admin`.
+3. **VPS / serveur Node** : `npm ci && npm run build && npm start` (derrière nginx/Caddy en HTTPS, process manager
+   type `pm2`). Sauvegardez régulièrement `data/itea.db` (ou utilisez Turso).
+4. Compléter `/mentions-legales` et `/confidentialite` (textes modèles à valider juridiquement).
+5. Faire une vraie commande de test de bout en bout : elle doit apparaître dans `/admin` et déclencher la notification.
 
 ## Architecture
 
@@ -114,10 +147,13 @@ src/
   lib/pricing.ts            moteur de prix (partagé navigateur + serveur)
   lib/cart-state.ts         logique pure du panier
   lib/order-validation.ts   validation + reconstruction serveur de la commande
-  lib/server/               enregistrement (orders-store) et notifications (notify)
-  app/api/orders/route.ts   POST /api/orders
-  app/                      pages : accueil, /commande, /commande/confirmation, légales
-  components/               UI (sections, panier, modale produit, checkout)
+  lib/order-status.ts       statuts de commande (partagés navigateur + serveur)
+  lib/server/               db (libSQL), orders-store, admin-auth, admin-api, notify
+  app/(site)/               site public : accueil, /commande, /commande/confirmation, légales
+  app/admin/                espace restaurant (connexion + tableau de bord)
+  app/api/orders/           POST /api/orders (commande client)
+  app/api/admin/            login, logout, liste et statuts des commandes
+  components/               UI (sections, panier, modale produit, checkout, admin)
 tests/                      tests unitaires (node:test)
 ```
 
