@@ -1,7 +1,4 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import path from "node:path";
 import { after, before, describe, test } from "node:test";
 import { ACTIVE_STATUSES, advanceLabel, isActive, isOrderStatus, nextStatus, ORDER_STATUSES } from "../src/lib/order-status.ts";
 import type { ConfirmedOrder } from "../src/lib/types.ts";
@@ -93,9 +90,7 @@ describe("authentification admin", () => {
   });
 });
 
-describe("commandes en base (libSQL)", () => {
-  let dir: string;
-
+describe("commandes en base (PostgreSQL, via PGlite en mémoire)", () => {
   const makeOrder = (number: string, createdAt: string, extra: Partial<ConfirmedOrder> = {}): ConfirmedOrder => ({
     number,
     createdAt,
@@ -109,16 +104,17 @@ describe("commandes en base (libSQL)", () => {
   });
 
   before(async () => {
-    dir = await mkdtemp(path.join(tmpdir(), "itea-test-"));
-    process.env.TURSO_DATABASE_URL = `file:${path.join(dir, "test.db").replace(/\\/g, "/")}`;
+    // Jamais la vraie base : sans DATABASE_URL, le Postgres embarqué est utilisé, ici en mémoire.
+    delete process.env.DATABASE_URL;
+    delete process.env.POSTGRES_URL;
     delete process.env.VERCEL;
+    process.env.PGLITE_DATA_DIR = "memory://";
     resetDbForTests();
   });
 
   after(async () => {
-    (await getDb()).close();
+    await (await getDb()).close();
     resetDbForTests();
-    await rm(dir, { recursive: true, force: true });
   });
 
   test("enregistrement puis relecture identique, statut « nouvelle »", async () => {
@@ -170,6 +166,18 @@ describe("commandes en base (libSQL)", () => {
     assert.equal(await isLoginBlocked("1.2.3.4", now + 100), true);
     assert.equal(await isLoginBlocked("9.9.9.9", now + 100), false, "autre IP non bloquée");
     assert.equal(await isLoginBlocked("1.2.3.4", now + 11 * 60 * 1000), false, "débloqué après 10 min");
+  });
+
+  test("la base refuse un statut inconnu (contrainte CHECK)", async () => {
+    const db = await getDb();
+    await assert.rejects(() => db.query("UPDATE orders SET status = $1 WHERE number = $2", ["expediee", "IT-261022-AAAA"]));
+    assert.equal((await getOrder("IT-261022-AAAA"))!.status, "new");
+  });
+
+  test("dates relues en ISO 8601 (timestamptz)", async () => {
+    const stored = await getOrder("IT-261022-AAAA");
+    assert.match(stored!.updatedAt, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+    assert.equal(stored!.createdAt, "2026-10-22T10:00:00.000Z");
   });
 
   test("format des numéros de commande", () => {

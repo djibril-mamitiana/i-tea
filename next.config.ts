@@ -3,8 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
-  // Client de base de données : chargé tel quel par Node (pas de bundling du module natif).
-  serverExternalPackages: ["@libsql/client", "libsql"],
+  // Postgres embarqué (PGlite, développement) : chargé tel quel par Node, il a besoin de ses fichiers WASM.
+  serverExternalPackages: ["@electric-sql/pglite"],
   // Les photos produits réelles peuvent être déposées dans /public/products
   // ou servies depuis un CDN : ajoutez son domaine ici.
   images: {

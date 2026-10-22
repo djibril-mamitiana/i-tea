@@ -1,15 +1,31 @@
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
-import type { Client } from "@libsql/client";
 
 /**
- * Base de données : libSQL (SQLite), un seul moteur pour le local et la production.
+ * Base de données : PostgreSQL.
  *
- *  - Production / Vercel : une base Turso → TURSO_DATABASE_URL (libsql://…) + TURSO_AUTH_TOKEN.
- *  - Développement / serveur à disque persistant : sans variable, un fichier `data/itea.db`.
+ *  - Production / Vercel : une base Postgres, par exemple Neon → variable DATABASE_URL
+ *    (la variable POSTGRES_URL, posée par certaines intégrations Vercel, est aussi acceptée).
+ *  - Développement / serveur à disque persistant : sans variable, un Postgres embarqué (PGlite)
+ *    stocké dans `data/pglite` — même SQL, aucune installation, aucun compte nécessaire.
  *
  * Les tables sont créées automatiquement au premier accès.
  */
+
+export type Row = Record<string, unknown>;
+
+export interface Statement {
+  text: string;
+  params?: unknown[];
+}
+
+export interface Db {
+  query(text: string, params?: unknown[]): Promise<Row[]>;
+  /** Exécute plusieurs instructions dans une seule transaction. */
+  batch(statements: Statement[]): Promise<void>;
+  /** Ferme la connexion (utile aux tests et aux scripts ; sans effet avec le driver HTTP de Neon). */
+  close(): Promise<void>;
+}
 
 export class DatabaseUnavailableError extends Error {
   constructor(message: string, options?: { cause?: unknown }) {
@@ -18,69 +34,94 @@ export class DatabaseUnavailableError extends Error {
   }
 }
 
-const SCHEMA = [
-  `CREATE TABLE IF NOT EXISTS orders (
-    number TEXT PRIMARY KEY,
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL,
-    status TEXT NOT NULL DEFAULT 'new',
-    mode TEXT NOT NULL,
-    customer_name TEXT NOT NULL,
-    customer_phone TEXT NOT NULL,
-    total REAL NOT NULL,
-    data TEXT NOT NULL
-  )`,
-  `CREATE INDEX IF NOT EXISTS idx_orders_created ON orders (created_at)`,
-  `CREATE INDEX IF NOT EXISTS idx_orders_status ON orders (status, created_at)`,
-  `CREATE TABLE IF NOT EXISTS admin_login_attempts (
-    ip TEXT NOT NULL,
-    at INTEGER NOT NULL
-  )`,
-  `CREATE INDEX IF NOT EXISTS idx_login_attempts ON admin_login_attempts (ip, at)`,
+const SCHEMA: Statement[] = [
+  // Verrou : deux démarrages simultanés (serverless) ne créent pas les tables en même temps.
+  { text: "SELECT pg_advisory_xact_lock(727274)" },
+  {
+    text: `CREATE TABLE IF NOT EXISTS orders (
+      number         TEXT PRIMARY KEY,
+      created_at     TIMESTAMPTZ NOT NULL,
+      updated_at     TIMESTAMPTZ NOT NULL,
+      status         TEXT NOT NULL DEFAULT 'new'
+                     CHECK (status IN ('new', 'preparing', 'ready', 'completed', 'cancelled')),
+      mode           TEXT NOT NULL CHECK (mode IN ('pickup', 'delivery')),
+      customer_name  TEXT NOT NULL,
+      customer_phone TEXT NOT NULL,
+      total          NUMERIC(10, 2) NOT NULL,
+      data           JSONB NOT NULL
+    )`,
+  },
+  { text: "CREATE INDEX IF NOT EXISTS idx_orders_created ON orders (created_at)" },
+  { text: "CREATE INDEX IF NOT EXISTS idx_orders_status ON orders (status, created_at)" },
+  { text: "CREATE TABLE IF NOT EXISTS admin_login_attempts (ip TEXT NOT NULL, at BIGINT NOT NULL)" },
+  { text: "CREATE INDEX IF NOT EXISTS idx_login_attempts ON admin_login_attempts (ip, at)" },
 ];
 
-function resolveUrl(): string {
-  const configured = process.env.TURSO_DATABASE_URL?.trim();
-  if (configured) return configured;
+type Source = { kind: "postgres"; url: string } | { kind: "pglite"; dir: string };
+
+function resolveSource(): Source {
+  const url = (process.env.DATABASE_URL ?? process.env.POSTGRES_URL)?.trim();
+  if (url) {
+    if (!/^postgres(ql)?:\/\//i.test(url)) {
+      throw new DatabaseUnavailableError("DATABASE_URL doit être une URL PostgreSQL (postgresql://…).");
+    }
+    return { kind: "postgres", url };
+  }
   if (process.env.VERCEL) {
     throw new DatabaseUnavailableError(
-      "TURSO_DATABASE_URL est manquant : sur Vercel, une base de données Turso est nécessaire (voir README).",
+      "DATABASE_URL est manquant : sur Vercel, une base Postgres (ex. Neon) est nécessaire (voir README).",
     );
   }
-  return "file:./data/itea.db";
+  return { kind: "pglite", dir: process.env.PGLITE_DATA_DIR ?? "./data/pglite" };
 }
 
-async function connect(): Promise<Client> {
-  const url = resolveUrl();
-
-  if (url.startsWith("file:")) {
-    // Fichier local : on crée le dossier au besoin (sauf base en mémoire).
-    const file = url.slice("file:".length);
-    if (file && !file.startsWith(":memory:")) await mkdir(path.dirname(path.resolve(file)), { recursive: true });
-    const { createClient } = await import("@libsql/client");
-    return createClient({ url });
+async function connect(source: Source): Promise<Db> {
+  if (source.kind === "postgres") {
+    // Driver Neon : requêtes HTTP, adapté au serverless (aucune connexion à maintenir ouverte).
+    const { neon } = await import("@neondatabase/serverless");
+    const sql = neon(source.url);
+    return {
+      query: async (text, params = []) => (await sql.query(text, params)) as Row[],
+      batch: async (statements) => {
+        await sql.transaction(statements.map((s) => sql.query(s.text, s.params ?? [])));
+      },
+      close: async () => {},
+    };
   }
 
-  // Base distante : client 100 % JavaScript (fetch), sans module natif — idéal pour Vercel.
-  const { createClient } = await import("@libsql/client/web");
-  return createClient({ url, authToken: process.env.TURSO_AUTH_TOKEN });
+  const { PGlite } = await import("@electric-sql/pglite");
+  const inMemory = source.dir.startsWith("memory:");
+  if (!inMemory) await mkdir(path.resolve(source.dir), { recursive: true });
+  const pg = new PGlite(inMemory ? source.dir : path.resolve(source.dir));
+  await pg.waitReady;
+  return {
+    query: async (text, params = []) => (await pg.query<Row>(text, params)).rows,
+    batch: async (statements) => {
+      await pg.transaction(async (tx) => {
+        for (const s of statements) await tx.query(s.text, s.params ?? []);
+      });
+    },
+    close: () => pg.close(),
+  };
 }
 
-async function init(): Promise<Client> {
+async function init(): Promise<Db> {
   try {
-    const client = await connect();
-    await client.batch(SCHEMA, "write");
-    return client;
+    const db = await connect(resolveSource());
+    // Une requête légère suffit à constater que le schéma est déjà en place.
+    const [present] = await db.query("SELECT to_regclass('orders') AS orders, to_regclass('admin_login_attempts') AS attempts");
+    if (!present?.orders || !present?.attempts) await db.batch(SCHEMA);
+    return db;
   } catch (err) {
     if (err instanceof DatabaseUnavailableError) throw err;
     throw new DatabaseUnavailableError("Connexion à la base de données impossible.", { cause: err });
   }
 }
 
-const globalForDb = globalThis as unknown as { __iteaDb?: Promise<Client> };
+const globalForDb = globalThis as unknown as { __iteaDb?: Promise<Db> };
 
 /** Client partagé (mis en cache, y compris entre rechargements à chaud en développement). */
-export function getDb(): Promise<Client> {
+export function getDb(): Promise<Db> {
   if (!globalForDb.__iteaDb) {
     globalForDb.__iteaDb = init().catch((err) => {
       globalForDb.__iteaDb = undefined; // permet de réessayer à la requête suivante

@@ -66,7 +66,7 @@ Les prix sont recalculés **côté serveur** à partir de ce même fichier : le 
 | Élément | État |
 | --- | --- |
 | Validation serveur (produits, options, quantités, prix, frais, champs client) | ✅ implémentée et testée |
-| Enregistrement des commandes en **base de données** (libSQL / Turso) | ✅ testé en local (SQLite) ; connexion Turso distante **non testée avec un vrai compte** |
+| Enregistrement des commandes en **base PostgreSQL** (Neon) | ✅ testé sur une vraie base Neon (schéma, enregistrement, statuts, contraintes) et en local |
 | Numéro de commande unique (`IT-AAMMJJ-XXXX`) | ✅ |
 | **Espace admin** `/admin` : connexion par mot de passe, liste des commandes, statuts | ✅ implémenté et testé (voir plus bas) |
 | Anti-abus (champ piège, limitation par IP, taille du corps) | ✅ (limitation des commandes en mémoire, voir plus bas) |
@@ -112,17 +112,18 @@ Pour ajouter un paiement en ligne : intégrer le prestataire (création de la se
 `src/app/api/orders/route.ts`, confirmation par webhook), puis passer `integrated: true`.
 
 ### Base de données
-Un seul moteur, **libSQL (SQLite)**, pour le développement comme pour la production :
+Un seul langage, **PostgreSQL**, pour le développement comme pour la production :
 
-- **Sans configuration** (développement, VPS avec disque persistant) : fichier local `data/itea.db`, créé tout seul.
-- **Vercel / production** : base **Turso** (offre gratuite) — Vercel n'a pas de disque persistant.
-  ```bash
-  turso db create i-tea
-  turso db show i-tea --url        # -> TURSO_DATABASE_URL  (libsql://…)
-  turso db tokens create i-tea     # -> TURSO_AUTH_TOKEN
-  ```
-  Les tables sont créées automatiquement au premier accès. Sur Vercel, sans `TURSO_DATABASE_URL`, les commandes
-  et l'admin renvoient une erreur explicite (rien n'est simulé).
+- **Production / Vercel** : une base Postgres, par exemple **Neon**. Copiez sa « connection string » (version *pooled*)
+  dans la variable `DATABASE_URL`. Le driver `@neondatabase/serverless` (requêtes HTTP) est adapté au serverless.
+  C'est un **secret** : saisissez-la dans Vercel → Settings → Environment Variables, jamais dans un fichier commité.
+- **Sans configuration** (développement, VPS avec disque persistant) : un Postgres embarqué (**PGlite**) stocke
+  les données dans `data/pglite`, sans rien installer ni créer de compte.
+- Les tables (`orders`, `admin_login_attempts`) sont créées automatiquement au premier accès. Sur Vercel, sans
+  `DATABASE_URL`, les commandes et l'admin renvoient une erreur explicite (rien n'est simulé).
+
+Pour tester contre votre vraie base sans l'écrire dans un fichier suivi par git, mettez `DATABASE_URL` dans un fichier
+ignoré comme `.env.neon.local` et lancez par exemple `node --env-file=.env.neon.local node_modules/next/dist/bin/next dev`.
 
 La limitation du nombre de commandes par IP (`api/orders/route.ts`) est en mémoire : suffisante contre les abus
 basiques, à remplacer par un store partagé (Redis/Upstash) si le site tourne sur plusieurs instances.
@@ -131,10 +132,10 @@ basiques, à remplacer par un store partagé (Redis/Upstash) si le site tourne s
 
 1. Renseigner `src/config/site.ts` et `src/data/menu.ts`, passer `demoMode: false`.
 2. **Vercel** : importer le dépôt, puis dans *Settings → Environment Variables* ajouter :
-   `NEXT_PUBLIC_SITE_URL`, `ADMIN_PASSWORD`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` et un canal de notification.
+   `NEXT_PUBLIC_SITE_URL`, `ADMIN_PASSWORD`, `DATABASE_URL` (Neon) et un canal de notification.
    Redéployer, puis ouvrir `https://votre-site/admin`.
 3. **VPS / serveur Node** : `npm ci && npm run build && npm start` (derrière nginx/Caddy en HTTPS, process manager
-   type `pm2`). Sauvegardez régulièrement `data/itea.db` (ou utilisez Turso).
+   type `pm2`). Utilisez `DATABASE_URL` (Neon ou autre Postgres), ou sauvegardez régulièrement `data/pglite`.
 4. Compléter `/mentions-legales` et `/confidentialite` (textes modèles à valider juridiquement).
 5. Faire une vraie commande de test de bout en bout : elle doit apparaître dans `/admin` et déclencher la notification.
 
@@ -148,7 +149,7 @@ src/
   lib/cart-state.ts         logique pure du panier
   lib/order-validation.ts   validation + reconstruction serveur de la commande
   lib/order-status.ts       statuts de commande (partagés navigateur + serveur)
-  lib/server/               db (libSQL), orders-store, admin-auth, admin-api, notify
+  lib/server/               db (PostgreSQL), orders-store, admin-auth, admin-api, notify
   app/(site)/               site public : accueil, /commande, /commande/confirmation, légales
   app/admin/                espace restaurant (connexion + tableau de bord)
   app/api/orders/           POST /api/orders (commande client)

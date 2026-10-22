@@ -66,22 +66,19 @@ const MAX_FAILURES = 8;
 
 export async function isLoginBlocked(ip: string, now = Date.now()): Promise<boolean> {
   const db = await getDb();
-  const result = await db.execute({
-    sql: "SELECT COUNT(*) AS n FROM admin_login_attempts WHERE ip = ? AND at > ?",
-    args: [ip, now - WINDOW_MS],
-  });
-  return Number(result.rows[0]?.n ?? 0) >= MAX_FAILURES;
+  const rows = await db.query("SELECT COUNT(*)::int AS n FROM admin_login_attempts WHERE ip = $1 AND at > $2", [
+    ip,
+    now - WINDOW_MS,
+  ]);
+  return Number(rows[0]?.n ?? 0) >= MAX_FAILURES;
 }
 
 export async function recordFailedLogin(ip: string, now = Date.now()): Promise<void> {
   const db = await getDb();
-  await db.batch(
-    [
-      { sql: "INSERT INTO admin_login_attempts (ip, at) VALUES (?, ?)", args: [ip, now] },
-      { sql: "DELETE FROM admin_login_attempts WHERE at < ?", args: [now - 60 * 60 * 1000] },
-    ],
-    "write",
-  );
+  await db.batch([
+    { text: "INSERT INTO admin_login_attempts (ip, at) VALUES ($1, $2)", params: [ip, now] },
+    { text: "DELETE FROM admin_login_attempts WHERE at < $1", params: [now - 60 * 60 * 1000] },
+  ]);
 }
 
 /** Une action de modification n'est acceptée que depuis une page de ce même site. */
