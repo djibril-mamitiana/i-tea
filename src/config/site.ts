@@ -37,7 +37,10 @@ export const site = {
   description:
     "I Tea : bubble tea, thés fruités, snacks et desserts. Compose ta boisson, commande en ligne en livraison ou à emporter.",
   /** URL publique du site (SEO, partages). Surchargée par NEXT_PUBLIC_SITE_URL. */
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    // Sur Vercel, l'adresse de production est fournie automatiquement.
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000"),
   locale: "fr-FR",
   timezone: "Europe/Paris",
 

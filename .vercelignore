@@ -1,0 +1,15 @@
+# Fichiers jamais envoyés à Vercel par le CLI (équivalent du .gitignore + dossiers personnels).
+node_modules
+.next
+out
+build
+next-env.d.ts
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+/data
+/.claude
+/.git
+# Dossier de documents personnels, étranger au site
+/livrables
