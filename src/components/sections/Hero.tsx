@@ -81,10 +81,10 @@ export function Hero() {
       </div>
 
       <div className="border-t border-cream/15">
-        <ul className="mx-auto flex max-w-7xl flex-col gap-1.5 px-4 py-4 text-sm text-cream/80 sm:flex-row sm:flex-wrap sm:gap-x-0 sm:gap-y-1 sm:px-6 lg:px-8">
+        <ul className="mx-auto flex max-w-7xl flex-col gap-1.5 px-4 py-4 text-sm text-cream/80 sm:flex-row sm:flex-wrap sm:gap-x-8 sm:gap-y-1 sm:px-6 lg:gap-x-0 lg:px-8">
           {facts.map((f, i) => (
             <li key={f} className="inline-flex items-center">
-              {i > 0 && <span className="mx-5 hidden h-3 w-px bg-cream/30 sm:block" aria-hidden="true" />}
+              {i > 0 && <span className="mx-5 hidden h-3 w-px bg-cream/30 lg:block" aria-hidden="true" />}
               {f}
             </li>
           ))}

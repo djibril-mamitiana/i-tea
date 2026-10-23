@@ -31,7 +31,7 @@ export function SelectionCard({ product, variant, priority = false }: { product:
             label={label}
             priority={priority}
             sizes="(min-width: 1024px) 45vw, 100vw"
-            className="aspect-[4/3] w-full rounded-lg lg:aspect-square [&_img]:transition-transform [&_img]:duration-700 group-hover:[&_img]:scale-[1.03]"
+            className="aspect-[4/3] w-full rounded-lg md:aspect-[16/9] lg:aspect-square [&_img]:transition-transform [&_img]:duration-700 group-hover:[&_img]:scale-[1.03]"
           />
         </button>
         <div className="mt-5 flex items-start justify-between gap-6">
