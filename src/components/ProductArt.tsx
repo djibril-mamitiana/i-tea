@@ -1,6 +1,7 @@
 import { useId } from "react";
 import type { ProductArt as Art } from "@/lib/types";
 import { Cup } from "./art/Cup";
+import { FoodArt } from "./art/Food";
 import { INK } from "./art/primitives";
 
 /**
@@ -206,6 +207,7 @@ export function ArtSvg({ art, className }: { art: Art; className?: string }) {
     case "cake": content = <Cake art={art} />; break;
     case "waffle": content = <Waffle art={art} uid={uid} />; break;
     case "combo": content = <Combo art={art} uid={uid} />; break;
+    default: content = <FoodArt art={art} />;
   }
   return (
     <svg viewBox="0 0 200 240" className={className} role="img" aria-hidden="true" focusable="false">

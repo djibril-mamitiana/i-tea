@@ -1,4 +1,4 @@
-import { ArrowRight, Bike, Sparkles } from "lucide-react";
+import { ArrowRight, BadgeCheck, Bike, Leaf } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/config/site";
@@ -18,19 +18,19 @@ export function Hero() {
       <div className="mx-auto grid max-w-7xl items-center gap-2 px-4 pb-10 pt-6 sm:px-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-6 lg:px-8 lg:pb-20 lg:pt-8">
         <div className="animate-rise">
           <p className="eyebrow flex items-center gap-2">
-            <span className="h-px w-8 bg-accent" aria-hidden="true" />
-            Bubble tea · Thés fruités · Snacks
+            <span className="h-px w-8 shrink-0 bg-accent" aria-hidden="true" />
+            {site.descriptor}
           </p>
           <h1 id="hero-title" className="display-xl mt-5">
-            Ton thé.
+            Ton plat.
             <br />
-            Tes envies.
+            Ton thé.
             <br />
             <span className="display-em text-accent-text">Ton moment.</span>
           </h1>
           <p className="mt-6 max-w-md text-lg leading-relaxed text-muted">
-            Bubble teas, thés fruités, snacks et desserts. Compose ta boisson à ta façon, puis commande en ligne :
-            à emporter ou livrée.
+            Cuisine vietnamienne, bubble teas, matcha, cafés et gourmandises, faits maison avec des produits frais.
+            Commande en ligne : à emporter ou livrée.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -45,8 +45,12 @@ export function Hero() {
 
           <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-ink/80">
             <li className="inline-flex items-center gap-2">
-              <Sparkles size={18} className="text-accent-text" aria-hidden="true" />
-              Sucre, glace, toppings : à ta façon
+              <BadgeCheck size={18} className="text-accent-text" aria-hidden="true" />
+              {site.highlights.halal}
+            </li>
+            <li className="inline-flex items-center gap-2">
+              <Leaf size={18} className="text-accent-text" aria-hidden="true" />
+              {site.highlights.homemade}
             </li>
             <li className="inline-flex items-center gap-2">
               <Bike size={18} className="text-accent-text" aria-hidden="true" />
@@ -59,7 +63,7 @@ export function Hero() {
         <div className="relative mx-auto w-full max-w-2xl lg:max-w-none lg:-mr-4">
           {site.media.hero ? (
             <div className="relative aspect-[6/5] overflow-hidden rounded-t-[999px] rounded-b-[2.5rem] shadow-pop">
-              <Image src={site.media.hero} alt="Bubble teas I Tea" fill priority sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
+              <Image src={site.media.hero} alt="Plats et boissons I Tea" fill priority sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />
             </div>
           ) : (
             <HeroScene className="h-auto w-full" />

@@ -94,7 +94,7 @@ function ProductForm({
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <div ref={scroller} className="relative min-h-0 flex-1 overflow-y-auto px-5 pb-4 pt-5">
           <h2 className="pr-10 font-display text-3xl font-bold leading-tight">{product.name}</h2>
-          <p className="mt-1 text-sm text-muted">{product.description}</p>
+          {product.description && <p className="mt-1 text-sm text-muted">{product.description}</p>}
           <p className="mt-2 font-display text-xl font-bold text-accent-text">{formatPrice(product.price)}</p>
 
           <div className="mt-5 space-y-6">

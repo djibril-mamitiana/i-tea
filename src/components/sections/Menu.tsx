@@ -74,7 +74,7 @@ export function Menu() {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Rechercher une boisson, un snack…"
+              placeholder="Rechercher un plat, une boisson…"
               aria-label="Rechercher dans le menu"
               className="field pl-12 pr-12"
               enterKeyHint="search"
@@ -143,7 +143,7 @@ export function Menu() {
               <div className="flex flex-col items-center gap-3 rounded-card bg-white px-6 py-12 text-center shadow-card">
                 <ArtSvg art={categories[0].art} className="h-32 w-auto opacity-90" />
                 <p className="font-display text-2xl font-bold">Rien ne correspond…</p>
-                <p className="text-muted">Essaie « thé », « poulet » ou « mangue ».</p>
+                <p className="text-muted">Essaie « poulet », « matcha » ou « nems ».</p>
                 <button type="button" className="btn btn-ink mt-2" onClick={() => setQuery("")}>
                   Voir toute la carte
                 </button>

@@ -54,7 +54,7 @@ export function FeaturedCard({ product, priority = false }: { product: Product; 
 
       <div className="flex flex-1 flex-col px-1 pt-5">
         <h3 className="font-display text-2xl font-bold leading-tight">{product.name}</h3>
-        <p className="mt-1.5 line-clamp-2 text-muted">{product.description}</p>
+        {product.description && <p className="mt-1.5 line-clamp-2 text-muted">{product.description}</p>}
         <div className="mt-auto flex items-center justify-between gap-3 pt-5">
           <p className="font-display text-2xl font-bold">{formatPrice(product.price)}</p>
           <button type="button" className="btn btn-accent" onClick={() => quickAdd(product.id)}>

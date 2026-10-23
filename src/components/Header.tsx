@@ -31,14 +31,14 @@ export function Header() {
         }`}
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:h-[4.75rem] lg:px-8">
-          <Logo />
+          <Logo priority />
 
-          <nav aria-label="Catégories du menu" className="hidden items-center gap-1 lg:flex">
+          <nav aria-label="Catégories du menu" className="hidden items-center gap-0.5 xl:flex">
             {categories.map((c) => (
               <CategoryLink
                 key={c.id}
                 id={c.id}
-                className="whitespace-nowrap rounded-full px-3.5 py-2 text-[0.95rem] font-semibold text-ink/80 transition hover:bg-sand hover:text-ink"
+                className="whitespace-nowrap rounded-full px-3 py-2 text-[0.95rem] font-semibold text-ink/80 transition hover:bg-sand hover:text-ink"
               >
                 {c.name}
               </CategoryLink>
@@ -68,7 +68,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
-              className="grid size-12 place-items-center rounded-full bg-sand transition hover:bg-line active:scale-95 lg:hidden"
+              className="grid size-12 place-items-center rounded-full bg-sand transition hover:bg-line active:scale-95 xl:hidden"
               aria-label="Ouvrir le menu de navigation"
               aria-haspopup="dialog"
             >

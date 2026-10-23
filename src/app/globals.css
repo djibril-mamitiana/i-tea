@@ -37,7 +37,7 @@
   --color-danger: #b42318;
 
   --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  --font-sans: var(--font-dm-sans), "Segoe UI", system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), var(--font-vietnamese), "Segoe UI", system-ui, sans-serif;
 
   --radius-card: 1.75rem;
   --shadow-card: 0 1px 0 rgb(48 32 25 / 0.04), 0 14px 34px -18px rgb(48 32 25 / 0.32);

@@ -15,7 +15,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-[1.5fr_1fr_1fr]">
           <div>
-            <Logo light />
+            <Logo light className="size-24" />
             <p className="mt-5 max-w-sm leading-relaxed text-cream/75">{site.description}</p>
             <div className="mt-6">
               <SocialLinks onDark />
@@ -43,13 +43,25 @@ export function Footer() {
                   Horaires et infos pratiques
                 </Link>
               </li>
-              {contact.phone && (
-                <li>
-                  <a href={`tel:${contact.phone.replace(/[^\d+]/g, "")}`} className={linkClass}>
-                    {contact.phone}
-                  </a>
+              {contact.address && (
+                <li className="py-1 text-cream/80">
+                  {contact.mapUrl ? (
+                    <a href={contact.mapUrl} target="_blank" rel="noopener noreferrer" className="underline-offset-4 hover:text-cream hover:underline">
+                      {contact.address}
+                    </a>
+                  ) : (
+                    contact.address
+                  )}
+                  {contact.addressNote && <span className="block text-sm text-cream/60">{contact.addressNote}</span>}
                 </li>
               )}
+              {[contact.phone, contact.landline].filter((n): n is string => Boolean(n)).map((number) => (
+                <li key={number}>
+                  <a href={`tel:${number.replace(/[^\d+]/g, "")}`} className={linkClass}>
+                    {number}
+                  </a>
+                </li>
+              ))}
               {contact.email && (
                 <li>
                   <a href={`mailto:${contact.email}`} className={`${linkClass} break-all`}>

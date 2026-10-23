@@ -1,6 +1,7 @@
 import { useId } from "react";
 import type { ProductArt as Art } from "@/lib/types";
 import { Cup } from "./Cup";
+import { FoodArt } from "./Food";
 import {
   CREAM,
   IceCube,
@@ -23,7 +24,7 @@ import {
  */
 
 const brownSugar: Art = { kind: "cup", color: "#F6E7D3", color2: "#A9693A", topping: "pearls", streaks: true, bg: "" };
-const matcha: Art = { kind: "cup", color: "#C9DDB4", color2: "#6F9460", topping: "pearls", bg: "" };
+const pho: Art = { kind: "bowl", variant: "soup", color: "#E8B25C", bg: "" };
 const strawberryMilk: Art = { kind: "cup", color: "#FBD3DB", color2: "#E9808F", topping: "pearls", garnish: "strawberry", bg: "" };
 
 /** Place un gobelet : pivot au centre de son pied. */
@@ -63,8 +64,7 @@ function Floating({
 }
 
 const GROUND_PEARLS: [number, number, number][] = [
-  [64, 598, 13], [112, 612, 10], [158, 590, 9], [250, 606, 12], [332, 618, 9], [430, 612, 11],
-  [498, 596, 9], [548, 612, 13], [612, 592, 10], [660, 606, 12], [292, 590, 7], [470, 626, 8],
+  [332, 618, 9], [430, 612, 11], [498, 596, 9], [548, 612, 13], [612, 592, 10], [660, 606, 12], [470, 626, 8],
 ];
 
 export function HeroScene({ className }: { className?: string }) {
@@ -84,8 +84,10 @@ export function HeroScene({ className }: { className?: string }) {
         <MilkSplash w={330} color="#FFFDF8" />
       </g>
 
-      {/* gobelets */}
-      <PlacedCup art={matcha} uid={`${uid}b`} x={186} y={596} scale={1.62} rotate={-7} />
+      {/* bol de pho et gobelets */}
+      <g transform="translate(170 604) rotate(-4) scale(1.7) translate(-100 -228)">
+        <FoodArt art={pho} />
+      </g>
       <PlacedCup art={strawberryMilk} uid={`${uid}c`} x={570} y={598} scale={1.7} rotate={6} />
       <PlacedCup art={brownSugar} uid={`${uid}a`} x={380} y={610} scale={2.25} />
 
@@ -124,9 +126,6 @@ export function HeroScene({ className }: { className?: string }) {
       </Floating>
 
       {/* devant : fruits et perles posés sur la table */}
-      <g transform="translate(88 560) rotate(-24)">
-        <StrawberryHalf r={30} />
-      </g>
       <g transform="translate(642 556) rotate(18)">
         <Strawberry r={28} />
       </g>
@@ -136,55 +135,6 @@ export function HeroScene({ className }: { className?: string }) {
       {GROUND_PEARLS.map(([x, y, r]) => (
         <Pearl key={`${x}-${y}`} x={x} y={y} r={r} uid={uid} />
       ))}
-    </svg>
-  );
-}
-
-const GREEN_PEARLS: [number, number, number][] = [
-  [70, 560, 14], [118, 584, 11], [170, 566, 12], [250, 590, 10], [352, 576, 13], [444, 588, 10], [508, 562, 14], [548, 590, 11], [210, 604, 8], [410, 608, 9],
-];
-
-export function BrandScene({ className }: { className?: string }) {
-  const uid = useId().replace(/:/g, "");
-  return (
-    <svg viewBox="0 0 600 680" className={className} role="img" aria-hidden="true" focusable="false">
-      <defs>
-        <PearlDefs uid={uid} />
-        <clipPath id={`brand-arch-${uid}`}>
-          <path d="M30 680 L30 300 A270 270 0 0 1 570 300 L570 680Z" />
-        </clipPath>
-      </defs>
-
-      <path d="M30 680 L30 300 A270 270 0 0 1 570 300 L570 680Z" fill="#78966A" />
-      <g clipPath={`url(#brand-arch-${uid})`}>
-        <circle cx={470} cy={130} r={130} fill="#8DAE7E" />
-        <circle cx={90} cy={470} r={170} fill="#6C8A5E" />
-        <g transform="translate(300 250)" opacity={0.9}>
-          <MilkSplash w={420} color="#F1A6B6" />
-        </g>
-        <PlacedCup art={strawberryMilk} uid={`${uid}a`} x={300} y={700} scale={2.9} />
-        <Floating x={110} y={170} rotate={-16} dur={10} delay={-2}>
-          <OrangeSlice r={38} fruit="lime" />
-        </Floating>
-        <Floating x={500} y={420} rotate={14} dur={9} delay={-3}>
-          <StrawberryHalf r={36} />
-        </Floating>
-        <Floating x={84} y={380} rotate={-24} dur={11} delay={-5}>
-          <Leaf length={72} color="#C9DDB4" />
-        </Floating>
-        <Floating x={512} y={236} rotate={28} dur={12} delay={-7}>
-          <Leaf length={58} color="#DDE8D3" />
-        </Floating>
-        <Floating x={430} y={90} dur={8} delay={-2} dist={-6}>
-          <Sparkle size={16} color={CREAM} />
-        </Floating>
-        <Floating x={160} y={70} dur={9} delay={-4} dist={-6}>
-          <Sparkle size={11} color={CREAM} />
-        </Floating>
-        {GREEN_PEARLS.map(([x, y, r]) => (
-          <Pearl key={`${x}-${y}`} x={x} y={y + 38} r={r} uid={uid} />
-        ))}
-      </g>
     </svg>
   );
 }

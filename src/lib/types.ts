@@ -14,10 +14,20 @@ export type ArtKind =
   | "mochi"
   | "cake"
   | "waffle"
-  | "combo";
+  | "combo"
+  | "bowl"
+  | "rolls"
+  | "taiyaki"
+  | "can"
+  | "sandwich";
+
+/** Contenu d'un bol (`kind: "bowl"`). */
+export type BowlVariant = "soup" | "noodles" | "rice" | "bibimbap" | "salad";
 
 export interface ProductArt {
   kind: ArtKind;
+  /** Contenu du bol, quand `kind` vaut « bowl ». */
+  variant?: BowlVariant;
   /** Couleur principale du liquide / de l'aliment. */
   color: string;
   /** Couleur secondaire (dégradé du liquide, garniture…). */
@@ -64,7 +74,7 @@ export interface Product {
   /** Prix de base, avant options. */
   price: number;
   available: boolean;
-  /** Mis en avant dans « Les incontournables ». */
+  /** Mis en avant dans « Notre sélection » (choix éditorial, sans affirmation de popularité). */
   popular?: boolean;
   /** Proposé en complément dans le panier. */
   upsell?: boolean;
@@ -78,6 +88,8 @@ export interface Product {
 export interface Category {
   id: string;
   name: string;
+  /** Titre court pour les cartes étroites de l'accueil (sinon `name`). */
+  shortName?: string;
   tagline: string;
   /** Vraie photo de la catégorie (ex. /categories/snacks.jpg). */
   image?: string;

@@ -6,14 +6,22 @@ import { ArtSvg } from "../ProductArt";
 import { Reveal } from "../ui/Reveal";
 import { SectionHeading } from "./SectionHeading";
 
-/** Placement des cartes : la première est haute, la deuxième large (grille 4 colonnes sur ordinateur). */
+/**
+ * Placement des 8 cartes (grille 4 colonnes sur ordinateur). L'ordre du DOM suit la carte du restaurant ;
+ * la carte haute (index 3, le bubble tea, dont le gobelet est vertical) est calée en haut à gauche et les
+ * autres s'écoulent autour : entrées en large, puis trois cartes standard, puis deux larges.
+ */
+const TALL = 3;
+const WIDE = [0, 6, 7];
 const LAYOUT = [
-  "sm:col-span-2 lg:col-span-1 lg:row-span-2 min-h-[18rem]",
   "sm:col-span-2 min-h-[13rem]",
   "min-h-[13rem]",
   "min-h-[13rem]",
+  "sm:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-start-1 lg:row-span-2 min-h-[18rem]",
   "min-h-[13rem]",
   "min-h-[13rem]",
+  "min-h-[13rem] lg:col-span-2",
+  "min-h-[13rem] lg:col-span-2",
 ];
 
 /** Raccourcis visuels vers chaque catégorie, générés depuis src/data/menu.ts. */
@@ -24,11 +32,11 @@ export function Categories() {
         <SectionHeading id="categories-title" eyebrow="La carte" title={<>Qu&apos;est-ce qui te <span className="display-em text-accent-text">ferait plaisir&nbsp;?</span></>} />
       </Reveal>
 
-      <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:grid-rows-2">
+      <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
         {categories.map((c, i) => {
           const n = productsByCategory(c.id).length;
-          const tall = i === 0;
-          const wide = i === 1;
+          const tall = i === TALL;
+          const wide = WIDE.includes(i);
           return (
             <li key={c.id} className={LAYOUT[i] ?? "min-h-[13rem]"}>
               <Reveal delay={i * 60} className="h-full">
@@ -41,8 +49,8 @@ export function Categories() {
                     <span className="eyebrow">
                       {n} {n > 1 ? "produits" : "produit"}
                     </span>
-                    <span className={`font-display mt-2 font-bold leading-[1.02] ${tall ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl"}`}>
-                      {c.name}
+                    <span className={`font-display mt-2 text-balance font-bold leading-[1.02] ${tall ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl"}`}>
+                      {c.shortName ?? c.name}
                     </span>
                     <span className="mt-1.5 text-sm text-ink/70">{c.tagline}</span>
                     <span className="mt-auto inline-flex pt-5">

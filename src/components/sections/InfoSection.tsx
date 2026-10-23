@@ -23,9 +23,10 @@ export function InfoSection() {
   const { contact, ordering } = site;
   const { pickup, delivery } = ordering;
   const payments = activePayments();
-  const hasContact = contact.phone || contact.email || contact.address;
+  const hasContact = contact.phone || contact.landline || contact.email || contact.address;
   const hasSocials = Object.values(site.socials).some(Boolean);
-  const demoNote = site.demoMode ? "Informations de démonstration, à remplacer dans src/config/site.ts." : undefined;
+  const hoursNote = site.demoMode ? "Horaires repris des affiches d'I Tea (7j/7) : à confirmer." : undefined;
+  const orderingNote = site.demoMode ? "Frais, minimum et zones de livraison : exemples à confirmer avec I Tea." : undefined;
 
   return (
     <section id="infos" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24" aria-labelledby="infos-title">
@@ -35,7 +36,7 @@ export function InfoSection() {
 
       <div className="mt-10 grid gap-5 lg:grid-cols-3">
         <Reveal className="h-full">
-          <Card icon={Clock} title="Horaires" note={demoNote}>
+          <Card icon={Clock} title="Horaires" note={hoursNote}>
             <dl className="space-y-1.5">
               {weekHours().map((h) => (
                 <div key={h.day} className="flex justify-between gap-6">
@@ -51,8 +52,11 @@ export function InfoSection() {
         </Reveal>
 
         <Reveal className="h-full" delay={80}>
-          <Card icon={Store} title="Retrait, livraison, paiement" note={demoNote}>
+          <Card icon={Store} title="Retrait, livraison, paiement" note={orderingNote}>
             <ul className="space-y-2.5">
+              <li>
+                <strong className="text-ink">Sur place</strong> : tu peux aussi t&apos;installer au restaurant.
+              </li>
               {pickup.enabled && (
                 <li>
                   <strong className="text-ink">{pickup.label}</strong> : {pickup.description} Gratuit.
@@ -91,14 +95,15 @@ export function InfoSection() {
                       )}
                     </li>
                   )}
-                  {contact.phone && (
-                    <li className="flex gap-3">
+                  {contact.address && contact.addressNote && <li className="pl-[1.875rem] text-sm">{contact.addressNote}</li>}
+                  {[contact.phone, contact.landline].filter((n): n is string => Boolean(n)).map((number) => (
+                    <li key={number} className="flex gap-3">
                       <Phone size={18} className="mt-0.5 shrink-0 text-accent-text" aria-hidden="true" />
-                      <a href={`tel:${contact.phone.replace(/[^\d+]/g, "")}`} className="font-semibold text-ink underline-offset-4 hover:underline">
-                        {contact.phone}
+                      <a href={`tel:${number.replace(/[^\d+]/g, "")}`} className="font-semibold text-ink underline-offset-4 hover:underline">
+                        {number}
                       </a>
                     </li>
-                  )}
+                  ))}
                   {contact.email && (
                     <li className="flex gap-3">
                       <Mail size={18} className="mt-0.5 shrink-0 text-accent-text" aria-hidden="true" />

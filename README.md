@@ -1,13 +1,14 @@
 # I Tea — site de commande en ligne
 
-Site de commande pour le restaurant **I Tea** (bubble tea, thés fruités, snacks, desserts) :
+Site de commande pour le restaurant **I Tea** (Bures-sur-Yvette) : cuisine vietnamienne, bubble tea, matcha, cafés,
+taiyaki et bubble waffle, halal, fait maison :
 Next.js 16 · React 19 · TypeScript · Tailwind CSS 4. Mobile first, panier persistant,
 personnalisation des produits, checkout invité, enregistrement des commandes en base de données
 et espace admin pour le restaurant.
 
-> ⚠️ **Version de démonstration.** La carte, les prix, les horaires et les illustrations sont fictifs.
-> Rien n'est inventé en production : remplacez les données (voir ci-dessous) puis passez
-> `demoMode` à `false`.
+> ⚠️ **Version de démonstration.** La carte, les prix, l'adresse, les téléphones, les horaires et les photos viennent des
+> documents fournis par I Tea (carte papier et affiches). Restent à confirmer : frais, minimum et zones de livraison,
+> et plusieurs points listés dans [`A_CONFIRMER.md`](A_CONFIRMER.md). Une fois tout confirmé, passez `demoMode` à `false`.
 
 ## Lancer le projet
 
@@ -42,22 +43,29 @@ Tout se règle dans **deux fichiers** :
 - `currency` : devise et format (par défaut **euro `€`, 2 décimales** ; pour l'Ariary :
   `{ code: "MGA", symbol: "Ar", position: "suffix", decimals: 0 }`). Tous les prix du menu et les frais de livraison
   sont à exprimer dans cette devise.
-- `contact`, `socials` : laissez `null` tant qu'une info n'est pas fournie, elle n'est pas affichée.
-- `hours`, `timezone` (par défaut `Europe/Paris`) : horaires (affichés + badge « Ouvert / Fermé »).
+- `contact` : adresse, deux numéros, e-mail et lien de carte, repris des affiches. `socials` : `null` tant que les comptes
+  ne sont pas fournis. Une info à `null` n'est pas affichée.
+- `hours`, `timezone` (par défaut `Europe/Paris`) : horaires (affichés + badge « Ouvert / Fermé »). Actuellement 7j/7, 11h30–21h00
+  (affiche du restaurant).
+- `offer`, `loyalty`, `highlights` : l'offre « 1 bubble tea ou 1 matcha acheté = 1 bubble waffle ou 2 taiyakis offerts », la carte de
+  fidélité et les mentions « viande halal », « fait maison · produits frais », telles qu'imprimées. L'offre n'est **pas**
+  calculée dans le panier (conditions en ligne à confirmer).
 - `ordering` : retrait / livraison, frais de livraison, seuil de livraison offerte, commande minimum.
 - `payments` : moyens de paiement (voir « Paiement » plus bas).
 
 ### 2. `src/data/menu.ts` — la carte
-- `categories` : les catégories (nom, accroche, visuel). Ajoutez, supprimez, réordonnez.
-- `products` : un objet par produit (`name`, `description`, `price`, `available`, `popular`, `upsell`, `groups`…).
-- **Options** : `OptionGroup` réutilisables (`size`, `sugar`, `ice`, `extraToppings`, sauces…).
+- `categories` : les 8 catégories de la carte (Entrées, Plats, Desserts, Bubble tea, Matcha & Special series, Cafés,
+  Gourmandises, Boissons), avec leur illustration. Ajoutez, supprimez, réordonnez.
+- `products` : un objet par produit (`name`, `description`, `price`, `available`, `popular`, `upsell`, `badge`, `image`, `groups`…).
+  Les noms et prix viennent de la carte papier ; les descriptions, de la carte et des affiches (jamais inventées).
+- **Options** : `OptionGroup` réutilisables (taille 500/700 ml, toppings +0,50 €, crèmes +1,00 €, parfums, choix des nems…).
   Un groupe a un `min` (0 = facultatif, 1+ = obligatoire), un `max` (1 = choix unique) et des
   options avec leur supplément `price`. Une option `available: false` est grisée.
-- **Photos réelles** : déposez vos fichiers dans `public/products/` puis ajoutez `image: "/products/brown-sugar.jpg"`
-  au produit. Sans `image`, une illustration vectorielle de démonstration est affichée.
-  Format conseillé : carré, 800×800 px minimum, fond uni ou naturel.
-- `popular: true` → apparaît dans « Les incontournables ». `upsell: true` → proposé dans le panier.
-- Les formules sont de simples produits de la catégorie `formules` dont les groupes listent les choix.
+- **Photos** : 20 produits ont une vraie photo (`image: "/products/soupe-pho.jpg"`), recadrée depuis les affiches d'I Tea.
+  Les autres affichent une illustration vectorielle générique. Pour en ajouter : déposez un carré (1000 px mini) dans
+  `public/products/` et renseignez `image`.
+- `popular: true` → apparaît dans « Notre sélection » (choix éditorial, sans affirmation de popularité). `upsell: true` → proposé
+  dans le panier. `badge: "Signature"` : repris des affiches (soupe phở, bibimbap, bò bún).
 
 Les prix sont recalculés **côté serveur** à partir de ce même fichier : le navigateur n'est jamais cru sur parole.
 
@@ -66,10 +74,13 @@ Les prix sont recalculés **côté serveur** à partir de ce même fichier : le 
 - **Palette** (dans `src/app/globals.css`, bloc `@theme`) : brun profond `#302019`, crème `#FFF8EF`, caramel `#C58A50`
   (actions), vert matcha `#78966A`, rose fruité `#F1A6B6`. Le caramel est assombri (`accent-text`) pour le texte, afin de
   garder un contraste suffisant.
-- **Typographie** : titres en *Fraunces* (serif expressif, arrondi), texte en *DM Sans*. Classes utilitaires : `display-xl`,
-  `display-lg`, `display-em` (italique d'accent), `eyebrow`.
-- **Visuels** : le site livre des **illustrations vectorielles originales de démonstration** (gobelets, perles, fruits,
-  snacks), pas des photographies. Elles sont remplacées par vos vraies photos, sans rien casser :
+- **Logo** : le logo rond d'I Tea (`public/brand/logo.webp`, généré depuis le fichier fourni) sert dans l'en-tête, le pied de page,
+  l'icône du navigateur (`src/app/icon.png`, `apple-icon.png`) et l'image de partage (`opengraph-image.jpg`).
+- **Typographie** : titres en *Fraunces* (avec le sous-ensemble vietnamien, pour « phở »), texte en *DM Sans* ; *Be Vietnam Pro* ne
+  sert que de repli pour les caractères vietnamiens. Classes utilitaires : `display-xl`, `display-lg`, `display-em`, `eyebrow`.
+- **Visuels** : les photos de plats viennent des affiches d'I Tea. Les produits sans photo, le hero et les catégories utilisent des
+  **illustrations vectorielles originales** (gobelets, bols, rouleaux, taiyaki…), qui ne prétendent pas être des photos. La photo de
+  la salle (`public/media/resto.jpg`) illustre la section « L'univers I Tea » : à vérifier (voir `A_CONFIRMER.md`). Tout se remplace :
   | Où | Comment |
   | --- | --- |
   | Produit | champ `image: "/products/brown-sugar.jpg"` dans `src/data/menu.ts` |

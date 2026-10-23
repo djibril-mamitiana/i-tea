@@ -1,30 +1,25 @@
-import { Banknote, Bike, SlidersHorizontal, Store } from "lucide-react";
+import { Banknote, BadgeCheck, Bike, Leaf } from "lucide-react";
 import { activePayments, site } from "@/config/site";
 import { formatPrice } from "@/lib/format";
 
-/** Bandeau compact sous le hero : uniquement ce qui est réellement configuré dans src/config/site.ts. */
+/** Bandeau compact sous le hero : uniquement ce qui est écrit sur la carte ou configuré dans src/config/site.ts. */
 export function ReassuranceBar() {
   const { pickup, delivery } = site.ordering;
   const payments = activePayments();
 
+  const serviceTitle =
+    pickup.enabled && delivery.enabled ? "À emporter ou livré" : delivery.enabled ? "Livraison" : "À emporter";
+  const serviceText = delivery.enabled
+    ? delivery.freeFrom !== null
+      ? `Livraison ${formatPrice(delivery.fee)}, offerte dès ${formatPrice(delivery.freeFrom)}`
+      : `Livraison ${formatPrice(delivery.fee)}`
+    : "Gratuit, à récupérer au restaurant";
+
   const items = [
-    { icon: SlidersHorizontal, title: "Boissons personnalisables", text: "Taille, sucre, glace, toppings" },
-    ...(pickup.enabled ? [{ icon: Store, title: "Commande à emporter", text: "Gratuite, à récupérer au restaurant" }] : []),
-    ...(delivery.enabled
-      ? [
-          {
-            icon: Bike,
-            title: "Livraison",
-            text:
-              delivery.freeFrom !== null
-                ? `${formatPrice(delivery.fee)}, offerte dès ${formatPrice(delivery.freeFrom)}`
-                : formatPrice(delivery.fee),
-          },
-        ]
-      : []),
-    ...(payments.length
-      ? [{ icon: Banknote, title: "Paiement simple", text: payments.map((p) => p.label).join(" · ") }]
-      : []),
+    { icon: Leaf, title: "Fait maison", text: "Produits frais" },
+    { icon: BadgeCheck, title: site.highlights.halal, text: "Indiqué sur la carte" },
+    { icon: Bike, title: serviceTitle, text: serviceText },
+    ...(payments.length ? [{ icon: Banknote, title: "Paiement simple", text: payments.map((p) => p.label).join(" · ") }] : []),
   ];
 
   return (

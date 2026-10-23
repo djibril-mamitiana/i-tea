@@ -45,8 +45,35 @@ export const site = {
   name: "I Tea",
   /** Affiche le bandeau « menu de démonstration ». Passez à false au lancement. */
   demoMode: true,
+  /** Ligne descriptive du logo, du hero et des partages. */
+  descriptor: "Cuisine vietnamienne · Bubble tea · Gourmandises",
   description:
-    "I Tea : bubble tea, thés fruités, snacks et desserts. Compose ta boisson, commande en ligne en livraison ou à emporter.",
+    "I Tea à Bures-sur-Yvette : cuisine vietnamienne, bubble tea, matcha, cafés et gourmandises, faits maison avec des produits frais. Viande halal. Commande en ligne, sur place ou à emporter.",
+  /** Logo fourni par I Tea (rond, fond transparent). */
+  logo: "/brand/logo.webp",
+  /** Mentions imprimées sur la carte du restaurant. */
+  highlights: {
+    halal: "Viande halal",
+    homemade: "Fait maison · produits frais",
+  },
+  /**
+   * Offre annoncée sur la carte et sur les affiches d'I Tea. Les affiches la disent valable « à emporter ou sur
+   * place » ; son application aux commandes en ligne reste à confirmer, elle n'est pas calculée dans le panier.
+   */
+  offer: {
+    enabled: true,
+    lead: "1 bubble tea ou 1 matcha acheté",
+    reward: "1 bubble waffle ou 2 taiyakis offerts",
+    where: "À emporter ou sur place",
+  },
+  /** Carte de fidélité du restaurant (texte de la carte). */
+  loyalty: {
+    enabled: true,
+    title: "Carte de fidélité",
+    rule: "1 tampon par achat d'un montant minimum de 6 €.",
+    reward: "10 tampons = 1 bubble waffle ou 3 taiyakis offerts.",
+    conditions: "Les tampons et récompenses ne sont ni cumulables ni échangeables contre leur valeur monétaire.",
+  },
   /** URL publique du site (SEO, partages). Surchargée par NEXT_PUBLIC_SITE_URL. */
   url:
     process.env.NEXT_PUBLIC_SITE_URL ??
@@ -62,13 +89,17 @@ export const site = {
    */
   currency: { code: "EUR", symbol: "€", position: "suffix" as "prefix" | "suffix", decimals: 2 },
 
-  /** Laissez `null` pour masquer une information tant qu'elle n'est pas fournie. */
+  /** Coordonnées reprises des affiches d'I Tea. Laissez `null` pour masquer une information. */
   contact: {
-    phone: null as string | null,
+    phone: "+33 7 67 68 10 91" as string | null,
+    /** Second numéro (fixe) indiqué sur les affiches. */
+    landline: "+33 1 86 04 51 70" as string | null,
     whatsapp: null as string | null,
-    email: null as string | null,
-    address: null as string | null,
-    mapUrl: null as string | null,
+    /** Deux adresses figurent sur les affiches (iteaivie@ sur la plupart, itearestaurant@ sur quelques-unes) : à confirmer. */
+    email: "iteaivie@gmail.com" as string | null,
+    address: "7 rue du général Leclerc, 91440 Bures-sur-Yvette" as string | null,
+    addressNote: "RER B · station Bures-sur-Yvette" as string | null,
+    mapUrl: "https://www.google.com/maps/search/?api=1&query=7+rue+du+g%C3%A9n%C3%A9ral+Leclerc%2C+91440+Bures-sur-Yvette" as string | null,
   },
 
   socials: {
@@ -83,7 +114,8 @@ export const site = {
    */
   media: {
     hero: null as string | null,
-    brand: null as string | null,
+    /** Photo du restaurant fournie par I Tea (section « L'univers I Tea »). */
+    brand: "/media/resto.jpg" as string | null,
   },
 
   /**
@@ -97,15 +129,15 @@ export const site = {
     seeMoreUrl: null as string | null,
   },
 
-  /** Horaires d'ouverture (de démonstration). */
+  /** Horaires indiqués sur les affiches : « Ouvert 7j/7 - 11h30 à 21h00 ». À confirmer (jours fériés, vacances…). */
   hours: [
-    { day: 1, open: "10:00", close: "21:00" },
-    { day: 2, open: "10:00", close: "21:00" },
-    { day: 3, open: "10:00", close: "21:00" },
-    { day: 4, open: "10:00", close: "21:00" },
-    { day: 5, open: "10:00", close: "22:00" },
-    { day: 6, open: "10:00", close: "22:00" },
-    { day: 0, open: "12:00", close: "20:00" },
+    { day: 1, open: "11:30", close: "21:00" },
+    { day: 2, open: "11:30", close: "21:00" },
+    { day: 3, open: "11:30", close: "21:00" },
+    { day: 4, open: "11:30", close: "21:00" },
+    { day: 5, open: "11:30", close: "21:00" },
+    { day: 6, open: "11:30", close: "21:00" },
+    { day: 0, open: "11:30", close: "21:00" },
   ] as DayHours[],
 
   ordering: {

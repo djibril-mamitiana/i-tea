@@ -2,32 +2,51 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/config/site";
-import { BrandScene } from "../art/Scenes";
 import { Reveal } from "../ui/Reveal";
 import { SectionHeading } from "./SectionHeading";
 
 const STEPS = [
-  { title: "Choisis ta boisson", text: "Bubble tea, thé fruité ou boisson fraîche : tout commence par une envie." },
-  { title: "Compose-la", text: "Taille, niveau de sucre, glace et toppings : tu règles chaque détail." },
-  { title: "Ajoute une gourmandise", text: "Un snack, un dessert, ou une formule pour tout prendre en une fois." },
+  { title: "Choisis ton plat ou ta boisson", text: "Entrées, plats, bubble teas, matcha, cafés ou gourmandises : tout commence par une envie." },
+  { title: "Personnalise", text: "Taille, toppings, crèmes, garniture : quand la carte propose un choix, tu le fais ici." },
+  { title: "Complète ta commande", text: "Une entrée, un dessert ou une boisson en plus, en un tap." },
   { title: "Récupère ou fais-toi livrer", text: "À emporter au restaurant, ou livrée selon les zones desservies." },
 ];
 
-/** Section éditoriale : grande composition asymétrique + texte court. Aucune promesse de qualité inventée. */
+/** Section éditoriale : le logo d'I Tea dans une arche + texte court. Seuls des faits écrits sur la carte sont avancés. */
 export function BrandSection() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-28" aria-labelledby="brand-title">
       <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-20">
         <Reveal className="relative mx-auto w-full max-w-md lg:max-w-none">
           {site.media.brand ? (
-            <div className="relative aspect-[6/7] overflow-hidden rounded-t-[999px] rounded-b-[2.5rem] shadow-pop">
-              <Image src={site.media.brand} alt="L'univers I Tea" fill sizes="(min-width: 1024px) 40vw, 90vw" className="object-cover" />
-            </div>
+            <>
+              <div className="relative aspect-[6/7] overflow-hidden rounded-t-[999px] rounded-b-[2.5rem] shadow-pop">
+                <Image src={site.media.brand} alt="La salle d'I Tea" fill sizes="(min-width: 1024px) 40vw, 90vw" className="object-cover" />
+              </div>
+              <Image
+                src={site.logo}
+                alt={`Logo ${site.name}`}
+                width={240}
+                height={240}
+                className="absolute -bottom-4 -left-2 size-28 rounded-full shadow-pop ring-4 ring-cream sm:-left-4 sm:size-32"
+              />
+            </>
           ) : (
-            <BrandScene className="h-auto w-full" />
+            <div className="relative aspect-[6/7] overflow-hidden rounded-t-[999px] rounded-b-[2.5rem] bg-pink-soft">
+              <div className="absolute -left-10 top-1/3 size-48 rounded-full bg-matcha-soft" aria-hidden="true" />
+              <div className="absolute -right-12 bottom-8 size-56 rounded-full bg-caramel-soft" aria-hidden="true" />
+              <Image
+                src={site.logo}
+                alt={`Logo ${site.name}`}
+                width={640}
+                height={640}
+                sizes="(min-width: 1024px) 30vw, 80vw"
+                className="absolute left-1/2 top-[56%] w-[84%] -translate-x-1/2 -translate-y-1/2 rounded-full shadow-pop"
+              />
+            </div>
           )}
           <p className="absolute -right-2 bottom-8 hidden max-w-[11rem] -rotate-3 rounded-2xl bg-cream px-4 py-3 text-sm font-bold leading-snug shadow-pop sm:block lg:-right-8">
-            Ta boisson, ta recette.
+            {site.highlights.homemade}
           </p>
         </Reveal>
 
@@ -36,10 +55,10 @@ export function BrandSection() {
             <SectionHeading
               id="brand-title"
               eyebrow="L'univers I Tea"
-              title={<>Du thé, des fruits et <span className="display-em text-accent-text">beaucoup de personnalité.</span></>}
+              title={<>Faits maison, <span className="display-em text-accent-text">avec des produits frais.</span></>}
             >
-              Chez I Tea, chaque boisson se compose à ta façon : la base, le sucre, la glace, les toppings. À côté, des
-              snacks et des desserts pour faire une vraie pause.
+              La carte d&apos;I Tea réunit de la cuisine vietnamienne, des bubble teas, du matcha, des cafés et des
+              gourmandises. {site.highlights.halal}.
             </SectionHeading>
           </Reveal>
 
@@ -59,7 +78,7 @@ export function BrandSection() {
 
           <Reveal className="mt-10">
             <Link href="#menu" className="btn btn-ink btn-lg">
-              Composer ma boisson
+              Voir toute la carte
               <ArrowRight size={20} aria-hidden="true" />
             </Link>
           </Reveal>

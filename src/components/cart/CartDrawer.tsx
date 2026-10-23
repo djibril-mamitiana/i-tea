@@ -39,7 +39,7 @@ export function CartDrawer() {
               <ShoppingBag size={40} aria-hidden="true" />
             </div>
             <h3 className="text-xl font-extrabold">Ton panier est vide</h3>
-            <p className="max-w-xs text-muted">Une envie de bubble tea ? Choisis tes favoris, on s&apos;occupe du reste.</p>
+            <p className="max-w-xs text-muted">Une envie de nems, de pho ou de bubble tea ? Choisis tes favoris, on s&apos;occupe du reste.</p>
             <Link href="/#menu" onClick={closeCart} className="btn btn-accent btn-lg mt-2">
               Découvrir le menu
               <ArrowRight size={20} aria-hidden="true" />

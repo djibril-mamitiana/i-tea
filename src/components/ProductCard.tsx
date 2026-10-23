@@ -51,7 +51,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
 
       <div className="flex flex-1 flex-col gap-1 p-4">
         <h3 className="text-lg font-bold leading-tight">{product.name}</h3>
-        <p className="line-clamp-2 text-sm leading-snug text-muted">{product.description}</p>
+        {product.description && <p className="line-clamp-2 text-sm leading-snug text-muted">{product.description}</p>}
 
         <div className="mt-auto flex flex-col gap-3 pt-3">
           <p className="font-display text-xl font-extrabold">{formatPrice(product.price)}</p>
