@@ -55,6 +55,19 @@ const SCHEMA: Statement[] = [
   { text: "CREATE INDEX IF NOT EXISTS idx_orders_status ON orders (status, created_at)" },
   { text: "CREATE TABLE IF NOT EXISTS admin_login_attempts (ip TEXT NOT NULL, at BIGINT NOT NULL)" },
   { text: "CREATE INDEX IF NOT EXISTS idx_login_attempts ON admin_login_attempts (ip, at)" },
+  // Offres gérées depuis l'admin (voir src/lib/offers.ts) : le détail est dans la colonne JSONB `data`.
+  {
+    text: `CREATE TABLE IF NOT EXISTS offers (
+      id         TEXT PRIMARY KEY,
+      position   INTEGER NOT NULL DEFAULT 0,
+      active     BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at TIMESTAMPTZ NOT NULL,
+      updated_at TIMESTAMPTZ NOT NULL,
+      data       JSONB NOT NULL
+    )`,
+  },
+  // Petits repères internes (ex. « les offres de départ ont été créées »).
+  { text: "CREATE TABLE IF NOT EXISTS app_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)" },
 ];
 
 type Source = { kind: "postgres"; url: string } | { kind: "pglite"; dir: string };
@@ -109,8 +122,11 @@ async function init(): Promise<Db> {
   try {
     const db = await connect(resolveSource());
     // Une requête légère suffit à constater que le schéma est déjà en place.
-    const [present] = await db.query("SELECT to_regclass('orders') AS orders, to_regclass('admin_login_attempts') AS attempts");
-    if (!present?.orders || !present?.attempts) await db.batch(SCHEMA);
+    const [present] = await db.query(
+      "SELECT to_regclass('orders') AS orders, to_regclass('admin_login_attempts') AS attempts, to_regclass('offers') AS offers, to_regclass('app_meta') AS meta",
+    );
+    // Les instructions de SCHEMA sont idempotentes : une base plus ancienne reçoit simplement les tables manquantes.
+    if (!present?.orders || !present?.attempts || !present?.offers || !present?.meta) await db.batch(SCHEMA);
     return db;
   } catch (err) {
     if (err instanceof DatabaseUnavailableError) throw err;

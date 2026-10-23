@@ -6,6 +6,7 @@ import { Toast } from "@/components/cart/Toast";
 import { DemoBanner } from "@/components/DemoBanner";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { OffersProvider } from "@/components/offers/OffersProvider";
 
 /** Habillage du site public (panier, en-tête, pied de page). L'admin n'en fait pas partie. */
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -17,16 +18,18 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       >
         Aller au contenu
       </a>
-      <CartProvider>
-        <DemoBanner />
-        <Header />
-        <main id="contenu">{children}</main>
-        <Footer />
-        <ProductDialog />
-        <CartDrawer />
-        <Toast />
-        <MobileCartBar />
-      </CartProvider>
+      <OffersProvider>
+        <CartProvider>
+          <DemoBanner />
+          <Header />
+          <main id="contenu">{children}</main>
+          <Footer />
+          <ProductDialog />
+          <CartDrawer />
+          <Toast />
+          <MobileCartBar />
+        </CartProvider>
+      </OffersProvider>
     </>
   );
 }

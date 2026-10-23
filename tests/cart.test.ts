@@ -5,7 +5,7 @@ import { cartReducer, sanitizeLines, type CartState } from "../src/lib/cart-stat
 import { defaultSelections, lineId } from "../src/lib/pricing.ts";
 import { findVariant, orderable, unavailable } from "./fixtures.ts";
 
-const empty: CartState = { lines: [], mode: "pickup", hydrated: true };
+const empty: CartState = { lines: [], rewards: [], mode: "pickup", hydrated: true };
 const { product, group, base, alt } = findVariant();
 const other = orderable.find((p) => p.id !== product.id)!;
 

@@ -1,18 +1,23 @@
 import { site } from "../config/site.ts";
 import { getProduct } from "../data/menu.ts";
 import { lineId, validateSelections } from "./pricing.ts";
-import type { CartLine, OrderMode, Selections } from "./types.ts";
+import type { CartLine, OrderMode, RewardSelection, Selections } from "./types.ts";
 
 /** Logique pure du panier (sans React) : testable et réutilisable. */
 
 export interface CartState {
   lines: CartLine[];
+  /** Cadeaux choisis au titre des offres (gratuits ; vérifiés par le serveur à la commande). */
+  rewards: RewardSelection[];
   mode: OrderMode;
   hydrated: boolean;
 }
 
 export type CartAction =
-  | { type: "hydrate"; lines: CartLine[]; mode: OrderMode }
+  | { type: "hydrate"; lines: CartLine[]; mode: OrderMode; rewards?: RewardSelection[] }
+  | { type: "claimReward"; selection: RewardSelection }
+  | { type: "removeReward"; index: number }
+  | { type: "setRewards"; rewards: RewardSelection[] }
   | { type: "add"; productId: string; selections: Selections; qty: number }
   | { type: "setQty"; id: string; qty: number }
   | { type: "remove"; id: string }
@@ -26,7 +31,13 @@ const clampQty = (n: number) => Math.max(1, Math.min(MAX_QTY, Math.floor(n)));
 export function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case "hydrate":
-      return { lines: action.lines, mode: action.mode, hydrated: true };
+      return { lines: action.lines, rewards: action.rewards ?? [], mode: action.mode, hydrated: true };
+    case "claimReward":
+      return { ...state, rewards: [...state.rewards, action.selection] };
+    case "removeReward":
+      return { ...state, rewards: state.rewards.filter((_, i) => i !== action.index) };
+    case "setRewards":
+      return { ...state, rewards: action.rewards };
     case "add": {
       const id = lineId(action.productId, action.selections);
       const existing = state.lines.find((l) => l.id === id);
@@ -64,7 +75,7 @@ export function cartReducer(state: CartState, action: CartAction): CartState {
       };
     }
     case "clear":
-      return { ...state, lines: [] };
+      return { ...state, lines: [], rewards: [] };
     case "mode":
       return { ...state, mode: action.mode };
   }

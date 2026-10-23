@@ -1,5 +1,6 @@
 import { activeModes, activePayments, site } from "../config/site.ts";
 import { getProduct } from "../data/menu.ts";
+import { sanitizeRewards, validateRewards, type Offer } from "./offers.ts";
 import { computeTotals, lineId, optionLabels, roundMoney, unitPrice, validateSelections } from "./pricing.ts";
 import type { ConfirmedOrder, OrderApiError, OrderMode, OrderRequest, Selections } from "./types.ts";
 
@@ -64,6 +65,7 @@ export function parseOrderRequest(body: unknown): OrderRequest | null {
       notes: str(customer.notes),
     },
     items: cleanItems,
+    rewards: sanitizeRewards(body.rewards),
   };
 }
 
@@ -71,9 +73,10 @@ export type BuildResult = { ok: true; order: ConfirmedOrder } | { ok: false; sta
 
 /**
  * Reconstruit entièrement la commande à partir du catalogue serveur.
- * Aucun prix venant du navigateur n'est utilisé.
+ * Aucun prix venant du navigateur n'est utilisé. `offers` : les offres connues du serveur (celles en vigueur
+ * sont retenues) ; les cadeaux demandés par le client sont vérifiés contre elles et contre le panier réel.
  */
-export function buildOrder(request: OrderRequest, number: string, now: Date): BuildResult {
+export function buildOrder(request: OrderRequest, number: string, now: Date, offers: Offer[] = []): BuildResult {
   const fail = (status: number, error: OrderApiError): BuildResult => ({ ok: false, status, error });
 
   if (!activeModes().includes(request.mode)) {
@@ -135,6 +138,19 @@ export function buildOrder(request: OrderRequest, number: string, now: Date): Bu
     return fail(409, { error: "Certains articles ne peuvent plus être commandés.", issues });
   }
 
+  let rewardItems: ConfirmedOrder["items"] = [];
+  if (request.rewards?.length) {
+    const check = validateRewards({
+      offers,
+      selections: request.rewards,
+      lines: items.map((i) => ({ productId: i.productId, qty: i.qty })),
+      mode: request.mode,
+      now,
+    });
+    if (!check.ok) return fail(409, { error: check.error, code: "offers_changed" });
+    rewardItems = check.items;
+  }
+
   const totals = computeTotals(subtotal, request.mode);
   if (totals.minOrderMissing > 0) {
     return fail(400, { error: "La commande minimum pour la livraison n'est pas atteinte." });
@@ -155,7 +171,7 @@ export function buildOrder(request: OrderRequest, number: string, now: Date): Bu
         ...(request.mode === "delivery" && address ? { address: address.trim() } : {}),
         ...(notes?.trim() ? { notes: notes.trim() } : {}),
       },
-      items,
+      items: [...items, ...rewardItems],
       totals,
     },
   };

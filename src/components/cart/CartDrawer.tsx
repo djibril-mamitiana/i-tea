@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowRight, Check, Pencil, Plus, ShoppingBag, X } from "lucide-react";
+import { ArrowRight, Check, Gift, Pencil, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 import { site } from "@/config/site";
 import { products } from "@/data/menu";
 import { formatPrice, plural } from "@/lib/format";
@@ -10,9 +11,17 @@ import { Sheet } from "../ui/Sheet";
 import { Stepper } from "../ui/Stepper";
 import { useCart } from "./CartProvider";
 import { ModeToggle } from "./ModeToggle";
+import { OfferPanel } from "./OfferPanel";
 
 export function CartDrawer() {
-  const { cartOpen, closeCart, lines, count, totals, mode, setQty, openProduct, quickAdd } = useCart();
+  // À l'ouverture du panier, on relit les offres : une offre modifiée ou terminée ne doit pas rester affichée.
+  const open = useCart().cartOpen;
+  const refresh = useCart().refreshOffers;
+  useEffect(() => {
+    if (open) void refresh();
+  }, [open, refresh]);
+
+  const { cartOpen, closeCart, lines, count, totals, mode, setQty, openProduct, quickAdd, rewardLines, removeReward } = useCart();
 
   const inCart = new Set(lines.map((l) => l.line.productId));
   const suggestions = products.filter((p) => p.upsell && p.available && !inCart.has(p.id)).slice(0, 3);
@@ -79,7 +88,31 @@ export function CartDrawer() {
                     </div>
                   </li>
                 ))}
+                {rewardLines.map(({ index, item }) => (
+                  <li key={`reward-${index}`} className="flex gap-3 py-4">
+                    <span className="grid size-20 shrink-0 place-items-center rounded-2xl bg-pink-soft text-ink" aria-hidden="true">
+                      <Gift size={32} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="text-base font-bold leading-tight">{item.name}</h3>
+                        <p className="shrink-0 font-display text-base font-extrabold text-accent-text">Offert</p>
+                      </div>
+                      {item.optionLabels.length > 0 && <p className="mt-0.5 text-xs leading-snug text-muted">{item.optionLabels.join(" · ")}</p>}
+                      <button
+                        type="button"
+                        onClick={() => removeReward(index)}
+                        className="mt-2 inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-bold text-danger hover:bg-sand"
+                      >
+                        <Trash2 size={15} aria-hidden="true" />
+                        Retirer le cadeau
+                      </button>
+                    </div>
+                  </li>
+                ))}
               </ul>
+
+              <OfferPanel />
 
               {isDelivery && freeFrom !== null && (
                 <div className="mt-2 rounded-2xl bg-white p-4 text-sm">

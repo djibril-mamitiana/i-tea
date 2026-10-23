@@ -4,10 +4,18 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useReducer,
 import { activeModes, site } from "@/config/site";
 import { getProduct } from "@/data/menu";
 import { cartReducer, sanitizeLines } from "@/lib/cart-state";
+import { liveOffers, offerProgress, reconcileRewards, rewardItem, sanitizeRewards, type OfferProgress } from "@/lib/offers";
 import { computeTotals, priceLine } from "@/lib/pricing";
-import type { CartLine, OrderMode, PricedLine, Selections, Totals } from "@/lib/types";
+import type { CartLine, ConfirmedOrder, OrderMode, PricedLine, RewardSelection, Selections, Totals } from "@/lib/types";
+import { useOffers } from "../offers/OffersProvider";
 
 const STORAGE_KEY = "itea.cart.v1";
+
+/** Un cadeau d'offre tel qu'affiché dans le panier : gratuit, avec son libellé et son choix. */
+export interface RewardLineView {
+  index: number;
+  item: ConfirmedOrder["items"][number];
+}
 
 export interface ProductDialogTarget {
   productId: string;
@@ -22,6 +30,13 @@ interface CartContextValue {
   totals: Totals;
   mode: OrderMode;
   setMode: (mode: OrderMode) => void;
+  /** Offres : cadeaux choisis (envoyés à la commande), leur affichage, et la progression de chaque offre. */
+  rewards: RewardSelection[];
+  rewardLines: RewardLineView[];
+  offerProgress: OfferProgress[];
+  claimReward: (selection: RewardSelection) => void;
+  removeReward: (index: number) => void;
+  refreshOffers: () => Promise<void>;
   addItem: (productId: string, selections: Selections, qty?: number) => void;
   setQty: (id: string, qty: number) => void;
   removeItem: (id: string) => void;
@@ -51,8 +66,10 @@ export function useCart(): CartContextValue {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const { offers, status: offersStatus, refresh } = useOffers();
   const [state, dispatch] = useReducer(cartReducer, {
     lines: [],
+    rewards: [],
     mode: site.ordering.defaultMode,
     hydrated: false,
   });
@@ -64,27 +81,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Récupération du panier après le premier rendu (évite tout écart d'hydratation).
   useEffect(() => {
     let lines: CartLine[] = [];
+    let rewards: RewardSelection[] = [];
     let mode: OrderMode = site.ordering.defaultMode;
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");
       if (saved) {
         lines = sanitizeLines(saved.lines);
+        rewards = sanitizeRewards(saved.rewards);
         if (activeModes().includes(saved.mode)) mode = saved.mode;
       }
     } catch {
       /* stockage indisponible ou corrompu : on repart d'un panier vide */
     }
-    dispatch({ type: "hydrate", lines, mode });
+    dispatch({ type: "hydrate", lines, mode, rewards });
   }, []);
 
   useEffect(() => {
     if (!state.hydrated) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ lines: state.lines, mode: state.mode }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ lines: state.lines, rewards: state.rewards, mode: state.mode }));
     } catch {
       /* quota ou navigation privée : le panier reste utilisable en mémoire */
     }
-  }, [state.lines, state.mode, state.hydrated]);
+  }, [state.lines, state.rewards, state.mode, state.hydrated]);
 
   // Synchronisation entre onglets.
   useEffect(() => {
@@ -92,7 +111,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (e.key !== STORAGE_KEY || !e.newValue) return;
       try {
         const saved = JSON.parse(e.newValue);
-        dispatch({ type: "hydrate", lines: sanitizeLines(saved.lines), mode: activeModes().includes(saved.mode) ? saved.mode : site.ordering.defaultMode });
+        dispatch({
+          type: "hydrate",
+          lines: sanitizeLines(saved.lines),
+          rewards: sanitizeRewards(saved.rewards),
+          mode: activeModes().includes(saved.mode) ? saved.mode : site.ordering.defaultMode,
+        });
       } catch {
         /* ignoré */
       }
@@ -110,6 +134,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     () => computeTotals(lines.reduce((sum, l) => sum + l.lineTotal, 0), state.mode),
     [lines, state.mode],
   );
+
+  // Offres : un cadeau ne reste dans le panier que tant que l'offre est valable et que les achats le justifient.
+  const cartQty = useMemo(() => state.lines.map((l) => ({ productId: l.productId, qty: l.qty })), [state.lines]);
+  useEffect(() => {
+    if (!state.hydrated || offersStatus !== "ready") return;
+    const kept = reconcileRewards(offers, state.rewards, cartQty, state.mode, new Date());
+    if (kept.length !== state.rewards.length) dispatch({ type: "setRewards", rewards: kept });
+  }, [state.hydrated, state.rewards, state.mode, offers, offersStatus, cartQty]);
+
+  const progress = useMemo(
+    () => offerProgress(liveOffers(offers, new Date()), cartQty, state.rewards, state.mode),
+    [offers, cartQty, state.rewards, state.mode],
+  );
+  const rewardLines = useMemo<RewardLineView[]>(() => {
+    const live = liveOffers(offers, new Date());
+    return state.rewards.flatMap((sel, index) => {
+      const offer = live.find((o) => o.id === sel.offerId);
+      const alt = offer?.alternatives.find((a) => a.id === sel.alternativeId);
+      if (!offer || !alt) return [];
+      return [{ index, item: rewardItem(offer, alt, alt.choices.find((c) => c.id === sel.choiceId)) }];
+    });
+  }, [offers, state.rewards]);
 
   // Verrouille le défilement de la page derrière une modale ouverte.
   useEffect(() => {
@@ -149,6 +195,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     totals,
     mode: state.mode,
     setMode: (mode) => dispatch({ type: "mode", mode }),
+    rewards: state.rewards,
+    rewardLines,
+    offerProgress: progress,
+    claimReward: (selection) => {
+      dispatch({ type: "claimReward", selection });
+      setBump((b) => b + 1);
+      setToast({ id: Date.now(), message: "Cadeau ajouté à ton panier" });
+    },
+    removeReward: (index) => dispatch({ type: "removeReward", index }),
+    refreshOffers: () => refresh(true),
     addItem,
     setQty: (id, qty) => dispatch({ type: "setQty", id, qty }),
     removeItem: (id) => dispatch({ type: "remove", id }),

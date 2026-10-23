@@ -167,13 +167,13 @@ const waffleFormula: OptionGroup = {
 /* ---------- Catégories (dans l'ordre de la carte papier) ---------- */
 
 export const categories: Category[] = [
-  { id: "entrees", name: "Entrées", tagline: "Pour commencer", art: { kind: "rolls", color: "#E7A63A", bg: BG.gold } },
-  { id: "plats", name: "Plats", tagline: "Nouilles, riz, sandwichs, bò bún, phở", art: bowl("soup", "#E8B25C", BG.peach) },
-  { id: "desserts", name: "Desserts", tagline: "Pour finir en douceur", art: { kind: "mochi", color: "#F4C6DA", color2: "#CDB8F5", bg: BG.pink } },
-  { id: "bubble-tea", name: "Bubble tea", tagline: "Fruit tea et milk tea", art: cup("#C69A6B", "#8A5A36", BG.sand, { topping: "pearls" }) },
-  { id: "matcha", name: "Matcha & Special series", shortName: "Matcha", tagline: "Matcha, taro et cacao", art: cup("#B8D77A", "#7FA83E", BG.matcha, { topping: "pearls" }) },
-  { id: "cafe", name: "Cafés", tagline: "De l'expresso au café vietnamien", art: cup("#C9A27A", "#6B4630", BG.coffee, { topping: "foam" }) },
-  { id: "gourmandises", name: "Gourmandises", tagline: "Taiyaki et bubble waffle", art: { kind: "taiyaki", color: "#E8B66B", color2: "#9B5B34", bg: BG.gold } },
+  { id: "entrees", image: "/products/nems.jpg", name: "Entrées", tagline: "Pour commencer", art: { kind: "rolls", color: "#E7A63A", bg: BG.gold } },
+  { id: "plats", image: "/products/soupe-pho.jpg", name: "Plats", tagline: "Nouilles, riz, sandwichs, bò bún, phở", art: bowl("soup", "#E8B25C", BG.peach) },
+  { id: "desserts", image: "/products/perles-coco.jpg", name: "Desserts", tagline: "Pour finir en douceur", art: { kind: "mochi", color: "#F4C6DA", color2: "#CDB8F5", bg: BG.pink } },
+  { id: "bubble-tea", image: "/products/the-au-lait.jpg", name: "Bubble tea", tagline: "Fruit tea et milk tea", art: cup("#C69A6B", "#8A5A36", BG.sand, { topping: "pearls" }) },
+  { id: "matcha", image: "/products/matcha-latte.jpg", name: "Matcha & Special series", shortName: "Matcha", tagline: "Matcha, taro et cacao", art: cup("#B8D77A", "#7FA83E", BG.matcha, { topping: "pearls" }) },
+  { id: "cafe", image: "/products/cafe-vietnamien-creme-salee.jpg", name: "Cafés", tagline: "De l'expresso au café vietnamien", art: cup("#C9A27A", "#6B4630", BG.coffee, { topping: "foam" }) },
+  { id: "gourmandises", image: "/products/taiyaki.jpg", name: "Gourmandises", tagline: "Taiyaki et bubble waffle", art: { kind: "taiyaki", color: "#E8B66B", color2: "#9B5B34", bg: BG.gold } },
   { id: "boissons", name: "Boissons", tagline: "Sodas, thés, bières et autres", art: { kind: "can", color: "#F28C28", color2: "#FFF4E2", bg: BG.matcha } },
 ];
 

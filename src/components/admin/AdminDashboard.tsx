@@ -7,6 +7,7 @@ import { site } from "@/config/site";
 import { ACTIVE_STATUSES, type OrderStatus } from "@/lib/order-status";
 import type { StoredOrder } from "@/lib/types";
 import { Logo } from "../Logo";
+import { AdminNav } from "./AdminNav";
 import { useLocalFlag, useNow } from "./hooks";
 import { OrderCard } from "./OrderCard";
 
@@ -195,7 +196,8 @@ export function AdminDashboard() {
         </div>
       </header>
 
-      <h1 className="text-3xl font-extrabold sm:text-4xl">Commandes {site.name}</h1>
+      <AdminNav />
+      <h1 className="mt-5 text-3xl font-extrabold sm:text-4xl">Commandes {site.name}</h1>
 
       <div role="tablist" aria-label="Filtrer les commandes" className="no-scrollbar mt-5 flex gap-2 overflow-x-auto pb-1">
         {tabs.map((t) => (

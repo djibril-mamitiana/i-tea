@@ -87,12 +87,10 @@ export function ConfirmationClient() {
             {order.items.map((i, n) => (
               <li key={`${i.productId}-${n}`} className="flex justify-between gap-3 py-3">
                 <div className="min-w-0">
-                  <p className="font-bold leading-tight">
-                    {i.qty} × {i.name}
-                  </p>
+                  <p className="font-bold leading-tight">{i.reward ? i.name : `${i.qty} × ${i.name}`}</p>
                   {i.optionLabels.length > 0 && <p className="text-xs text-muted">{i.optionLabels.join(" · ")}</p>}
                 </div>
-                <p className="shrink-0 text-sm font-bold">{formatPrice(i.lineTotal)}</p>
+                <p className={`shrink-0 text-sm font-bold ${i.reward ? "text-accent-text" : ""}`}>{i.reward ? "Offert" : formatPrice(i.lineTotal)}</p>
               </li>
             ))}
           </ul>

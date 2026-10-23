@@ -15,7 +15,7 @@ export type NotifyResult = "sent" | "failed" | "none";
 export function orderToText(order: ConfirmedOrder): string {
   const lines = order.items.map(
     (i) =>
-      `• ${i.qty} × ${i.name}${i.optionLabels.length ? ` (${i.optionLabels.join(", ")})` : ""} — ${formatPrice(i.lineTotal)}`,
+      `• ${i.qty} × ${i.name}${i.optionLabels.length ? ` (${i.optionLabels.join(", ")})` : ""} — ${i.reward ? "OFFERT" : formatPrice(i.lineTotal)}`,
   );
   const mode = order.mode === "delivery" ? `LIVRAISON → ${order.customer.address}` : "À EMPORTER";
   return [

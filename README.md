@@ -47,9 +47,9 @@ Tout se règle dans **deux fichiers** :
   ne sont pas fournis. Une info à `null` n'est pas affichée.
 - `hours`, `timezone` (par défaut `Europe/Paris`) : horaires (affichés + badge « Ouvert / Fermé »). Actuellement 7j/7, 11h30–21h00
   (affiche du restaurant).
-- `offer`, `loyalty`, `highlights` : l'offre « 1 bubble tea ou 1 matcha acheté = 1 bubble waffle ou 2 taiyakis offerts », la carte de
-  fidélité et les mentions « viande halal », « fait maison · produits frais », telles qu'imprimées. L'offre n'est **pas**
-  calculée dans le panier (conditions en ligne à confirmer).
+- `offer`, `loyalty`, `highlights` : le texte de l'offre « 1 bubble tea ou 1 matcha acheté = 1 bubble waffle ou 2 taiyakis offerts », de la
+  carte de fidélité et les mentions « viande halal », « fait maison · produits frais », tels qu'imprimés. Ils servent
+  de **point de départ** : les offres se gèrent ensuite depuis l'admin (voir « Offres »).
 - `ordering` : retrait / livraison, frais de livraison, seuil de livraison offerte, commande minimum.
 - `payments` : moyens de paiement (voir « Paiement » plus bas).
 
@@ -109,6 +109,30 @@ Les prix sont recalculés **côté serveur** à partir de ce même fichier : le 
 | Carte bancaire en ligne | ❌ non intégré → masqué |
 | Suivi de commande côté client, gestion de la carte depuis l'admin | ❌ non inclus |
 | Codes promo / remises | ❌ non implémentés (aucune fausse promotion n'est affichée) |
+
+## Offres (`/admin/offres`)
+
+Les offres se créent et se modifient dans l'espace admin, onglet **Offres**, sans toucher au code. Deux types :
+
+- **Annonce** : un texte affiché sur le site (carte de fidélité, fermeture exceptionnelle, événement…). Aucun effet sur le panier.
+- **Produit offert** : acheter N produits parmi une liste donne droit à un cadeau, **au choix parmi plusieurs** (« 1 bubble waffle ou
+  2 taiyakis »), avec un choix éventuel (le parfum). Le client le choisit dans son panier ; le cadeau coûte 0 € et apparaît « Offert »
+  sur le ticket, dans l'admin et dans la notification.
+
+Réglages d'une offre : titre, description, période (dates facultatives), commandes en ligne concernées (à emporter, livraison), produits qui
+déclenchent l'offre, nombre à acheter pour 1 cadeau, nombre maximal de cadeaux par commande, cadeaux au choix. On peut activer ou
+désactiver une offre d'un clic.
+
+**Sécurité** : le serveur ne croit jamais le navigateur. À chaque commande, il relit les offres en base et vérifie que l'offre est en vigueur,
+que le mode de commande est concerné, que le panier réel donne droit au nombre de cadeaux demandés et que le choix existe (voir
+`src/lib/offers.ts`, testé dans `tests/offers.test.ts`). En cas de doute, la commande est refusée avec un message clair.
+
+**Au premier lancement**, deux offres sont créées à partir des documents d'I Tea : « 1 bubble tea ou 1 matcha acheté = 1 bubble waffle ou 2 taiyakis
+offerts » (**commandes à emporter uniquement**, 1 cadeau par commande) et la carte de fidélité (annonce). Modifiez-les ou supprimez-les : elles ne
+reviennent pas. Si la base est injoignable, le site n'affiche que des annonces (aucun cadeau ne peut être vérifié).
+
+API : `GET /api/offers` (offres en vigueur, publique) ; `/api/admin/offers` et `/api/admin/offers/[id]` (admin). Tables `offers` et `app_meta`,
+créées automatiquement comme les autres.
 
 ## Espace admin (`/admin`)
 

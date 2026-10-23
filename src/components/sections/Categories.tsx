@@ -62,7 +62,18 @@ export function Categories() {
                   </div>
 
                   {c.image ? (
-                    <Image src={c.image} alt="" fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover" />
+                    <div
+                      className={`absolute overflow-hidden transition-transform duration-500 ease-out group-hover:scale-[1.03] ${
+                        tall ? "inset-x-0 bottom-0 h-[58%]" : "inset-y-0 right-0 w-[48%] sm:w-[44%]"
+                      }`}
+                      style={{
+                        maskImage: tall ? "linear-gradient(to top, #000 62%, transparent)" : "linear-gradient(to right, transparent, #000 42%)",
+                        WebkitMaskImage: tall ? "linear-gradient(to top, #000 62%, transparent)" : "linear-gradient(to right, transparent, #000 42%)",
+                      }}
+                      aria-hidden="true"
+                    >
+                      <Image src={c.image} alt="" fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover" />
+                    </div>
                   ) : (
                     <ArtSvg
                       art={c.art}

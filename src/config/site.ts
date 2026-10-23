@@ -89,15 +89,15 @@ export const site = {
    */
   currency: { code: "EUR", symbol: "€", position: "suffix" as "prefix" | "suffix", decimals: 2 },
 
-  /** Coordonnées reprises des affiches d'I Tea. Laissez `null` pour masquer une information. */
+  /** Coordonnées d'I Tea (confirmées par le restaurant). Laissez `null` pour masquer une information. */
   contact: {
-    phone: "+33 7 67 68 10 91" as string | null,
-    /** Second numéro (fixe) indiqué sur les affiches. */
-    landline: "+33 1 86 04 51 70" as string | null,
+    phone: "07 67 68 10 91" as string | null,
+    /** Second numéro (fixe) d'I Tea. */
+    landline: "01 86 04 51 70" as string | null,
     whatsapp: null as string | null,
-    /** Deux adresses figurent sur les affiches (iteaivie@ sur la plupart, itearestaurant@ sur quelques-unes) : à confirmer. */
-    email: "iteaivie@gmail.com" as string | null,
-    address: "7 rue du général Leclerc, 91440 Bures-sur-Yvette" as string | null,
+    /** Adresse e-mail confirmée par I Tea. */
+    email: "itearestaurant@gmail.com" as string | null,
+    address: "7 rue du Général Leclerc, 91440 Bures-sur-Yvette" as string | null,
     addressNote: "RER B · station Bures-sur-Yvette" as string | null,
     mapUrl: "https://www.google.com/maps/search/?api=1&query=7+rue+du+g%C3%A9n%C3%A9ral+Leclerc%2C+91440+Bures-sur-Yvette" as string | null,
   },
@@ -114,6 +114,12 @@ export const site = {
    */
   media: {
     hero: null as string | null,
+    /** Collage de trois photos de plats pour le hero (recadrées depuis les affiches d'I Tea). Vide : illustration. */
+    heroPhotos: [
+      { src: "/products/soupe-pho.jpg", alt: "Soupe phở" },
+      { src: "/products/the-au-lait.jpg", alt: "Thé au lait aux perles de tapioca" },
+      { src: "/products/taiyaki.jpg", alt: "Taiyaki, gaufre en forme de poisson" },
+    ] as { src: string; alt: string }[],
     /** Photo du restaurant fournie par I Tea (section « L'univers I Tea »). */
     brand: "/media/resto.jpg" as string | null,
   },

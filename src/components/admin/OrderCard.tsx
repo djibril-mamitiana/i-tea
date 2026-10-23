@@ -100,12 +100,10 @@ export function OrderCard({
         {order.items.map((item, i) => (
           <li key={`${item.productId}-${i}`} className="flex justify-between gap-3 py-2.5">
             <div className="min-w-0">
-              <p className="font-bold leading-tight">
-                {item.qty} × {item.name}
-              </p>
+              <p className="font-bold leading-tight">{item.reward ? item.name : `${item.qty} × ${item.name}`}</p>
               {item.optionLabels.length > 0 && <p className="text-sm text-muted">{item.optionLabels.join(" · ")}</p>}
             </div>
-            <p className="shrink-0 text-sm font-semibold">{formatPrice(item.lineTotal)}</p>
+            <p className={`shrink-0 text-sm font-semibold ${item.reward ? "text-accent-text" : ""}`}>{item.reward ? "Offert" : formatPrice(item.lineTotal)}</p>
           </li>
         ))}
       </ul>

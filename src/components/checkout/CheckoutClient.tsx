@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Banknote, Bike, CircleAlert, LoaderCircle, Lock, ShoppingBag, Store } from "lucide-react";
+import { ArrowLeft, Banknote, Bike, CircleAlert, Gift, LoaderCircle, Lock, ShoppingBag, Store } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState, useSyncExternalStore } from "react";
@@ -30,7 +30,7 @@ const readSavedCustomer = () => {
 
 export function CheckoutClient() {
   const router = useRouter();
-  const { hydrated, lines, count, totals, mode, setMode, clear, openCart, removeItem } = useCart();
+  const { hydrated, lines, count, totals, mode, setMode, clear, openCart, removeItem, rewards, rewardLines, refreshOffers } = useCart();
   const payments = activePayments();
 
   // Coordonnées mémorisées sur cet appareil (jamais envoyées ailleurs qu'à la commande).
@@ -106,6 +106,7 @@ export function CheckoutClient() {
             notes: values.notes || undefined,
           },
           items: lines.map(({ line }) => ({ productId: line.productId, qty: line.qty, selections: line.selections })),
+          rewards,
         }),
       });
 
@@ -128,6 +129,8 @@ export function CheckoutClient() {
       }
 
       const err = (data && "error" in data ? data : null) ?? { error: "Une erreur est survenue. Réessaie dans un instant." };
+      // Une offre a changé ou ne s'applique plus : on relit les offres, le panier retire seul les cadeaux invalides.
+      if (err.code === "offers_changed") void refreshOffers();
       if (err.fields) {
         setServerFields(err.fields);
         const first = Object.keys(err.fields)[0];
@@ -365,6 +368,18 @@ export function CheckoutClient() {
                   {optionLabels.length > 0 && <p className="text-xs text-muted">{optionLabels.join(" · ")}</p>}
                 </div>
                 <p className="shrink-0 text-sm font-bold">{formatPrice(lineTotal)}</p>
+              </li>
+            ))}
+            {rewardLines.map(({ index, item }) => (
+              <li key={`reward-${index}`} className="flex gap-3 py-3">
+                <span className="grid size-14 shrink-0 place-items-center rounded-xl bg-pink-soft" aria-hidden="true">
+                  <Gift size={24} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="font-bold leading-tight">{item.name}</p>
+                  {item.optionLabels.length > 0 && <p className="text-xs text-muted">{item.optionLabels.join(" · ")}</p>}
+                </div>
+                <p className="shrink-0 text-sm font-bold text-accent-text">Offert</p>
               </li>
             ))}
           </ul>

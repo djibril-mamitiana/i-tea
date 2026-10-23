@@ -133,10 +133,20 @@ export interface OrderCustomer {
   notes?: string;
 }
 
+/** Un cadeau choisi par le client au titre d'une offre (voir src/lib/offers.ts). */
+export interface RewardSelection {
+  offerId: string;
+  alternativeId: string;
+  /** Choix du cadeau (ex. le parfum), si l'offre en propose. */
+  choiceId?: string;
+}
+
 export interface OrderRequest {
   mode: OrderMode;
   customer: OrderCustomer;
   items: { productId: string; qty: number; selections: Selections }[];
+  /** Cadeaux des offres : vérifiés par le serveur, jamais crus sur parole. */
+  rewards?: RewardSelection[];
   paymentMethod: string;
   /** Champ piège anti-robots : doit rester vide. */
   website?: string;
@@ -156,6 +166,9 @@ export interface ConfirmedOrder {
     unitPrice: number;
     lineTotal: number;
     optionLabels: string[];
+    /** Cadeau d'une offre : prix 0, affiché « Offert ». */
+    reward?: boolean;
+    offerId?: string;
   }[];
   totals: Totals;
 }
@@ -172,4 +185,6 @@ export type OrderApiError = {
   fields?: Record<string, string>;
   /** Lignes devenues indisponibles ou dont le prix a changé. */
   issues?: { productId: string; message: string }[];
+  /** « offers_changed » : une offre n'est plus valable ; le client doit actualiser ses offres. */
+  code?: "offers_changed";
 };
