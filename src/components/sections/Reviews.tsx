@@ -15,7 +15,7 @@ export function Reviews() {
     <section className="bg-sand py-16 lg:py-24" aria-labelledby="reviews-title">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
-          <SectionHeading id="reviews-title" eyebrow="Ils en parlent" title={<>Ce que disent <span className="display-em text-accent-text">nos clients</span></>} />
+          <SectionHeading id="reviews-title" eyebrow="Avis" title="L'avis de nos clients" />
         </Reveal>
 
         {items.length > 0 ? (
@@ -24,11 +24,11 @@ export function Reviews() {
               <li key={`${r.author}-${i}`}>
                 <Reveal delay={i * 70} className="h-full">
                   <figure className="flex h-full flex-col rounded-card bg-white p-7 shadow-card">
-                    <Quote size={28} className="text-accent" aria-hidden="true" />
+                    <Quote size={26} className="text-gold" aria-hidden="true" />
                     {r.rating && (
                       <p className="mt-3 flex gap-0.5" aria-label={`Note : ${r.rating} sur 5`}>
                         {Array.from({ length: 5 }, (_, n) => (
-                          <Star key={n} size={18} className={n < r.rating! ? "fill-accent text-accent" : "text-line"} aria-hidden="true" />
+                          <Star key={n} size={18} className={n < r.rating! ? "fill-gold text-gold" : "text-line"} aria-hidden="true" />
                         ))}
                       </p>
                     )}

@@ -14,18 +14,18 @@ export function validateCustomer(
   const address = (customer.address ?? "").trim();
   const notes = (customer.notes ?? "").trim();
 
-  if (name.length < 2) errors.name = "Indique ton prénom ou ton nom.";
+  if (name.length < 2) errors.name = "Indiquez votre prénom ou votre nom.";
   else if (name.length > 80) errors.name = "Ce nom est trop long.";
 
   const digits = phone.replace(/[\s.\-()]/g, "");
-  if (!phone) errors.phone = "Indique ton numéro pour que l'on puisse te joindre.";
+  if (!phone) errors.phone = "Indiquez votre numéro pour que nous puissions vous joindre.";
   else if (!/^\+?\d{8,15}$/.test(digits)) errors.phone = "Ce numéro ne semble pas valide (8 à 15 chiffres).";
 
   if (mode === "delivery") {
-    if (address.length < 6) errors.address = "Indique une adresse de livraison complète.";
+    if (address.length < 6) errors.address = "Indiquez une adresse de livraison complète.";
     else if (address.length > 250) errors.address = "Cette adresse est trop longue.";
   }
-  if (notes.length > 300) errors.notes = "Ton message est trop long (300 caractères maximum).";
+  if (notes.length > 300) errors.notes = "Votre message est trop long (300 caractères maximum).";
   return errors;
 }
 
@@ -86,8 +86,8 @@ export function buildOrder(request: OrderRequest, number: string, now: Date): Bu
   const fields = validateCustomer(request.mode, request.customer);
   if (Object.keys(fields).length) return fail(400, { error: "Certaines informations sont à corriger.", fields });
 
-  if (request.items.length === 0) return fail(400, { error: "Ton panier est vide." });
-  if (request.items.length > site.ordering.maxCartLines) return fail(400, { error: "Ton panier contient trop d'articles différents." });
+  if (request.items.length === 0) return fail(400, { error: "Votre panier est vide." });
+  if (request.items.length > site.ordering.maxCartLines) return fail(400, { error: "Votre panier contient trop d'articles différents." });
 
   const issues: NonNullable<OrderApiError["issues"]> = [];
   const items: ConfirmedOrder["items"] = [];
@@ -114,7 +114,7 @@ export function buildOrder(request: OrderRequest, number: string, now: Date): Bu
     }
     const id = lineId(product.id, item.selections);
     if (seen.has(id)) {
-      return fail(400, { error: "Ton panier contient des lignes en double. Recharge la page et réessaie." });
+      return fail(400, { error: "Votre panier contient des lignes en double. Rechargez la page et réessayez." });
     }
     seen.add(id);
 

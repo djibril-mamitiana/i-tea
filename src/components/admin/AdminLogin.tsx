@@ -27,9 +27,9 @@ export function AdminLogin() {
         return;
       }
       const data = await res.json().catch(() => null);
-      setError(data?.error ?? "Connexion impossible. Réessaie.");
+      setError(data?.error ?? "Connexion impossible. Veuillez réessayer.");
     } catch {
-      setError("Connexion impossible. Vérifie ta connexion internet.");
+      setError("Connexion impossible. Vérifiez votre connexion internet.");
     }
     setLoading(false);
   }
@@ -41,8 +41,8 @@ export function AdminLogin() {
         <span className="grid size-12 place-items-center rounded-2xl bg-ink text-cream">
           <LockKeyhole size={24} aria-hidden="true" />
         </span>
-        <h1 className="mt-4 text-2xl font-extrabold">Espace restaurant</h1>
-        <p className="mt-1 text-muted">Connecte-toi pour gérer les commandes.</p>
+        <h1 className="mt-4 text-2xl font-semibold">Espace restaurant</h1>
+        <p className="mt-1 text-muted">Connectez-vous pour gérer les commandes.</p>
 
         <label htmlFor="admin-password" className="mt-6 block font-bold">
           Mot de passe

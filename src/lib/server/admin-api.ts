@@ -18,7 +18,7 @@ export function requireAdmin(request: NextRequest, { mutating }: { mutating: boo
   if (!adminConfig().ok) return adminJson({ error: "L'espace admin n'est pas configuré." }, 503);
   if (mutating && !isSameOrigin(request)) return adminJson({ error: "Requête refusée." }, 403);
   if (!isValidSession(request.cookies.get(SESSION_COOKIE)?.value)) {
-    return adminJson({ error: "Session expirée. Reconnecte-toi." }, 401);
+    return adminJson({ error: "Session expirée. Veuillez vous reconnecter." }, 401);
   }
   return null;
 }

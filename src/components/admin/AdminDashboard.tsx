@@ -195,7 +195,7 @@ export function AdminDashboard() {
         </div>
       </header>
 
-      <h1 className="text-3xl font-extrabold sm:text-4xl">Commandes {site.name}</h1>
+      <h1 className="text-3xl font-semibold sm:text-4xl">Commandes {site.name}</h1>
 
       <div role="tablist" aria-label="Filtrer les commandes" className="no-scrollbar mt-5 flex gap-2 overflow-x-auto pb-1">
         {tabs.map((t) => (
@@ -205,15 +205,15 @@ export function AdminDashboard() {
             role="tab"
             aria-selected={view === t.id}
             onClick={() => setView(t.id)}
-            className={`inline-flex min-h-12 shrink-0 items-center gap-2 rounded-full px-5 font-bold transition ${
+            className={`inline-flex min-h-12 shrink-0 items-center gap-2 rounded px-5 font-bold transition ${
               view === t.id ? "bg-ink text-cream" : "bg-white text-ink hover:bg-cream"
             }`}
           >
             {t.label}
             {t.count !== null && (
               <span
-                className={`grid h-6 min-w-6 place-items-center rounded-full px-1.5 text-xs font-extrabold ${
-                  t.id === "active" && newCount > 0 ? "bg-accent text-ink" : view === t.id ? "bg-white/20" : "bg-sand"
+                className={`grid h-6 min-w-6 place-items-center rounded px-1.5 text-xs font-semibold ${
+                  t.id === "active" && newCount > 0 ? "bg-accent text-cream" : view === t.id ? "bg-white/20" : "bg-sand"
                 }`}
               >
                 {t.count}

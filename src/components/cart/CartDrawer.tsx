@@ -5,7 +5,7 @@ import Link from "next/link";
 import { site } from "@/config/site";
 import { products } from "@/data/menu";
 import { formatPrice, plural } from "@/lib/format";
-import { ProductVisual } from "../ProductVisual";
+import { Photo } from "../Photo";
 import { Sheet } from "../ui/Sheet";
 import { Stepper } from "../ui/Stepper";
 import { useCart } from "./CartProvider";
@@ -22,26 +22,28 @@ export function CartDrawer() {
 
   return (
     <Sheet open={cartOpen} onClose={closeCart} variant="drawer" label="Panier">
-      <div className="sheet-panel flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-[2rem] bg-cream shadow-pop md:h-full md:max-h-none md:w-[28rem] md:rounded-none md:rounded-l-[2rem]">
+      <div className="sheet-panel flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-lg bg-cream shadow-pop md:h-full md:max-h-none md:w-[28rem] md:rounded-none">
         <header className="flex items-center justify-between gap-3 border-b border-line px-5 py-4">
-          <h2 className="text-2xl font-extrabold">
-            Ton panier
-            {count > 0 && <span className="ml-2 text-base font-semibold text-muted">{count} {plural(count, "article", "articles")}</span>}
+          <h2 className="font-display text-3xl font-medium">
+            Votre panier
+            {count > 0 && (
+              <span className="ml-3 font-sans text-sm font-medium text-muted">
+                {count} {plural(count, "article", "articles")}
+              </span>
+            )}
           </h2>
-          <button type="button" onClick={closeCart} className="grid size-11 place-items-center rounded-full bg-sand transition hover:bg-line active:scale-90" aria-label="Fermer le panier">
-            <X size={22} />
+          <button type="button" onClick={closeCart} className="grid size-11 place-items-center rounded-lg border border-line bg-white transition hover:border-ink/40 active:scale-90" aria-label="Fermer le panier">
+            <X size={21} />
           </button>
         </header>
 
         {lines.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 px-8 py-12 text-center">
-            <div className="grid size-24 place-items-center rounded-full bg-sand text-ink">
-              <ShoppingBag size={40} aria-hidden="true" />
-            </div>
-            <h3 className="text-xl font-extrabold">Ton panier est vide</h3>
-            <p className="max-w-xs text-muted">Une envie de bubble tea ? Choisis tes favoris, on s&apos;occupe du reste.</p>
-            <Link href="/#menu" onClick={closeCart} className="btn btn-accent btn-lg mt-2">
-              Découvrir le menu
+            <ShoppingBag size={40} className="text-muted" aria-hidden="true" />
+            <h3 className="font-display text-2xl">Votre panier est vide</h3>
+            <p className="max-w-xs text-muted">Parcourez la carte et ajoutez vos plats : nous nous occupons du reste.</p>
+            <Link href="/#carte" onClick={closeCart} className="btn btn-accent btn-lg mt-2">
+              Découvrir la carte
               <ArrowRight size={20} aria-hidden="true" />
             </Link>
           </div>
@@ -54,22 +56,22 @@ export function CartDrawer() {
 
               <ul className="divide-y divide-line">
                 {lines.map(({ line, product, unitPrice, lineTotal, optionLabels }) => (
-                  <li key={line.id} className="flex gap-3 py-4">
-                    <ProductVisual item={product} className="size-20 shrink-0 rounded-2xl" sizes="80px" />
+                  <li key={line.id} className="flex gap-4 py-5">
+                    {product.image && <Photo src={product.image} alt={product.name} sizes="80px" className="size-20 shrink-0 rounded" />}
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className="text-base font-bold leading-tight">{product.name}</h3>
-                        <p className="shrink-0 font-display text-base font-extrabold">{formatPrice(lineTotal)}</p>
+                      <div className="flex items-start justify-between gap-3">
+                        <h3 className="font-display text-xl font-medium leading-tight">{product.name}</h3>
+                        <p className="shrink-0 font-display text-lg">{formatPrice(lineTotal)}</p>
                       </div>
-                      {optionLabels.length > 0 && <p className="mt-0.5 text-xs leading-snug text-muted">{optionLabels.join(" · ")}</p>}
+                      {optionLabels.length > 0 && <p className="mt-1 text-xs leading-snug text-muted">{optionLabels.join(" · ")}</p>}
                       {line.qty > 1 && <p className="mt-0.5 text-xs text-muted">{formatPrice(unitPrice)} l&apos;unité</p>}
-                      <div className="mt-2 flex items-center justify-between gap-2">
+                      <div className="mt-3 flex items-center justify-between gap-2">
                         <Stepper qty={line.qty} onChange={(q) => setQty(line.id, q)} label={product.name} removable size="sm" max={site.ordering.maxItemQty} />
                         {product.groups.length > 0 && (
                           <button
                             type="button"
                             onClick={() => openProduct({ productId: product.id, editLineId: line.id })}
-                            className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-bold text-accent-text hover:bg-sand"
+                            className="inline-flex min-h-11 items-center gap-1.5 rounded px-3 text-sm font-semibold text-accent-text hover:bg-sand"
                           >
                             <Pencil size={15} aria-hidden="true" />
                             Modifier
@@ -82,9 +84,9 @@ export function CartDrawer() {
               </ul>
 
               {isDelivery && freeFrom !== null && (
-                <div className="mt-2 rounded-2xl bg-white p-4 text-sm">
+                <div className="mt-2 rounded-lg border border-line bg-white p-4 text-sm">
                   {totals.freeDeliveryRemaining === null ? (
-                    <p className="flex items-center gap-2 font-bold text-ink-3">
+                    <p className="flex items-center gap-2 font-semibold text-green">
                       <Check size={18} aria-hidden="true" /> Livraison offerte
                     </p>
                   ) : (
@@ -92,11 +94,8 @@ export function CartDrawer() {
                       <p>
                         Plus que <strong>{formatPrice(totals.freeDeliveryRemaining)}</strong> pour la livraison offerte.
                       </p>
-                      <div className="mt-2 h-2 overflow-hidden rounded-full bg-sand" role="presentation">
-                        <div
-                          className="h-full rounded-full bg-accent transition-all duration-500"
-                          style={{ width: `${Math.min(100, (totals.subtotal / freeFrom) * 100)}%` }}
-                        />
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-sand" role="presentation">
+                        <div className="h-full rounded-full bg-gold transition-all duration-500" style={{ width: `${Math.min(100, (totals.subtotal / freeFrom) * 100)}%` }} />
                       </div>
                     </>
                   )}
@@ -104,22 +103,21 @@ export function CartDrawer() {
               )}
 
               {suggestions.length > 0 && (
-                <section className="mt-6" aria-labelledby="upsell-title">
-                  <h3 id="upsell-title" className="mb-3 text-base font-extrabold">
-                    Complète ta commande
+                <section className="mt-7" aria-labelledby="upsell-title">
+                  <h3 id="upsell-title" className="mb-3 font-display text-xl font-medium">
+                    Complétez votre commande
                   </h3>
                   <ul className="grid gap-2">
                     {suggestions.map((p) => (
-                      <li key={p.id} className="flex items-center gap-3 rounded-2xl bg-white p-2 pr-3">
-                        <ProductVisual item={p} className="size-14 shrink-0 rounded-xl" sizes="56px" />
+                      <li key={p.id} className="flex items-center gap-3 rounded-lg border border-line bg-white p-3 pl-4">
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-bold">{p.name}</p>
+                          <p className="truncate font-semibold">{p.name}</p>
                           <p className="text-sm text-muted">{formatPrice(p.price)}</p>
                         </div>
                         <button
                           type="button"
                           onClick={() => quickAdd(p.id)}
-                          className="grid size-11 shrink-0 place-items-center rounded-full bg-accent text-ink transition hover:bg-accent-deep active:scale-90"
+                          className="grid size-11 shrink-0 place-items-center rounded-lg bg-green text-cream transition hover:bg-green-2 active:scale-90"
                           aria-label={`Ajouter ${p.name}`}
                         >
                           <Plus size={20} />
@@ -143,15 +141,15 @@ export function CartDrawer() {
                     <dd className="font-semibold">{totals.deliveryFee > 0 ? formatPrice(totals.deliveryFee) : "Offerte"}</dd>
                   </div>
                 )}
-                <div className="flex items-baseline justify-between border-t border-line pt-2 text-lg">
-                  <dt className="font-extrabold">Total</dt>
-                  <dd className="font-display text-2xl font-extrabold">{formatPrice(totals.total)}</dd>
+                <div className="flex items-baseline justify-between border-t border-line pt-2">
+                  <dt className="text-lg font-semibold">Total</dt>
+                  <dd className="font-display text-3xl">{formatPrice(totals.total)}</dd>
                 </div>
               </dl>
 
               {blocked && (
-                <p className="mt-3 rounded-xl bg-lemon/40 px-3 py-2 text-sm font-semibold" role="status">
-                  Commande minimum en livraison : {formatPrice(site.ordering.delivery.minOrder)}. Encore {formatPrice(totals.minOrderMissing)}, ou passe en « {site.ordering.pickup.label} ».
+                <p className="mt-3 border-l-2 border-gold bg-gold-soft px-3 py-2 text-sm font-medium" role="status">
+                  Commande minimum en livraison : {formatPrice(site.ordering.delivery.minOrder)}. Encore {formatPrice(totals.minOrderMissing)}, ou choisissez « {site.ordering.pickup.label} ».
                 </p>
               )}
 

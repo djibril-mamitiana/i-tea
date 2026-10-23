@@ -28,7 +28,7 @@ export function MobileCartBar() {
           </span>
           Voir le panier
         </span>
-        <span className="font-display text-lg font-extrabold">{formatPrice(totals.subtotal)}</span>
+        <span className="font-display text-lg font-semibold">{formatPrice(totals.subtotal)}</span>
       </button>
     </div>
   );

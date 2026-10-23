@@ -7,9 +7,9 @@ import { advanceLabel, isActive, nextStatus, ORDER_STATUSES, STATUS_LABEL, type 
 import type { StoredOrder } from "@/lib/types";
 
 const STATUS_STYLE: Record<OrderStatus, string> = {
-  new: "bg-accent text-ink",
-  preparing: "bg-lemon text-ink",
-  ready: "bg-matcha text-ink",
+  new: "bg-accent text-cream",
+  preparing: "bg-gold text-ink",
+  ready: "bg-green-2 text-cream",
   completed: "bg-sand text-muted",
   cancelled: "bg-danger/10 text-danger",
 };
@@ -56,7 +56,7 @@ export function OrderCard({
     >
       <header className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="font-display text-xl font-extrabold tracking-wide">{order.number}</h3>
+          <h3 className="font-display text-xl font-semibold tracking-wide">{order.number}</h3>
           <p className="text-sm text-muted">
             {formatOrderTime(order.createdAt)}
             {relative && ` · ${relative}`}
@@ -119,7 +119,7 @@ export function OrderCard({
         )}
         <div className="flex items-baseline justify-between">
           <dt className="font-bold">Total · {order.paymentLabel}</dt>
-          <dd className="font-display text-2xl font-extrabold">{formatPrice(order.totals.total)}</dd>
+          <dd className="font-display text-2xl font-semibold">{formatPrice(order.totals.total)}</dd>
         </div>
       </dl>
 

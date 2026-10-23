@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useCart } from "@/components/cart/CartProvider";
-import { ProductVisual } from "@/components/ProductVisual";
+import { Photo } from "@/components/Photo";
 import { activeModes, activePayments, site } from "@/config/site";
 import { formatPrice } from "@/lib/format";
 import { validateCustomer } from "@/lib/order-validation";
@@ -127,7 +127,7 @@ export function CheckoutClient() {
         return;
       }
 
-      const err = (data && "error" in data ? data : null) ?? { error: "Une erreur est survenue. Réessaie dans un instant." };
+      const err = (data && "error" in data ? data : null) ?? { error: "Une erreur est survenue. Veuillez réessayer dans un instant." };
       if (err.fields) {
         setServerFields(err.fields);
         const first = Object.keys(err.fields)[0];
@@ -137,14 +137,14 @@ export function CheckoutClient() {
       setStatus("error");
       requestAnimationFrame(() => bannerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
     } catch {
-      setBanner({ message: "Connexion impossible. Vérifie ta connexion internet puis réessaie : ton panier est conservé." });
+      setBanner({ message: "Connexion impossible. Vérifiez votre connexion internet puis réessayez : votre panier est conservé." });
       setStatus("error");
     }
   }
 
   /* ---------- États spéciaux ---------- */
   if (!hydrated) {
-    return <div className="mx-auto max-w-5xl px-4 py-24 text-center text-muted" role="status">Chargement de ton panier…</div>;
+    return <div className="mx-auto max-w-5xl px-4 py-24 text-center text-muted" role="status">Chargement de votre panier…</div>;
   }
 
   if (status === "done") {
@@ -154,12 +154,12 @@ export function CheckoutClient() {
   if (count === 0) {
     return (
       <div className="mx-auto flex max-w-lg flex-col items-center gap-4 px-4 py-24 text-center">
-        <div className="grid size-24 place-items-center rounded-full bg-sand">
+        <div className="grid size-20 place-items-center rounded-lg bg-sand">
           <ShoppingBag size={40} aria-hidden="true" />
         </div>
-        <h1 className="text-3xl font-extrabold">Ton panier est vide</h1>
-        <p className="text-muted">Ajoute quelques gourmandises avant de passer commande.</p>
-        <Link href="/#menu" className="btn btn-accent btn-lg mt-2">
+        <h1 className="display-lg">Votre panier est vide</h1>
+        <p className="text-muted">Ajoutez quelques plats avant de passer commande.</p>
+        <Link href="/#carte" className="btn btn-accent btn-lg mt-2">
           Retour au menu
         </Link>
       </div>
@@ -172,16 +172,16 @@ export function CheckoutClient() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-40 pt-6 sm:px-6 lg:px-8 lg:pb-20 lg:pt-10">
-      <Link href="/#menu" className="inline-flex min-h-11 items-center gap-2 font-bold text-ink/80 hover:text-ink">
+      <Link href="/#carte" className="inline-flex min-h-11 items-center gap-2 font-semibold text-ink/80 hover:text-ink">
         <ArrowLeft size={18} aria-hidden="true" /> Retour au menu
       </Link>
-      <h1 className="mt-2 text-4xl font-extrabold sm:text-5xl">Finaliser ma commande</h1>
-      <p className="mt-2 text-muted">Pas de compte à créer. Dis-nous juste où et comment te servir.</p>
+      <h1 className="display-lg mt-2">Finaliser ma commande</h1>
+      <p className="mt-2 text-muted">Aucun compte à créer. Dites-nous simplement où et comment vous servir.</p>
 
       <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_24rem]">
         <form id="checkout-form" onSubmit={onSubmit} noValidate className="space-y-8">
           {banner && (
-            <div ref={bannerRef} role="alert" className="rounded-2xl border-2 border-danger/30 bg-danger/5 p-4 text-danger">
+            <div ref={bannerRef} role="alert" className="rounded-lg border border-danger/40 bg-danger/5 p-4 text-danger">
               <p className="flex items-start gap-2 font-bold">
                 <CircleAlert size={20} className="mt-0.5 shrink-0" aria-hidden="true" />
                 {banner.message}
@@ -217,7 +217,7 @@ export function CheckoutClient() {
 
           {/* 1. Réception */}
           <fieldset>
-            <legend className="mb-3 text-xl font-extrabold">1. Comment veux-tu être servi ?</legend>
+            <legend className="mb-3 font-display text-2xl font-medium">1. Comment souhaitez-vous être servi ?</legend>
             <div className="grid gap-3 sm:grid-cols-2">
               {activeModes().map((m: OrderMode) => {
                 const Icon = MODE_ICON[m];
@@ -231,7 +231,7 @@ export function CheckoutClient() {
                     }`}
                   >
                     <input type="radio" name="mode" value={m} checked={checked} onChange={() => setMode(m)} className="sr-only" />
-                    <span className={`grid size-11 shrink-0 place-items-center rounded-xl ${checked ? "bg-ink text-cream" : "bg-sand"}`}>
+                    <span className={`grid size-11 shrink-0 place-items-center rounded-xl ${checked ? "bg-green text-cream" : "bg-sand"}`}>
                       <Icon size={22} aria-hidden="true" />
                     </span>
                     <span>
@@ -246,15 +246,15 @@ export function CheckoutClient() {
               })}
             </div>
             {blocked && (
-              <p className="mt-3 rounded-xl bg-lemon/40 px-4 py-3 text-sm font-semibold" role="status">
-                Commande minimum en livraison : {formatPrice(site.ordering.delivery.minOrder)} (encore {formatPrice(totals.minOrderMissing)}). Ajoute un article ou choisis « {site.ordering.pickup.label} ».
+              <p className="mt-3 border-l-2 border-gold bg-gold-soft px-4 py-3 text-sm font-medium" role="status">
+                Commande minimum en livraison : {formatPrice(site.ordering.delivery.minOrder)} (encore {formatPrice(totals.minOrderMissing)}). Ajoutez un article ou choisissez « {site.ordering.pickup.label} ».
               </p>
             )}
           </fieldset>
 
           {/* 2. Coordonnées */}
           <fieldset className="space-y-4">
-            <legend className="mb-1 text-xl font-extrabold">2. Tes coordonnées</legend>
+            <legend className="mb-1 font-display text-2xl font-medium">2. Vos coordonnées</legend>
             <Field id="name" label="Prénom ou nom" error={visible("name")}>
               <input
                 id="f-name"
@@ -268,7 +268,7 @@ export function CheckoutClient() {
                 required
               />
             </Field>
-            <Field id="phone" label="Téléphone" hint="Pour te joindre si besoin" error={visible("phone")}>
+            <Field id="phone" label="Téléphone" hint="Pour vous joindre si besoin" error={visible("phone")}>
               <input
                 id="f-phone"
                 className="field"
@@ -320,7 +320,7 @@ export function CheckoutClient() {
 
           {/* 3. Paiement */}
           <fieldset>
-            <legend className="mb-3 text-xl font-extrabold">3. Paiement</legend>
+            <legend className="mb-3 font-display text-2xl font-medium">3. Paiement</legend>
             {payments.length === 0 ? (
               <p className="rounded-2xl bg-white p-4 text-danger">
                 Aucun moyen de paiement n&apos;est disponible pour le moment. Contacte directement le restaurant.
@@ -351,13 +351,13 @@ export function CheckoutClient() {
 
         {/* Récapitulatif */}
         <aside className="rounded-card bg-white p-5 shadow-card lg:sticky lg:top-28" aria-labelledby="recap-title">
-          <h2 id="recap-title" className="text-xl font-extrabold">
-            Ta commande
+          <h2 id="recap-title" className="font-display text-2xl font-medium">
+            Votre commande
           </h2>
           <ul className="mt-3 divide-y divide-line">
             {lines.map(({ line, product, lineTotal, optionLabels }) => (
               <li key={line.id} className="flex gap-3 py-3">
-                <ProductVisual item={product} className="size-14 shrink-0 rounded-xl" sizes="56px" />
+                {product.image && <Photo src={product.image} alt={product.name} sizes="56px" className="size-14 shrink-0 rounded" />}
                 <div className="min-w-0 flex-1">
                   <p className="font-bold leading-tight">
                     {line.qty} × {product.name}
@@ -380,8 +380,8 @@ export function CheckoutClient() {
               </div>
             )}
             <div className="flex items-baseline justify-between border-t border-line pt-2">
-              <dt className="text-lg font-extrabold">Total</dt>
-              <dd className="font-display text-3xl font-extrabold">{formatPrice(totals.total)}</dd>
+              <dt className="text-lg font-semibold">Total</dt>
+              <dd className="font-display text-3xl">{formatPrice(totals.total)}</dd>
             </div>
           </dl>
           <button type="button" onClick={openCart} className="mt-3 min-h-11 text-sm font-bold text-accent-text underline-offset-4 hover:underline">
@@ -398,7 +398,7 @@ export function CheckoutClient() {
             {ctaLabel}
           </button>
           <p className="mt-3 hidden text-center text-xs text-muted lg:block">
-            En confirmant, tu acceptes que ces informations servent à préparer ta commande.{" "}
+            En confirmant, vous acceptez que ces informations servent à préparer votre commande.{" "}
             <Link href="/confidentialite" className="underline">
               Confidentialité
             </Link>

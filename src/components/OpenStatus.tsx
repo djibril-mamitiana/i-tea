@@ -17,7 +17,7 @@ export function OpenStatus({ onDark = false }: { onDark?: boolean }) {
   if (!status) return <span className="inline-block h-5 w-32" aria-hidden="true" />;
   return (
     <span className={`inline-flex items-center gap-2 text-sm font-semibold ${onDark ? "text-cream" : "text-ink"}`}>
-      <span className={`size-2.5 rounded-full ${status.open ? "bg-matcha" : "bg-berry"}`} aria-hidden="true" />
+      <span className={`size-2.5 rounded-full ${status.open ? (onDark ? "bg-gold" : "bg-green-2") : "bg-accent"}`} aria-hidden="true" />
       {status.open ? `Ouvert jusqu'à ${status.until}` : `Fermé${status.next ? ` · ${status.next}` : ""}`}
     </span>
   );

@@ -17,7 +17,7 @@ export function ModeToggle({ onDark = false, className = "" }: { onDark?: boolea
     <div
       role="radiogroup"
       aria-label="Mode de réception"
-      className={`inline-flex rounded-full p-1 ${onDark ? "bg-white/10" : "bg-sand"} ${className}`}
+      className={`inline-flex rounded-lg border p-1 ${onDark ? "border-cream/30" : "border-line bg-[#fffdf8]"} ${className}`}
     >
       {modes.map((m: OrderMode) => {
         const Icon = ICONS[m];
@@ -29,11 +29,11 @@ export function ModeToggle({ onDark = false, className = "" }: { onDark?: boolea
             role="radio"
             aria-checked={active}
             onClick={() => setMode(m)}
-            className={`inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-bold transition ${
+            className={`inline-flex min-h-11 items-center gap-2 rounded px-4 text-sm font-semibold transition ${
               active
                 ? onDark
-                  ? "bg-cream text-ink shadow"
-                  : "bg-ink text-cream shadow"
+                  ? "bg-cream text-ink"
+                  : "bg-green text-cream"
                 : onDark
                   ? "text-cream/80 hover:text-cream"
                   : "text-ink/70 hover:text-ink"

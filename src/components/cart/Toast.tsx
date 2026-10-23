@@ -12,13 +12,13 @@ export function Toast() {
       {visible && (
         <div
           key={toast.id}
-          className="pointer-events-auto flex max-w-md animate-rise items-center gap-3 rounded-full bg-ink py-2 pl-4 pr-2 text-sm font-semibold text-cream shadow-pop"
+          className="pointer-events-auto flex max-w-md animate-rise items-center gap-3 rounded-lg bg-ink py-2 pl-4 pr-2 text-sm font-semibold text-cream shadow-pop"
         >
-          <span className="grid size-6 shrink-0 place-items-center rounded-full bg-matcha text-ink">
+          <span className="grid size-6 shrink-0 place-items-center rounded bg-gold text-ink">
             <Check size={14} strokeWidth={3.5} aria-hidden="true" />
           </span>
           <span className="truncate">{toast.message}</span>
-          <button type="button" onClick={openCart} className="min-h-10 shrink-0 rounded-full bg-accent px-4 font-bold text-ink hover:bg-accent-deep">
+          <button type="button" onClick={openCart} className="min-h-10 shrink-0 rounded bg-accent px-4 font-semibold text-cream hover:bg-accent-deep">
             Voir
           </button>
         </div>

@@ -43,9 +43,9 @@ export function ConfirmationClient() {
   if (!data) {
     return (
       <div className="mx-auto flex max-w-lg flex-col items-center gap-4 px-4 py-24 text-center">
-        <h1 className="text-3xl font-extrabold">Aucune commande récente</h1>
+        <h1 className="text-3xl font-semibold">Aucune commande récente</h1>
         <p className="text-muted">Nous ne retrouvons pas de commande à afficher sur cet appareil.</p>
-        <Link href="/#menu" className="btn btn-accent btn-lg mt-2">
+        <Link href="/#carte" className="btn btn-accent btn-lg mt-2">
           Retour au menu
         </Link>
       </div>
@@ -58,21 +58,21 @@ export function ConfirmationClient() {
 
   const notifyMessage =
     notified === "sent"
-      ? "Le restaurant a bien reçu ta commande."
+      ? "Le restaurant a bien reçu votre commande."
       : site.demoMode
         ? "Mode démo : aucun canal de notification n'est configuré (voir le README). La commande est tout de même enregistrée côté serveur."
-        : "Ta commande est enregistrée. Si tu n'as pas de nouvelles, contacte le restaurant.";
+        : "Votre commande est enregistrée. Sans nouvelles, contactez le restaurant.";
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-24 pt-10 sm:px-6">
-      <div className="rounded-card bg-ink p-8 text-center text-cream shadow-pop sm:p-12">
-        <span className="mx-auto grid size-16 place-items-center rounded-full bg-matcha text-ink">
+      <div className="on-dark rounded-lg bg-green p-8 text-center text-cream sm:p-12">
+        <span className="mx-auto grid size-14 place-items-center rounded-full bg-gold text-ink">
           <Check size={34} strokeWidth={3.5} aria-hidden="true" />
         </span>
-        <h1 className="mt-5 text-4xl font-extrabold sm:text-5xl">Merci {order.customer.name.split(" ")[0]} !</h1>
-        <p className="mt-2 text-lg text-cream/80">Ta commande est enregistrée.</p>
-        <p className="mt-6 text-sm font-semibold uppercase tracking-[0.14em] text-peach">Numéro de commande</p>
-        <p className="mt-1 font-display text-4xl font-extrabold tracking-wide text-accent" aria-label={`Numéro ${order.number}`}>
+        <h1 className="display-lg mt-5">Merci {order.customer.name.split(" ")[0]} !</h1>
+        <p className="mt-2 text-lg text-cream/80">Votre commande est enregistrée.</p>
+        <p className="mt-6 eyebrow">Numéro de commande</p>
+        <p className="mt-1 font-display text-4xl tracking-wide text-gold" aria-label={`Numéro ${order.number}`}>
           {order.number}
         </p>
         <p className="mt-4 text-sm text-cream/75">{notifyMessage}</p>
@@ -80,7 +80,7 @@ export function ConfirmationClient() {
 
       <div className="mt-6 grid gap-6 md:grid-cols-2">
         <section className="rounded-card bg-white p-6 shadow-card" aria-labelledby="recap">
-          <h2 id="recap" className="text-xl font-extrabold">
+          <h2 id="recap" className="text-xl font-semibold">
             Récapitulatif
           </h2>
           <ul className="mt-3 divide-y divide-line">
@@ -108,15 +108,15 @@ export function ConfirmationClient() {
               </div>
             )}
             <div className="flex items-baseline justify-between border-t border-line pt-2">
-              <dt className="text-lg font-extrabold">Total</dt>
-              <dd className="font-display text-2xl font-extrabold">{formatPrice(order.totals.total)}</dd>
+              <dt className="text-lg font-semibold">Total</dt>
+              <dd className="font-display text-2xl font-semibold">{formatPrice(order.totals.total)}</dd>
             </div>
           </dl>
         </section>
 
         <section className="space-y-6">
           <div className="rounded-card bg-white p-6 shadow-card">
-            <h2 className="flex items-center gap-2 text-xl font-extrabold">
+            <h2 className="flex items-center gap-2 text-xl font-semibold">
               <ModeIcon size={22} aria-hidden="true" />
               {isDelivery ? "Livraison" : "À emporter"}
             </h2>
@@ -129,19 +129,19 @@ export function ConfirmationClient() {
           </div>
 
           <div className="rounded-card bg-sand p-6">
-            <h2 className="text-xl font-extrabold">Et maintenant ?</h2>
+            <h2 className="text-xl font-semibold">Et maintenant ?</h2>
             <ol className="mt-3 space-y-3 text-sm">
               <li className="flex gap-3">
                 <span className="grid size-6 shrink-0 place-items-center rounded-full bg-ink text-xs font-bold text-cream">1</span>
-                Garde ton téléphone à portée : le restaurant peut t&apos;appeler au besoin.
+                Gardez votre téléphone à portée : le restaurant peut vous appeler au besoin.
               </li>
               <li className="flex gap-3">
                 <span className="grid size-6 shrink-0 place-items-center rounded-full bg-ink text-xs font-bold text-cream">2</span>
-                {isDelivery ? "Ta commande sera livrée à l'adresse indiquée." : "Passe récupérer ta commande au restaurant."}
+                {isDelivery ? "Votre commande sera livrée à l'adresse indiquée." : "Venez récupérer votre commande au restaurant."}
               </li>
               <li className="flex gap-3">
                 <span className="grid size-6 shrink-0 place-items-center rounded-full bg-ink text-xs font-bold text-cream">3</span>
-                {order.paymentMethod === "cash" ? `Tu règles ${formatPrice(order.totals.total)} à la réception.` : "Le paiement est traité selon le moyen choisi."}
+                {order.paymentMethod === "cash" ? `Vous réglez ${formatPrice(order.totals.total)} à la réception.` : "Le paiement est traité selon le moyen choisi."}
               </li>
             </ol>
           </div>
@@ -149,7 +149,7 @@ export function ConfirmationClient() {
       </div>
 
       <div className="mt-8 text-center">
-        <Link href="/#menu" className="btn btn-ink btn-lg">
+        <Link href="/#carte" className="btn btn-ink btn-lg">
           Commander autre chose
         </Link>
       </div>

@@ -9,10 +9,10 @@ export function AdminNotConfigured({ reason }: { reason: "missing" | "too-short"
         <span className="grid size-12 place-items-center rounded-2xl bg-ink text-cream">
           <LockKeyhole size={24} aria-hidden="true" />
         </span>
-        <h1 className="mt-4 text-2xl font-extrabold">Espace admin non configuré</h1>
+        <h1 className="mt-4 text-2xl font-semibold">Espace admin non configuré</h1>
         <p className="mt-2 text-muted">
           {reason === "missing"
-            ? "Aucun mot de passe n'est défini. Ajoute la variable d'environnement ADMIN_PASSWORD (10 caractères minimum), puis redémarre le site."
+            ? "Aucun mot de passe n'est défini. Ajoutez la variable d'environnement ADMIN_PASSWORD (10 caractères minimum), puis redémarrez le site."
             : "Le mot de passe défini dans ADMIN_PASSWORD est trop court : 10 caractères minimum."}
         </p>
         <p className="mt-3 text-sm text-muted">Les étapes détaillées sont dans le README, section « Espace admin ».</p>

@@ -1,13 +1,14 @@
-# I Tea — site de commande en ligne
+# I TEA — site de commande en ligne
 
-Site de commande pour le restaurant **I Tea** (bubble tea, thés fruités, snacks, desserts) :
+Site de commande pour le restaurant **I TEA** (cuisine vietnamienne, thés et boissons, desserts) :
 Next.js 16 · React 19 · TypeScript · Tailwind CSS 4. Mobile first, panier persistant,
 personnalisation des produits, checkout invité, enregistrement des commandes en base de données
 et espace admin pour le restaurant.
 
-> ⚠️ **Version de démonstration.** La carte, les prix, les horaires et les illustrations sont fictifs.
-> Rien n'est inventé en production : remplacez les données (voir ci-dessous) puis passez
-> `demoMode` à `false`.
+> ⚠️ **Version de démonstration.** La carte, les prix, les horaires et les emplacements de photos sont fictifs
+> ou provisoires, et signalés comme tels sur le site. Rien n'est inventé en production : remplacez les données
+> (voir ci-dessous) puis passez `demoMode` à `false`. Les photos attendues sont listées dans
+> [`PHOTOS_A_FOURNIR.md`](PHOTOS_A_FOURNIR.md).
 
 ## Lancer le projet
 
@@ -48,39 +49,54 @@ Tout se règle dans **deux fichiers** :
 - `payments` : moyens de paiement (voir « Paiement » plus bas).
 
 ### 2. `src/data/menu.ts` — la carte
-- `categories` : les catégories (nom, accroche, visuel). Ajoutez, supprimez, réordonnez.
-- `products` : un objet par produit (`name`, `description`, `price`, `available`, `popular`, `upsell`, `groups`…).
-- **Options** : `OptionGroup` réutilisables (`size`, `sugar`, `ice`, `extraToppings`, sauces…).
+- `categories` : les catégories (nom, accroche, `image` facultative). Ajoutez, supprimez, réordonnez.
+  L'accueil affiche une section par catégorie ; la carte (`#carte`) les regroupe sous des filtres.
+- `products` : un objet par produit (`name`, `description`, `price`, `available`, `featured`, `upsell`, `groups`…).
+  Le catalogue actuel (13 plats, boissons et desserts) est un **exemple de démonstration** : remplacez-le par la vraie carte.
+- **Options** : `OptionGroup` réutilisables (`portion`, `spice`, `sugar`, sauces, garnitures…).
   Un groupe a un `min` (0 = facultatif, 1+ = obligatoire), un `max` (1 = choix unique) et des
   options avec leur supplément `price`. Une option `available: false` est grisée.
-- **Photos réelles** : déposez vos fichiers dans `public/products/` puis ajoutez `image: "/products/brown-sugar.jpg"`
-  au produit. Sans `image`, une illustration vectorielle de démonstration est affichée.
-  Format conseillé : carré, 800×800 px minimum, fond uni ou naturel.
-- `popular: true` → apparaît dans « Les incontournables ». `upsell: true` → proposé dans le panier.
-- Les formules sont de simples produits de la catégorie `formules` dont les groupes listent les choix.
+- **Photos réelles** : déposez vos fichiers dans `public/products/` puis ajoutez `image: "/products/pho-bo.jpg"`
+  au produit. Sans `image`, un emplacement « photo à venir » s'affiche en mode démo (jamais une illustration
+  présentée comme une photo du restaurant). Format conseillé : 4:3 ou carré, 1200 px minimum.
+- `featured: true` → apparaît dans « Notre sélection » (**3 ou 4 produits disponibles**, vérifié par les tests).
+  `upsell: true` → proposé dans le panier.
 
 Les prix sont recalculés **côté serveur** à partir de ce même fichier : le navigateur n'est jamais cru sur parole.
 
 ## Identité visuelle et photos
 
-- **Palette** (dans `src/app/globals.css`, bloc `@theme`) : brun profond `#302019`, crème `#FFF8EF`, caramel `#C58A50`
-  (actions), vert matcha `#78966A`, rose fruité `#F1A6B6`. Le caramel est assombri (`accent-text`) pour le texte, afin de
-  garder un contraste suffisant.
-- **Typographie** : titres en *Fraunces* (serif expressif, arrondi), texte en *DM Sans*. Classes utilitaires : `display-xl`,
-  `display-lg`, `display-em` (italique d'accent), `eyebrow`.
-- **Visuels** : le site livre des **illustrations vectorielles originales de démonstration** (gobelets, perles, fruits,
-  snacks), pas des photographies. Elles sont remplacées par vos vraies photos, sans rien casser :
+Direction « maison vietnamienne contemporaine » : sobre, chaleureuse, éditoriale, portée par la photographie.
+
+- **Palette** (`src/app/globals.css`, bloc `@theme`) : crème `#F5EFE3` (fond), vert profond `#234638` (identité, boutons),
+  rouge piment `#A83B2B` (appels à l'action principaux, avec parcimonie), miel doré `#D6A65D` (filets, accents sur fond
+  sombre), brun foncé `#332B23` (texte). Toutes les paires texte/fond atteignent un contraste d'au moins 4,5:1 (WCAG AA).
+- **Typographie** : titres en *Newsreader* (serif élégant, italique pour l'emphase), texte, prix, navigation et boutons
+  en *Be Vietnam Pro*, choisie parce qu'elle couvre le **vietnamien** (Phở, Bánh mì, Cà phê sữa đá). Classes utilitaires :
+  `display-xl`, `display-lg`, `display-em`, `eyebrow`.
+- **Style** : boutons rectangulaires (rayon 4 px), cartes à bordure fine, ombres quasi absentes, aucune animation
+  décorative. Le texte du site vouvoie le client.
+- **Photos** : le site ne contient **aucune photo inventée**. Chaque emplacement est un cadre « Photo à venir » décrivant
+  la photo attendue (visible uniquement en `demoMode`). Dès qu'un chemin est renseigné, `next/image` l'optimise
+  (AVIF/WebP) et réserve sa place pour éviter les sauts de mise en page :
+
   | Où | Comment |
   | --- | --- |
-  | Produit | champ `image: "/products/brown-sugar.jpg"` dans `src/data/menu.ts` |
-  | Catégorie | champ `image: "/categories/snacks.jpg"` sur la catégorie |
-  | Hero de l'accueil | `site.media.hero = "/media/hero.jpg"` dans `src/config/site.ts` (paysage, 1600 px mini) |
-  | Section « L'univers I Tea » | `site.media.brand = "/media/brand.jpg"` (portrait, 1200 px mini) |
+  | Hero de l'accueil | `site.media.hero = "/media/hero.jpg"` dans `src/config/site.ts` (paysage, 2000 px mini) |
+  | Sections cuisine, boissons, desserts | `site.media.cuisine`, `.boissons`, `.desserts` |
+  | Portrait de la restauratrice | `site.media.histoire` (portrait 4:5) |
+  | Produit | champ `image` dans `src/data/menu.ts` |
+  | Catégorie | champ `image` sur la catégorie |
 
-  Déposez les fichiers dans `public/products`, `public/categories` ou `public/media` : `next/image` les optimise (AVIF/WebP)
-  et réserve leur place pour éviter les sauts de mise en page. Utilisez vos propres photos ou des images dont vous avez les droits.
+  Déposez les fichiers dans `public/media`, `public/products` ou `public/categories`, avec des images dont vous avez les droits.
+- **Accroche** : `site.tagline` (« Cuisine vietnamienne, thés et douceurs. ») est une proposition neutre. Alternatives
+  possibles, **à faire valider par la restauratrice** : « Maison de thé et de cuisine vietnamienne » ; ou, seulement si elle
+  s'y reconnaît, « Les saveurs du Vietnam, comme à la maison ».
+- **Notre histoire** : `site.story` (titre, paragraphes, signature). Rien n'est inventé : tant que les paragraphes sont vides,
+  un emplacement « texte à fournir » s'affiche en mode démo et la section disparaît en production.
 - **Avis clients** : `site.reviews.items` accepte de vrais avis (auteur, texte, note et source facultatives). Vide : la section
   est masquée en production et remplacée par un emplacement explicite en mode démo. Aucun avis n'est jamais inventé.
+- **Navigation** : `src/lib/nav.ts` ne propose que des destinations qui existent (La carte, Notre histoire, Contact).
 
 ## Commandes : ce qui est réellement en place
 
@@ -176,7 +192,8 @@ src/
   app/api/orders/           POST /api/orders (commande client)
   app/api/admin/            login, logout, liste et statuts des commandes
   components/               UI (sections, panier, modale produit, checkout, admin)
-tests/                      tests unitaires (node:test)
+tests/                      tests unitaires (node:test) ; fixtures.ts choisit ses produits selon leurs caractéristiques,
+                            jamais par nom : la vraie carte peut remplacer la démo sans casser les tests
 ```
 
 ## Accessibilité et performance

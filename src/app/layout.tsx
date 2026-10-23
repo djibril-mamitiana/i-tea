@@ -1,27 +1,28 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Sans, Fraunces } from "next/font/google";
+import { Be_Vietnam_Pro, Newsreader } from "next/font/google";
 import { site } from "@/config/site";
 import "./globals.css";
 
-// Fraunces : serif variable expressif, adouci (axe SOFT) pour un ton gourmand et premium.
-const display = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
-  axes: ["SOFT", "opsz"],
+// Titres : Newsreader, serif éditorial (sous-ensemble vietnamien inclus pour les noms de plats).
+const display = Newsreader({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  variable: "--font-newsreader",
   style: ["normal", "italic"],
   display: "swap",
 });
 
-const body = DM_Sans({
-  subsets: ["latin"],
-  variable: "--font-dm-sans",
+// Texte, prix, navigation, boutons : Be Vietnam Pro, dessinée pour le vietnamien (ở, ế, ạ… sans police de secours).
+const body = Be_Vietnam_Pro({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  variable: "--font-be-vietnam",
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — Bubble tea, thés fruités & snacks | Commande en ligne`,
+    default: `${site.name} — Cuisine vietnamienne, thés et desserts | Commande en ligne`,
     template: `%s | ${site.name}`,
   },
   description: site.description,
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#302019",
+  themeColor: "#234638",
 };
 
 /** Racine minimale : polices et styles. Le site public et l'admin ont chacun leur layout. */

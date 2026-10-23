@@ -1,64 +1,62 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
-   I Tea — design system
-   ink     : brun profond (structure, texte, sections sombres)
-   cream   : crème chaude (fond du site)
-   caramel : actions principales (boutons « Commander », « Ajouter »)
-   matcha  : vert tendre, pour les repères positifs et les accents frais
-   pink    : rose fruité, pour la gourmandise et les fonds de cartes
-   Les couleurs « soft » sont des fonds de cartes ; « accent-text » est
-   le caramel assombri pour le texte (contraste ≥ 4,5 sur la crème).
+   I TEA — design system « Maison vietnamienne contemporaine »
+   cream   : crème de riz, fond principal (lumière)
+   green   : vert profond, structure (hero, bandeaux, pied de page)
+   ink     : brun foncé, texte (lisibilité maximale)
+   accent  : rouge piment, réservé aux actions importantes
+   gold    : miel doré, petites touches chaleureuses
+   Contrastes vérifiés (WCAG) : brun/crème 12:1, crème/vert 9:1,
+   crème/piment 5,5:1, doré/vert 4,7:1.
    ------------------------------------------------------------------ */
 @theme {
-  --color-ink: #302019;
-  --color-ink-2: #43302a;
-  --color-ink-3: #5c443a;
-  --color-cream: #fff8ef;
-  --color-sand: #f7ebdd;
-  --color-line: #ebdccb;
-  --color-muted: #6a564b;
+  --color-cream: #f5efe3;
+  --color-sand: #ece4d3;
+  --color-line: #d9cfbc;
+  --color-ink: #332b23;
+  --color-ink-2: #463a30;
+  --color-muted: #665a4d;
 
-  --color-accent: #c58a50;
-  --color-accent-deep: #b3763b;
-  --color-accent-text: #8a5726;
-  --color-caramel-soft: #f3dfc6;
+  --color-green: #234638;
+  --color-green-2: #2e5a49;
+  --color-green-soft: #e1e8df;
 
-  --color-matcha: #78966a;
-  --color-matcha-soft: #dde8d3;
-  --color-pink: #f1a6b6;
-  --color-pink-soft: #fbdce3;
+  --color-accent: #a83b2b;
+  --color-accent-deep: #8f3023;
+  --color-accent-text: #a83b2b;
 
-  /* Alias historiques : toutes les couleurs du site viennent de cette palette. */
-  --color-peach: #f3c9a5;
-  --color-lemon: #f5e2bd;
-  --color-berry: #d0586f;
-  --color-taro: #d9c7f5;
-  --color-danger: #b42318;
+  --color-gold: #d6a65d;
+  --color-gold-soft: #efe0c3;
 
-  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  --font-sans: var(--font-dm-sans), "Segoe UI", system-ui, sans-serif;
+  /* Alias utilisés par les composants existants (avis, notices, état d'ouverture, erreurs). */
+  --color-lemon: #efe0c3;
+  --color-berry: #a83b2b;
+  --color-danger: #a83b2b;
 
-  --radius-card: 1.75rem;
-  --shadow-card: 0 1px 0 rgb(48 32 25 / 0.04), 0 14px 34px -18px rgb(48 32 25 / 0.32);
-  --shadow-pop: 0 28px 64px -24px rgb(48 32 25 / 0.5);
+  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-be-vietnam), "Segoe UI", system-ui, sans-serif;
 
-  --animate-float: float 7s ease-in-out infinite;
-  --animate-float-slow: float 11s ease-in-out infinite;
+  /* Formes : des coins à peine adoucis, pas de pilules ni de bulles. */
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.3rem;
+  --radius-2xl: 0.375rem;
+  --radius-3xl: 0.5rem;
+  --radius-card: 0.375rem;
+
+  --shadow-card: 0 1px 2px rgb(51 43 35 / 0.06);
+  --shadow-pop: 0 24px 56px -24px rgb(51 43 35 / 0.5);
+
   --animate-bump: bump 0.45s ease;
   --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 
-  @keyframes float {
-    0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
-    50% { transform: translateY(var(--float, -10px)) rotate(var(--r, 0deg)); }
-  }
   @keyframes bump {
     0% { transform: scale(1); }
     35% { transform: scale(1.18); }
     100% { transform: scale(1); }
   }
   @keyframes rise {
-    from { opacity: 0; transform: translateY(16px); }
+    from { opacity: 0; transform: translateY(14px); }
     to { opacity: 1; transform: translateY(0); }
   }
 }
@@ -66,7 +64,7 @@
 html {
   scroll-behavior: smooth;
   /* Les ancres ne passent pas sous l'en-tête collant. */
-  scroll-padding-top: 8.5rem;
+  scroll-padding-top: 8rem;
   /* Les champs focalisés ne se cachent pas derrière la barre de confirmation fixe. */
   scroll-padding-bottom: 7rem;
   -webkit-text-size-adjust: 100%;
@@ -76,6 +74,7 @@ body {
   background: var(--color-cream);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
@@ -84,51 +83,53 @@ body.scroll-locked {
   overflow: hidden;
 }
 
-/* Titres : serif expressif et arrondi (Fraunces), adouci pour coller à l'univers gourmand. */
+/* Titres : serif classique (Newsreader), sobre et lisible — il porte la voix de la marque. */
 h1, h2, h3, .font-display {
   font-family: var(--font-display);
-  font-variation-settings: "SOFT" 100;
-  letter-spacing: -0.015em;
+  font-weight: 500;
+  letter-spacing: -0.012em;
 }
 
 ::selection {
-  background: var(--color-pink);
+  background: var(--color-gold);
   color: var(--color-ink);
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-ink);
+  outline: 3px solid var(--color-accent);
   outline-offset: 2px;
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
 }
+.on-dark :focus-visible { outline-color: var(--color-gold); }
 
 /* Les composants vivent dans leur couche : les utilitaires Tailwind (px-4, min-h-12…) les surchargent. */
 @layer components {
 /* ---------- Typographie éditoriale ---------- */
 .display-xl {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(3.1rem, 9.2vw, 6.6rem);
-  line-height: 0.94;
-  letter-spacing: -0.035em;
+  font-weight: 500;
+  font-size: clamp(2.5rem, 5.6vw, 4.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
 }
 .display-lg {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(2.1rem, 5.2vw, 3.9rem);
-  line-height: 1.02;
-  letter-spacing: -0.03em;
+  font-weight: 500;
+  font-size: clamp(2rem, 4.4vw, 3.4rem);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
 }
-.display-em { font-style: italic; font-weight: 600; }
+.display-em { font-style: italic; font-weight: 400; }
 .eyebrow {
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-accent-text);
 }
+.on-dark .eyebrow { color: var(--color-gold); }
 
-/* ---------- Boutons ---------- */
+/* ---------- Boutons : rectangulaires, nets ---------- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -136,27 +137,28 @@ h1, h2, h3, .font-display {
   gap: 0.5rem;
   min-height: 3rem;
   padding: 0 1.5rem;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 1rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+  font-size: 0.95rem;
   line-height: 1;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  transition: transform 0.15s ease, background-color 0.18s ease, box-shadow 0.2s ease, color 0.15s ease;
+  transition: transform 0.15s ease, background-color 0.18s ease, color 0.15s ease, box-shadow 0.18s ease;
   white-space: nowrap;
   user-select: none;
 }
-.btn:active:not(:disabled) { transform: scale(0.97); }
+.btn:active:not(:disabled) { transform: scale(0.98); }
 .btn:disabled { cursor: not-allowed; opacity: 0.45; }
 
-.btn-accent {
-  background: var(--color-accent);
-  color: var(--color-ink);
-  box-shadow: 0 10px 24px -12px rgb(138 87 38 / 0.8);
-}
-.btn-accent:hover:not(:disabled) { background: var(--color-accent-deep); box-shadow: 0 14px 28px -12px rgb(138 87 38 / 0.9); }
+/* Action principale : piment */
+.btn-accent { background: var(--color-accent); color: var(--color-cream); }
+.btn-accent:hover:not(:disabled) { background: var(--color-accent-deep); }
 
 .btn-ink { background: var(--color-ink); color: var(--color-cream); }
 .btn-ink:hover:not(:disabled) { background: var(--color-ink-2); }
+
+.btn-green { background: var(--color-green); color: var(--color-cream); }
+.btn-green:hover:not(:disabled) { background: var(--color-green-2); }
 
 /* Sur fond sombre */
 .btn-cream { background: var(--color-cream); color: var(--color-ink); }
@@ -165,29 +167,43 @@ h1, h2, h3, .font-display {
 .btn-ghost {
   background: transparent;
   color: inherit;
-  box-shadow: inset 0 0 0 2px currentColor;
+  box-shadow: inset 0 0 0 1.5px currentColor;
 }
-.btn-ghost:hover:not(:disabled) { background: rgb(48 32 25 / 0.06); }
-.on-dark .btn-ghost:hover:not(:disabled), .btn-ghost.on-dark:hover:not(:disabled) { background: rgb(255 255 255 / 0.12); }
+.btn-ghost:hover:not(:disabled) { background: rgb(51 43 35 / 0.06); }
+.on-dark .btn-ghost:hover:not(:disabled) { background: rgb(255 255 255 / 0.1); }
 
-.btn-lg { min-height: 3.5rem; padding: 0 2rem; font-size: 1.0625rem; }
+.btn-lg { min-height: 3.5rem; padding: 0 2rem; font-size: 1rem; }
 
 /* ---------- Champs ---------- */
 .field {
   width: 100%;
   min-height: 3.25rem;
   padding: 0.75rem 1rem;
-  border-radius: 1rem;
-  background: #fff;
-  border: 2px solid var(--color-line);
+  border-radius: 0.375rem;
+  background: #fffdf8;
+  border: 1.5px solid var(--color-line);
   color: var(--color-ink);
   font-size: 1rem; /* 16px : évite le zoom automatique d'iOS */
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.field::placeholder { color: #86746a; }
-.field:hover { border-color: #dcc9b2; }
-.field:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 0 0 4px rgb(48 32 25 / 0.12); }
+.field::placeholder { color: #8a7d6e; }
+.field:hover { border-color: #c4b8a2; }
+.field:focus { outline: none; border-color: var(--color-green); box-shadow: 0 0 0 3px rgb(35 70 56 / 0.18); }
 .field[aria-invalid="true"] { border-color: var(--color-danger); }
+}
+
+/* ---------- Emplacement de photo (avant la livraison des vraies photos) ---------- */
+.photo-placeholder {
+  background-color: #e4dac6;
+  box-shadow: inset 0 0 0 1px rgb(51 43 35 / 0.12);
+  background-image: repeating-linear-gradient(135deg, rgb(51 43 35 / 0.045) 0 1px, transparent 1px 14px);
+  color: var(--color-muted);
+}
+.on-dark .photo-placeholder,
+.photo-placeholder.is-dark {
+  background-color: var(--color-green-2);
+  background-image: repeating-linear-gradient(135deg, rgb(245 239 227 / 0.08) 0 1px, transparent 1px 14px);
+  color: rgb(245 239 227 / 0.75);
 }
 
 /* ---------- Boîtes de dialogue (modale produit, panier, menu mobile) ---------- */
@@ -204,8 +220,8 @@ dialog.sheet {
   overflow: hidden;
 }
 dialog.sheet::backdrop {
-  background: rgb(36 22 16 / 0.62);
-  backdrop-filter: blur(3px);
+  background: rgb(26 20 15 / 0.62);
+  backdrop-filter: blur(2px);
 }
 dialog.sheet[open]::backdrop { animation: fade-in 0.2s ease both; }
 dialog.sheet[open] .sheet-panel { animation: sheet-up 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
@@ -216,10 +232,10 @@ dialog.sheet.from-top[open] .sheet-panel { animation: sheet-down 0.3s cubic-bezi
   dialog.sheet.modal[open] .sheet-panel { animation: pop-in 0.26s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes sheet-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
-@keyframes sheet-left { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
-@keyframes sheet-down { from { transform: translateY(-24px); opacity: 0; } to { transform: none; opacity: 1; } }
-@keyframes pop-in { from { transform: scale(0.96) translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes sheet-up { from { transform: translateY(32px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes sheet-left { from { transform: translateX(32px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes sheet-down { from { transform: translateY(-20px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes pop-in { from { transform: scale(0.97) translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
 
 /* ---------- Défilement horizontal discret ---------- */
 .no-scrollbar { scrollbar-width: none; }
@@ -227,15 +243,7 @@ dialog.sheet.from-top[open] .sheet-panel { animation: sheet-down 0.3s cubic-bezi
 
 /* ---------- Apparition au scroll (activée par JS, jamais bloquante) ---------- */
 .reveal { transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.reveal[data-state="hidden"] { opacity: 0; transform: translateY(20px); }
-
-/* Éléments décoratifs SVG animés : rotation autour de leur propre centre. */
-.svg-float {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: float var(--dur, 8s) ease-in-out infinite;
-  animation-delay: var(--delay, 0s);
-}
+.reveal[data-state="hidden"] { opacity: 0; transform: translateY(16px); }
 
 /* Barre fixe mobile : respecte l'encoche / la barre d'accueil des iPhone. */
 .safe-bottom { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }

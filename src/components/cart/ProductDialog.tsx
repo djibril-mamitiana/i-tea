@@ -7,7 +7,7 @@ import { getProduct } from "@/data/menu";
 import { formatPrice, formatSupplement } from "@/lib/format";
 import { defaultSelections, unitPrice } from "@/lib/pricing";
 import type { CartLine, OptionGroup, Product, Selections } from "@/lib/types";
-import { ProductVisual } from "../ProductVisual";
+import { Photo } from "../Photo";
 import { Sheet } from "../ui/Sheet";
 import { Stepper } from "../ui/Stepper";
 import { useCart } from "./CartProvider";
@@ -79,23 +79,27 @@ function ProductForm({
   };
 
   return (
-    <div className="sheet-panel relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-[2rem] bg-cream shadow-pop md:h-[min(40rem,88dvh)] md:w-[calc(100%-3rem)] md:max-w-4xl md:flex-row md:rounded-[2rem]">
+    <div
+      className={`sheet-panel relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-lg bg-cream shadow-pop md:h-[min(40rem,88dvh)] md:w-[calc(100%-3rem)] md:flex-row md:rounded-lg ${
+        product.image ? "md:max-w-4xl" : "md:max-w-xl"
+      }`}
+    >
       <button
         type="button"
         onClick={onClose}
-        className="absolute right-3 top-3 z-10 grid size-11 place-items-center rounded-full bg-white/90 text-ink shadow transition hover:bg-white active:scale-90"
+        className="absolute right-3 top-3 z-10 grid size-11 place-items-center rounded-lg border border-line bg-white text-ink transition hover:border-ink/40 active:scale-90"
         aria-label="Fermer"
       >
         <X size={22} />
       </button>
 
-      <ProductVisual item={product} className="h-40 w-full shrink-0 md:h-auto md:w-[34%]" sizes="(min-width: 768px) 320px, 100vw" />
+      {product.image && <Photo src={product.image} alt={product.name} className="h-40 w-full shrink-0 md:h-auto md:w-[38%]" sizes="(min-width: 768px) 340px, 100vw" />}
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <div ref={scroller} className="relative min-h-0 flex-1 overflow-y-auto px-5 pb-4 pt-5">
-          <h2 className="pr-10 font-display text-3xl font-bold leading-tight">{product.name}</h2>
+          <h2 className="pr-12 font-display text-3xl font-medium leading-tight">{product.name}</h2>
           <p className="mt-1 text-sm text-muted">{product.description}</p>
-          <p className="mt-2 font-display text-xl font-bold text-accent-text">{formatPrice(product.price)}</p>
+          <p className="mt-2 font-display text-xl text-accent-text">{formatPrice(product.price)}</p>
 
           <div className="mt-5 space-y-6">
             {product.groups.map((group, index) => (
@@ -155,17 +159,17 @@ function GroupField({
   return (
     <fieldset data-group={group.id} className="min-w-0">
       <legend className="mb-2.5 flex w-full flex-wrap items-center gap-x-2.5 gap-y-0.5">
-        <span className="grid size-7 shrink-0 place-items-center rounded-full bg-ink text-xs font-extrabold text-cream" aria-hidden="true">
+        <span className="grid size-7 shrink-0 place-items-center rounded-full bg-ink text-xs font-semibold text-cream" aria-hidden="true">
           {step}
         </span>
-        <span className="font-display text-xl font-bold leading-none">{group.label}</span>
+        <span className="font-display text-xl font-medium leading-none">{group.label}</span>
         <span className="text-sm text-muted">
           {group.hint ?? (group.min > 0 ? "Obligatoire" : "Facultatif")}
         </span>
       </legend>
       {invalid && (
         <p className="mb-2 text-sm font-semibold text-danger" role="alert">
-          {group.min > 1 ? `Choisis ${group.min} options pour continuer.` : "Fais un choix pour continuer."}
+          {group.min > 1 ? `Choisissez ${group.min} options pour continuer.` : "Faites un choix pour continuer."}
         </p>
       )}
       <div className={compact ? "flex flex-wrap gap-2" : "grid gap-2"}>
@@ -177,9 +181,9 @@ function GroupField({
             <label
               key={option.id}
               className={`relative flex items-center gap-3 border-2 transition has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-accent/50 ${
-                compact ? "min-h-11 rounded-full px-4" : "min-h-14 rounded-2xl px-4 py-2"
+                compact ? "min-h-11 rounded-lg px-4" : "min-h-14 rounded-lg px-4 py-2"
               } ${
-                checked ? (compact ? "border-ink bg-ink text-cream" : "border-ink bg-matcha-soft") : "border-line bg-white"
+                checked ? (compact ? "border-green bg-green text-cream" : "border-green bg-green-soft") : "border-line bg-[#fffdf8]"
               } ${blocked ? "cursor-not-allowed opacity-45" : "cursor-pointer hover:border-ink/50"}`}
             >
               <input

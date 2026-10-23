@@ -41,12 +41,26 @@ export interface Review {
   date?: string;
 }
 
+export interface Story {
+  /** Titre de la section (ex. « Notre histoire »). */
+  title: string | null;
+  /** Paragraphes validés par la restauratrice. Rien n'est inventé : vide = section remplacée par un emplacement. */
+  paragraphs: string[];
+  /** Signature (ex. « Prénom, fondatrice »), uniquement si elle est réelle. */
+  signature: string | null;
+}
+
 export const site = {
-  name: "I Tea",
+  /** Nom exact de la marque : toujours I TEA, en capitales. */
+  name: "I TEA",
+  /** Ligne descriptive affichée sous le logo et dans le héros. */
+  descriptor: "Cuisine vietnamienne · Thés · Desserts",
+  /** Accroche du héros, à faire valider par la restauratrice (alternatives dans le README). */
+  tagline: "Cuisine vietnamienne, thés et douceurs.",
   /** Affiche le bandeau « menu de démonstration ». Passez à false au lancement. */
   demoMode: true,
   description:
-    "I Tea : bubble tea, thés fruités, snacks et desserts. Compose ta boisson, commande en ligne en livraison ou à emporter.",
+    "I TEA réunit cuisine vietnamienne, thés et desserts. Découvrez la carte et commandez en ligne, à emporter ou en livraison.",
   /** URL publique du site (SEO, partages). Surchargée par NEXT_PUBLIC_SITE_URL. */
   url:
     process.env.NEXT_PUBLIC_SITE_URL ??
@@ -78,13 +92,46 @@ export const site = {
   },
 
   /**
-   * Visuels de la page d'accueil. Laissez `null` pour l'illustration de démonstration, ou indiquez
-   * le chemin d'une vraie photo placée dans /public (ex. "/media/hero.jpg", format paysage, 1600 px minimum).
+   * Photographies de l'accueil. `null` = emplacement « photo à venir » clairement identifié.
+   * Placez vos fichiers dans /public/media puis indiquez leur chemin (ex. "/media/hero.jpg").
+   * La liste complète des photos attendues (format, cadrage) est dans PHOTOS_A_FOURNIR.md.
    */
   media: {
+    /** Plein cadre, paysage, 2000 px de large minimum. */
     hero: null as string | null,
-    brand: null as string | null,
+    /** Section « La cuisine vietnamienne », paysage ou portrait. */
+    cuisine: null as string | null,
+    /** Section « Le thé et les boissons ». */
+    boissons: null as string | null,
+    /** Section « Les desserts ». */
+    desserts: null as string | null,
+    /** Portrait de la restauratrice (section « Notre histoire »). */
+    histoire: null as string | null,
   },
+
+  /** Titres et introductions des sections de l'accueil (textes neutres, à adapter par I TEA). */
+  sections: {
+    selection: { eyebrow: "À découvrir", title: "Notre sélection" },
+    cuisine: {
+      title: "La cuisine vietnamienne",
+      intro: "Les plats de la carte I TEA, à commander en ligne pour les emporter ou pour être livré.",
+    },
+    boissons: {
+      title: "Le thé et les boissons",
+      intro: "Les thés et les boissons de la carte, à personnaliser selon vos goûts lorsque l'option existe.",
+    },
+    desserts: {
+      title: "Les desserts",
+      intro: "Les desserts de la carte, pour terminer le repas sur une note sucrée.",
+    },
+  },
+
+  /** Texte de la section « Notre histoire » : uniquement des faits fournis et validés par I TEA. */
+  story: {
+    title: null,
+    paragraphs: [],
+    signature: null,
+  } as Story,
 
   /**
    * Avis clients : uniquement de VRAIS avis, copiés tels quels avec leur source.
@@ -112,12 +159,12 @@ export const site = {
     pickup: {
       enabled: true,
       label: "À emporter",
-      description: "Tu passes récupérer ta commande au restaurant.",
+      description: "Vous récupérez votre commande au restaurant.",
     },
     delivery: {
       enabled: true,
       label: "Livraison",
-      description: "On t'apporte ta commande à l'adresse indiquée.",
+      description: "Nous vous livrons à l'adresse indiquée.",
       /** Frais de livraison fixes. */
       fee: 2.9,
       /** Livraison offerte à partir de ce sous-total (null = jamais). */
@@ -141,7 +188,7 @@ export const site = {
     {
       id: "cash",
       label: "Paiement à la réception",
-      description: "Tu règles directement à la remise de ta commande.",
+      description: "Vous réglez directement à la remise de votre commande.",
       enabled: true,
       integrated: true,
     },

@@ -38,8 +38,8 @@ export function SocialLinks({ onDark = false }: { onDark?: boolean }) {
             href={url!}
             target="_blank"
             rel="noopener noreferrer"
-            className={`grid size-11 place-items-center rounded-full transition ${
-              onDark ? "bg-white/10 hover:bg-accent hover:text-ink" : "bg-sand hover:bg-accent"
+            className={`grid size-11 place-items-center rounded-lg border transition ${
+              onDark ? "border-cream/30 hover:border-gold hover:text-gold" : "border-line hover:border-ink/50"
             }`}
             aria-label={name.charAt(0).toUpperCase() + name.slice(1)}
           >

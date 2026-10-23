@@ -39,7 +39,7 @@ export function validateSelections(product: Product, selections: Selections): st
       continue;
     }
     if (chosen.length < group.min) {
-      problems.push(group.min === 1 ? `${group.label} : choisis une option` : `${group.label} : choisis ${group.min} options`);
+      problems.push(group.min === 1 ? `${group.label} : choisissez une option` : `${group.label} : choisissez ${group.min} options`);
     }
     if (chosen.length > group.max) {
       problems.push(`${group.label} : ${group.max} option${group.max > 1 ? "s" : ""} maximum`);

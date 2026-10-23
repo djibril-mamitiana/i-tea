@@ -4,34 +4,6 @@ import type { OrderStatus } from "./order-status.ts";
 
 export type OrderMode = "pickup" | "delivery";
 
-/** Une illustration de démonstration (remplacée par `image` dès que vous avez de vraies photos). */
-export type ArtKind =
-  | "cup"
-  | "nuggets"
-  | "fries"
-  | "gyoza"
-  | "bao"
-  | "mochi"
-  | "cake"
-  | "waffle"
-  | "combo";
-
-export interface ProductArt {
-  kind: ArtKind;
-  /** Couleur principale du liquide / de l'aliment. */
-  color: string;
-  /** Couleur secondaire (dégradé du liquide, garniture…). */
-  color2?: string;
-  topping?: "pearls" | "jelly" | "foam" | "none";
-  garnish?: "orange" | "strawberry" | "mint" | "lemon" | "none";
-  /** Traînées de caramel sur les parois (brown sugar boba). */
-  streaks?: boolean;
-  /** Couleur de la mousse (topping « foam »). */
-  foam?: string;
-  /** Fond doux de la carte. */
-  bg: string;
-}
-
 export interface Option {
   id: string;
   label: string;
@@ -64,14 +36,13 @@ export interface Product {
   /** Prix de base, avant options. */
   price: number;
   available: boolean;
-  /** Mis en avant dans « Les incontournables ». */
-  popular?: boolean;
+  /** Mis en avant dans la sélection de l'accueil (aucune popularité n'est affirmée). */
+  featured?: boolean;
   /** Proposé en complément dans le panier. */
   upsell?: boolean;
   badge?: string;
   /** Chemin d'une vraie photo (ex. /products/brown-sugar.jpg). */
   image?: string;
-  art: ProductArt;
   groups: OptionGroup[];
 }
 
@@ -81,7 +52,6 @@ export interface Category {
   tagline: string;
   /** Vraie photo de la catégorie (ex. /categories/snacks.jpg). */
   image?: string;
-  art: ProductArt;
 }
 
 /** Choix du client : id de groupe → ids d'options. */

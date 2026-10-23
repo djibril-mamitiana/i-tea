@@ -1,24 +1,88 @@
-import type { Category, Option, OptionGroup, Product } from "../lib/types.ts";
+import type { Category, OptionGroup, Product } from "../lib/types.ts";
 
 /**
  * ============================================================
  *  CARTE DE I TEA — DONNÉES DE DÉMONSTRATION
- *  Les produits, descriptions et prix ci-dessous sont fictifs :
- *  remplacez-les par la vraie carte (un objet par produit).
+ *  Les plats, descriptions et prix ci-dessous sont des EXEMPLES
+ *  à remplacer par la vraie carte du restaurant (un objet par
+ *  produit). Aucune photo n'est fournie : ajoutez `image` pour
+ *  afficher une vraie photo (voir PHOTOS_A_FOURNIR.md).
  *  Les prix sont dans la devise définie dans src/config/site.ts.
  * ============================================================
  */
 
 /* ---------- Groupes d'options réutilisables ---------- */
 
-const size: OptionGroup = {
-  id: "size",
-  label: "Taille",
+const portion: OptionGroup = {
+  id: "portion",
+  label: "Portion",
   min: 1,
   max: 1,
   options: [
-    { id: "m", label: "Medium", detail: "50 cl", price: 0, default: true },
-    { id: "l", label: "Large", detail: "70 cl", price: 1 },
+    { id: "normale", label: "Normale", price: 0, default: true },
+    { id: "grande", label: "Grande", price: 2.5 },
+  ],
+};
+
+const spice: OptionGroup = {
+  id: "spice",
+  label: "Piment",
+  min: 1,
+  max: 1,
+  options: [
+    { id: "sans", label: "Sans piment", price: 0 },
+    { id: "doux", label: "Doux", price: 0, default: true },
+    { id: "fort", label: "Fort", price: 0 },
+  ],
+};
+
+const phoExtras: OptionGroup = {
+  id: "extras",
+  label: "Suppléments",
+  hint: "Facultatif · jusqu'à 3",
+  min: 0,
+  max: 3,
+  options: [
+    { id: "boeuf", label: "Bœuf supplémentaire", price: 3 },
+    { id: "oeuf", label: "Œuf", price: 1.5 },
+    { id: "herbes", label: "Herbes fraîches en plus", price: 0.5 },
+  ],
+};
+
+const dippingSauce: OptionGroup = {
+  id: "sauce",
+  label: "Sauce",
+  hint: "Obligatoire",
+  min: 1,
+  max: 1,
+  options: [
+    { id: "nuoc-cham", label: "Nước chấm", price: 0 },
+    { id: "cacahuetes", label: "Sauce aux cacahuètes", price: 0 },
+    { id: "piquante", label: "Sauce piquante", price: 0 },
+  ],
+};
+
+const sandwichFilling: OptionGroup = {
+  id: "filling",
+  label: "Garniture",
+  hint: "Obligatoire",
+  min: 1,
+  max: 1,
+  options: [
+    { id: "poulet", label: "Poulet", price: 0 },
+    { id: "porc", label: "Porc", price: 0 },
+    { id: "vegetarien", label: "Végétarien", price: 0 },
+  ],
+};
+
+const temperature: OptionGroup = {
+  id: "temperature",
+  label: "Température",
+  min: 1,
+  max: 1,
+  options: [
+    { id: "chaud", label: "Chaud", price: 0, default: true },
+    { id: "glace", label: "Glacé", price: 0 },
   ],
 };
 
@@ -28,456 +92,171 @@ const sugar: OptionGroup = {
   min: 1,
   max: 1,
   options: [
-    { id: "0", label: "0 %", price: 0 },
-    { id: "30", label: "30 %", price: 0 },
-    { id: "50", label: "50 %", price: 0, default: true },
-    { id: "70", label: "70 %", price: 0 },
-    { id: "100", label: "100 %", price: 0 },
+    { id: "sans", label: "Sans sucre", price: 0 },
+    { id: "leger", label: "Léger", price: 0, default: true },
+    { id: "normal", label: "Normal", price: 0 },
   ],
 };
 
-const ice: OptionGroup = {
-  id: "ice",
-  label: "Glace",
+const drinkSize: OptionGroup = {
+  id: "size",
+  label: "Taille",
   min: 1,
   max: 1,
   options: [
-    { id: "none", label: "Sans glace", price: 0 },
-    { id: "less", label: "Peu de glace", price: 0 },
-    { id: "normal", label: "Glace normale", price: 0, default: true },
+    { id: "m", label: "Moyenne", detail: "35 cl", price: 0, default: true },
+    { id: "l", label: "Grande", detail: "50 cl", price: 1 },
   ],
 };
 
-const baseTopping: OptionGroup = {
-  id: "topping",
-  label: "Ta garniture",
-  hint: "Incluse dans le prix",
-  min: 1,
-  max: 1,
-  options: [
-    { id: "pearls", label: "Perles de tapioca", price: 0, default: true },
-    { id: "coconut-jelly", label: "Gelée coco", price: 0 },
-    { id: "pop-mango", label: "Pop boba mangue", price: 0, available: false },
-    { id: "none", label: "Sans garniture", price: 0 },
-  ],
-};
-
-const extraToppings: OptionGroup = {
-  id: "extras",
-  label: "Garnitures en plus",
-  hint: "Facultatif · jusqu'à 2",
+const coffeeExtra: OptionGroup = {
+  id: "side",
+  label: "Accompagnement",
+  hint: "Facultatif",
   min: 0,
-  max: 2,
-  options: [
-    { id: "pearls", label: "Perles de tapioca", price: 0.5 },
-    { id: "coconut-jelly", label: "Gelée coco", price: 0.5 },
-    { id: "cheese-foam", label: "Mousse fromage", price: 0.9 },
-  ],
-};
-
-const snackSauce: OptionGroup = {
-  id: "sauce",
-  label: "Ta sauce",
-  hint: "Obligatoire",
-  min: 1,
   max: 1,
-  options: [
-    { id: "honey-chili", label: "Miel-piment", price: 0 },
-    { id: "garlic", label: "Ail doux", price: 0 },
-    { id: "bbq", label: "Barbecue", price: 0 },
-  ],
+  options: [{ id: "cafe", label: "Filet de café", price: 0.5 }],
 };
-
-const portion: OptionGroup = {
-  id: "portion",
-  label: "Portion",
-  min: 1,
-  max: 1,
-  options: [
-    { id: "regular", label: "Normale", price: 0, default: true },
-    { id: "large", label: "Grande", detail: "à partager", price: 2.5 },
-  ],
-};
-
-/** Construit un groupe de choix à partir de produits existants. */
-function pickProduct(
-  id: string,
-  label: string,
-  products: Product[],
-  options: { min?: number; max?: number; hint?: string; supplements?: Record<string, number> } = {},
-): OptionGroup {
-  const { min = 1, max = 1, hint, supplements = {} } = options;
-  return {
-    id,
-    label,
-    hint: hint ?? (min > 0 ? "Obligatoire" : undefined),
-    min,
-    max,
-    options: products.map<Option>((p) => ({
-      id: p.id,
-      label: p.name,
-      price: supplements[p.id] ?? 0,
-      available: p.available,
-    })),
-  };
-}
 
 /* ---------- Catégories ---------- */
 
 export const categories: Category[] = [
-  {
-    id: "bubble-tea",
-    name: "Bubble tea",
-    tagline: "Thé, lait et perles",
-    art: { kind: "cup", color: "#C69A6B", color2: "#8A5A36", topping: "pearls", bg: "#F3DFC6" },
-  },
-  {
-    id: "the-fruite",
-    name: "Thés fruités",
-    tagline: "Frais et pétillants",
-    art: { kind: "cup", color: "#FFB27A", color2: "#FF7A4D", topping: "jelly", garnish: "orange", bg: "#F8D9C4" },
-  },
-  {
-    id: "boissons-fraiches",
-    name: "Boissons fraîches",
-    tagline: "Smoothies et limonades",
-    art: { kind: "cup", color: "#FF8FA3", color2: "#E8537A", topping: "none", garnish: "strawberry", bg: "#FBDCE3" },
-  },
-  {
-    id: "snacks",
-    name: "Snacks",
-    tagline: "Croustillants et salés",
-    art: { kind: "nuggets", color: "#E7A63A", bg: "#F6E1B0" },
-  },
-  {
-    id: "desserts",
-    name: "Desserts",
-    tagline: "Pour finir en douceur",
-    art: { kind: "mochi", color: "#F4C6DA", color2: "#CDB8F5", bg: "#FBDCE3" },
-  },
-  {
-    id: "formules",
-    name: "Formules",
-    tagline: "Boisson + gourmandise",
-    art: { kind: "combo", color: "#A8CF5C", color2: "#E7A63A", topping: "pearls", bg: "#DDE8D3" },
-  },
+  { id: "cuisine", name: "Cuisine vietnamienne", tagline: "Plats et en-cas" },
+  { id: "boissons", name: "Thés et boissons", tagline: "Chaud ou glacé" },
+  { id: "desserts", name: "Desserts", tagline: "Douceurs de fin de repas" },
 ];
 
-/* ---------- Boissons ---------- */
-
-const bubbleTeas: Product[] = [
-  {
-    id: "milk-tea-classique",
-    categoryId: "bubble-tea",
-    name: "Milk tea classique",
-    description: "Thé noir corsé, lait onctueux, perles de tapioca.",
-    price: 5.5,
-    available: true,
-    popular: true,
-    art: { kind: "cup", color: "#D9B48A", color2: "#A9744A", topping: "pearls", bg: "#F3DFC6" },
-    groups: [size, sugar, ice, baseTopping, extraToppings],
-  },
-  {
-    id: "brown-sugar",
-    categoryId: "bubble-tea",
-    name: "Brown sugar boba",
-    description: "Perles caramélisées, lait frais, sirop de sucre brun.",
-    price: 6.5,
-    available: true,
-    popular: true,
-    badge: "Signature",
-    art: { kind: "cup", color: "#F6E7D3", color2: "#A9693A", topping: "pearls", streaks: true, bg: "#EACBA3" },
-    groups: [size, sugar, ice, extraToppings],
-  },
-  {
-    id: "matcha-boba",
-    categoryId: "bubble-tea",
-    name: "Matcha latte boba",
-    description: "Matcha vert intense, lait, perles de tapioca.",
-    price: 6.9,
-    available: true,
-    popular: true,
-    art: { kind: "cup", color: "#B8D77A", color2: "#7FA83E", topping: "pearls", bg: "#DDE8D3" },
-    groups: [size, sugar, ice, baseTopping, extraToppings],
-  },
-  {
-    id: "taro",
-    categoryId: "bubble-tea",
-    name: "Taro milk tea",
-    description: "Crème de taro violette, lait, douceur de vanille.",
-    price: 6.5,
-    available: true,
-    art: { kind: "cup", color: "#D9C7F5", color2: "#B197E6", topping: "pearls", bg: "#FBDCE3" },
-    groups: [size, sugar, ice, baseTopping, extraToppings],
-  },
-  {
-    id: "thai-tea",
-    categoryId: "bubble-tea",
-    name: "Thai milk tea",
-    description: "Thé épicé orangé, lait concentré, perles.",
-    price: 5.9,
-    available: false,
-    art: { kind: "cup", color: "#FFB067", color2: "#E27A2B", topping: "pearls", bg: "#F8D9C4" },
-    groups: [size, sugar, ice, baseTopping],
-  },
-];
-
-const fruitTeas: Product[] = [
-  {
-    id: "oolong-peche",
-    categoryId: "the-fruite",
-    name: "Oolong pêche",
-    description: "Thé oolong floral, pêche juteuse, glaçons.",
-    price: 5.5,
-    available: true,
-    popular: true,
-    art: { kind: "cup", color: "#FFC59A", color2: "#FF9A6B", topping: "jelly", garnish: "orange", bg: "#F8D9C4" },
-    groups: [size, sugar, ice, extraToppings],
-  },
-  {
-    id: "litchi-rose",
-    categoryId: "the-fruite",
-    name: "Thé litchi rose",
-    description: "Thé vert léger, litchi, pétales de rose.",
-    price: 5.5,
-    available: true,
-    art: { kind: "cup", color: "#FFD2DC", color2: "#F59BB3", topping: "jelly", garnish: "strawberry", bg: "#FBDCE3" },
-    groups: [size, sugar, ice, extraToppings],
-  },
-  {
-    id: "passion-vert",
-    categoryId: "the-fruite",
-    name: "Thé vert passion",
-    description: "Thé vert, fruit de la passion, gelée coco.",
-    price: 5.5,
-    available: true,
-    art: { kind: "cup", color: "#FFE27A", color2: "#F5B731", topping: "jelly", garnish: "lemon", bg: "#F6E6BE" },
-    groups: [size, sugar, ice, extraToppings],
-  },
-  {
-    id: "ice-tea-citron",
-    categoryId: "the-fruite",
-    name: "Ice tea citron",
-    description: "Thé noir glacé, citron frais, menthe.",
-    price: 3.9,
-    available: true,
-    upsell: true,
-    art: { kind: "cup", color: "#F2C27A", color2: "#D9903A", topping: "none", garnish: "lemon", bg: "#F6E6BE" },
-    groups: [size, sugar, ice],
-  },
-];
-
-const freshDrinks: Product[] = [
-  {
-    id: "smoothie-mangue",
-    categoryId: "boissons-fraiches",
-    name: "Smoothie mangue",
-    description: "Mangue mûre mixée, une pointe de citron vert.",
-    price: 5.9,
-    available: true,
-    art: { kind: "cup", color: "#FFC94D", color2: "#FF9F1C", topping: "none", garnish: "orange", bg: "#F6E6BE" },
-    groups: [size, ice],
-  },
-  {
-    id: "smoothie-fraise",
-    categoryId: "boissons-fraiches",
-    name: "Smoothie fraise",
-    description: "Fraises mixées, yaourt, glace pilée.",
-    price: 5.9,
-    available: true,
-    art: { kind: "cup", color: "#FF9DB1", color2: "#E8537A", topping: "none", garnish: "strawberry", bg: "#FBDCE3" },
-    groups: [size, ice],
-  },
-  {
-    id: "limonade-menthe",
-    categoryId: "boissons-fraiches",
-    name: "Limonade menthe",
-    description: "Citron pressé, menthe fraîche, eau pétillante.",
-    price: 4.2,
-    available: true,
-    upsell: true,
-    art: { kind: "cup", color: "#E4F2A8", color2: "#B9D95A", topping: "none", garnish: "mint", bg: "#DDE8D3" },
-    groups: [size, sugar, ice],
-  },
-];
-
-/* ---------- Snacks ---------- */
-
-const snacks: Product[] = [
-  {
-    id: "popcorn-chicken",
-    categoryId: "snacks",
-    name: "Popcorn chicken",
-    description: "Bouchées de poulet croustillantes, sauce au choix.",
-    price: 6.9,
-    available: true,
-    popular: true,
-    art: { kind: "nuggets", color: "#E7A63A", bg: "#F6E1B0" },
-    groups: [portion, snackSauce],
-  },
-  {
-    id: "gyoza",
-    categoryId: "snacks",
-    name: "Gyoza poêlés",
-    description: "Six raviolis dorés, farce poulet-légumes.",
-    price: 5.9,
-    available: true,
-    art: { kind: "gyoza", color: "#F4DFB4", bg: "#F6E1B0" },
-    groups: [snackSauce],
-  },
-  {
-    id: "frites-patate-douce",
-    categoryId: "snacks",
-    name: "Frites de patate douce",
-    description: "Dorées, légèrement salées.",
-    price: 4.5,
-    available: true,
-    upsell: true,
-    art: { kind: "fries", color: "#F0A04B", bg: "#F8D9C4" },
-    groups: [portion, snackSauce],
-  },
-  {
-    id: "bao-poulet",
-    categoryId: "snacks",
-    name: "Bao poulet croustillant",
-    description: "Pain vapeur moelleux, poulet croustillant, sauce maison.",
-    price: 6.5,
-    available: true,
-    art: { kind: "bao", color: "#FFF4E2", color2: "#E7A63A", bg: "#F3DFC6" },
-    groups: [],
-  },
-];
-
-/* ---------- Desserts ---------- */
-
-const mochiFlavors: OptionGroup = {
-  id: "flavor",
-  label: "Ton parfum",
-  hint: "Obligatoire",
-  min: 1,
-  max: 1,
-  options: [
-    { id: "strawberry", label: "Fraise", price: 0 },
-    { id: "matcha", label: "Matcha", price: 0 },
-    { id: "mango", label: "Mangue", price: 0 },
-    { id: "sesame", label: "Sésame noir", price: 0, available: false },
-  ],
-};
-
-const desserts: Product[] = [
-  {
-    id: "mochi",
-    categoryId: "desserts",
-    name: "Mochi glacés (3)",
-    description: "Trois petites bouchées de riz fondantes et glacées.",
-    price: 4.5,
-    available: true,
-    upsell: true,
-    art: { kind: "mochi", color: "#F4C6DA", color2: "#CDB8F5", bg: "#FBDCE3" },
-    groups: [mochiFlavors],
-  },
-  {
-    id: "cheesecake",
-    categoryId: "desserts",
-    name: "Cheesecake fruits rouges",
-    description: "Crémeux, base biscuitée, coulis de fruits rouges.",
-    price: 4.9,
-    available: true,
-    upsell: true,
-    art: { kind: "cake", color: "#FFF1D6", color2: "#E8537A", bg: "#FBDCE3" },
-    groups: [],
-  },
-  {
-    id: "gaufre-bubble",
-    categoryId: "desserts",
-    name: "Gaufre bubble",
-    description: "Gaufre à la bulle, chantilly, perles et sirop.",
-    price: 5.5,
-    available: true,
-    art: { kind: "waffle", color: "#E8B66B", color2: "#8A5A36", bg: "#F3DFC6" },
-    groups: [
-      {
-        id: "syrup",
-        label: "Ton sirop",
-        hint: "Obligatoire",
-        min: 1,
-        max: 1,
-        options: [
-          { id: "caramel", label: "Caramel", price: 0 },
-          { id: "chocolate", label: "Chocolat", price: 0 },
-          { id: "strawberry", label: "Fraise", price: 0 },
-        ],
-      },
-    ],
-  },
-];
-
-/* ---------- Formules ---------- */
-
-const allDrinks = [...bubbleTeas, ...fruitTeas, ...freshDrinks];
-const mainSnacks = snacks.filter((p) => p.id !== "bao-poulet");
-
-const formulas: Product[] = [
-  {
-    id: "duo-bubble",
-    categoryId: "formules",
-    name: "Duo Bubble",
-    description: "1 boisson au choix + 1 snack au choix.",
-    price: 10.9,
-    available: true,
-    popular: true,
-    badge: "Formule",
-    art: { kind: "combo", color: "#D9B48A", color2: "#E7A63A", topping: "pearls", bg: "#DDE8D3" },
-    groups: [
-      pickProduct("drink", "Ta boisson", allDrinks, { supplements: { "matcha-boba": 0.5, "brown-sugar": 0.5 } }),
-      pickProduct("snack", "Ton snack", snacks),
-      sugar,
-      ice,
-    ],
-  },
-  {
-    id: "formule-gourmande",
-    categoryId: "formules",
-    name: "Formule gourmande",
-    description: "1 boisson au choix + 1 dessert au choix.",
-    price: 8.9,
-    available: true,
-    art: { kind: "combo", color: "#F4C6DA", color2: "#CDB8F5", topping: "pearls", bg: "#FBDCE3" },
-    groups: [
-      pickProduct("drink", "Ta boisson", allDrinks, { supplements: { "matcha-boba": 0.5, "brown-sugar": 0.5 } }),
-      pickProduct("dessert", "Ton dessert", desserts),
-      sugar,
-      ice,
-    ],
-  },
-  {
-    id: "box-partage",
-    categoryId: "formules",
-    name: "Box à partager",
-    description: "2 boissons + 1 snack à partager + 1 dessert.",
-    price: 21.9,
-    available: true,
-    badge: "À deux",
-    art: { kind: "combo", color: "#FFB27A", color2: "#E7A63A", topping: "pearls", bg: "#F8D9C4" },
-    groups: [
-      pickProduct("drinks", "Tes 2 boissons", allDrinks, {
-        min: 2,
-        max: 2,
-        hint: "Choisis-en 2",
-      }),
-      pickProduct("snack", "Ton snack", mainSnacks),
-      pickProduct("dessert", "Ton dessert", desserts),
-    ],
-  },
-];
+/* ---------- Produits (exemples) ---------- */
 
 export const products: Product[] = [
-  ...bubbleTeas,
-  ...fruitTeas,
-  ...freshDrinks,
-  ...snacks,
-  ...desserts,
-  ...formulas,
+  {
+    id: "pho-bo",
+    categoryId: "cuisine",
+    name: "Phở bò",
+    description: "Soupe de nouilles de riz au bœuf, herbes fraîches.",
+    price: 13.5,
+    available: true,
+    featured: true,
+    groups: [portion, spice, phoExtras],
+  },
+  {
+    id: "bun-cha",
+    categoryId: "cuisine",
+    name: "Bún chả",
+    description: "Nouilles de riz, porc grillé, herbes et sauce à tremper.",
+    price: 13,
+    available: true,
+    featured: true,
+    groups: [portion, spice],
+  },
+  {
+    id: "goi-cuon",
+    categoryId: "cuisine",
+    name: "Gỏi cuốn (3 rouleaux)",
+    description: "Rouleaux frais aux crevettes et aux herbes, sauce à tremper.",
+    price: 6.5,
+    available: true,
+    featured: true,
+    upsell: true,
+    groups: [dippingSauce],
+  },
+  {
+    id: "banh-mi",
+    categoryId: "cuisine",
+    name: "Bánh mì",
+    description: "Sandwich vietnamien garni, herbes et légumes marinés.",
+    price: 7.5,
+    available: true,
+    groups: [sandwichFilling, spice],
+  },
+  {
+    id: "nem",
+    categoryId: "cuisine",
+    name: "Nems (4 pièces)",
+    description: "Nems croustillants servis avec salade, herbes et sauce.",
+    price: 6,
+    available: true,
+    upsell: true,
+    groups: [dippingSauce],
+  },
+  {
+    id: "bo-bun",
+    categoryId: "cuisine",
+    name: "Bò bún",
+    description: "Vermicelles de riz, bœuf sauté, herbes et cacahuètes.",
+    price: 13.5,
+    available: false,
+    groups: [portion, spice],
+  },
+
+  {
+    id: "the-jasmin",
+    categoryId: "boissons",
+    name: "Thé au jasmin",
+    description: "Thé parfumé, servi chaud ou glacé.",
+    price: 3.5,
+    available: true,
+    upsell: true,
+    groups: [temperature, sugar],
+  },
+  {
+    id: "the-glace-citron",
+    categoryId: "boissons",
+    name: "Thé glacé au citron",
+    description: "Thé noir glacé, citron, légèrement sucré.",
+    price: 4,
+    available: true,
+    groups: [drinkSize, sugar],
+  },
+  {
+    id: "ca-phe-sua-da",
+    categoryId: "boissons",
+    name: "Cà phê sữa đá",
+    description: "Café vietnamien au lait concentré, servi sur glace.",
+    price: 4.5,
+    available: true,
+    featured: true,
+    groups: [drinkSize],
+  },
+  {
+    id: "infusion-gingembre",
+    categoryId: "boissons",
+    name: "Infusion gingembre et miel",
+    description: "Infusion chaude au gingembre, adoucie au miel.",
+    price: 3.8,
+    available: true,
+    groups: [],
+  },
+
+  {
+    id: "che-ba-mau",
+    categoryId: "desserts",
+    name: "Chè ba màu",
+    description: "Dessert vietnamien aux trois couleurs, lait de coco et glace pilée.",
+    price: 5.5,
+    available: true,
+    upsell: true,
+    groups: [],
+  },
+  {
+    id: "banh-flan",
+    categoryId: "desserts",
+    name: "Bánh flan",
+    description: "Flan au caramel, texture fondante.",
+    price: 4.5,
+    available: true,
+    upsell: true,
+    groups: [coffeeExtra],
+  },
+  {
+    id: "che-chuoi",
+    categoryId: "desserts",
+    name: "Chè chuối",
+    description: "Banane mijotée au lait de coco et aux graines de sésame.",
+    price: 5,
+    available: true,
+    groups: [],
+  },
 ];
 
 const productIndex = new Map(products.map((p) => [p.id, p]));

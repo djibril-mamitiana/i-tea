@@ -17,10 +17,10 @@ export function Stepper({ qty, onChange, min = 1, max = 20, label, removable = f
   const dim = size === "sm" ? "size-11" : "size-12";
   const showTrash = removable && qty <= min;
   return (
-    <div className="inline-flex items-center rounded-full bg-sand p-1" role="group" aria-label={`Quantité : ${label}`}>
+    <div className="inline-flex items-center rounded-lg border border-line bg-white p-1" role="group" aria-label={`Quantité : ${label}`}>
       <button
         type="button"
-        className={`${dim} grid place-items-center rounded-full bg-white text-ink shadow-sm transition active:scale-90 hover:bg-cream disabled:opacity-40`}
+        className={`${dim} grid place-items-center rounded bg-sand text-ink transition active:scale-90 hover:bg-line disabled:opacity-40`}
         onClick={() => onChange(showTrash ? 0 : qty - 1)}
         disabled={!removable && qty <= min}
         aria-label={showTrash ? `Retirer ${label}` : `Diminuer la quantité de ${label}`}
@@ -32,7 +32,7 @@ export function Stepper({ qty, onChange, min = 1, max = 20, label, removable = f
       </span>
       <button
         type="button"
-        className={`${dim} grid place-items-center rounded-full bg-white text-ink shadow-sm transition active:scale-90 hover:bg-cream disabled:opacity-40`}
+        className={`${dim} grid place-items-center rounded bg-sand text-ink transition active:scale-90 hover:bg-line disabled:opacity-40`}
         onClick={() => onChange(qty + 1)}
         disabled={qty >= max}
         aria-label={`Augmenter la quantité de ${label}`}

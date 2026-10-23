@@ -8,13 +8,13 @@ import { ModeToggle } from "../cart/ModeToggle";
 import { CATEGORY_EVENT } from "../CategoryLink";
 import { OpenStatus } from "../OpenStatus";
 import { ProductCard } from "../ProductCard";
-import { ArtSvg } from "../ProductArt";
 import { SectionHeading } from "./SectionHeading";
 
 const normalize = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim();
 const ALL = "all";
+const GRID = "grid gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3";
 
-/** Menu complet : filtres de catégories, recherche instantanée, grille de produits. */
+/** La carte complète : filtres de catégories, recherche instantanée (insensible aux accents), commande. */
 export function Menu() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<string>(ALL);
@@ -30,21 +30,21 @@ export function Menu() {
   }, [query]);
 
   const scrollToResults = () => {
-    requestAnimationFrame(() => document.getElementById("menu-results")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    requestAnimationFrame(() => document.getElementById("carte-resultats")?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
 
   // Filtre piloté de l'extérieur : liens de catégories (événement) et ancre #cat-… au chargement.
   useEffect(() => {
-    const apply = (id: string, scroll: boolean) => {
+    const apply = (id: string) => {
       if (!categories.some((c) => c.id === id)) return;
       setFilter(id);
       setQuery("");
-      if (scroll) requestAnimationFrame(() => document.getElementById("menu")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+      requestAnimationFrame(() => document.getElementById("carte")?.scrollIntoView({ behavior: "smooth", block: "start" }));
     };
-    const onEvent = (e: Event) => apply((e as CustomEvent<string>).detail, true);
+    const onEvent = (e: Event) => apply((e as CustomEvent<string>).detail);
     const fromHash = () => {
       const m = window.location.hash.match(/^#cat-(.+)$/);
-      if (m) apply(m[1], true);
+      if (m) apply(m[1]);
     };
     window.addEventListener(CATEGORY_EVENT, onEvent);
     window.addEventListener("hashchange", fromHash);
@@ -62,20 +62,21 @@ export function Menu() {
   };
 
   const visibleCategories = filter === ALL ? categories : categories.filter((c) => c.id === filter);
+  const chips = [{ id: ALL, name: "Tout", n: products.length }, ...categories.map((c) => ({ id: c.id, name: c.name, n: products.filter((p) => p.categoryId === c.id).length }))];
 
   return (
-    <section id="menu" aria-labelledby="menu-title">
-      <div className="mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8 lg:pt-24">
+    <section id="carte" className="bg-cream" aria-labelledby="carte-title">
+      <div className="mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8 lg:pt-28">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <SectionHeading id="menu-title" eyebrow="Commander" title={<>Toute la <span className="display-em text-accent-text">carte</span></>} />
+          <SectionHeading id="carte-title" eyebrow="Commander" title="La carte" />
           <div className="relative w-full md:max-w-sm">
-            <Search size={20} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
+            <Search size={19} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Rechercher une boisson, un snack…"
-              aria-label="Rechercher dans le menu"
+              placeholder="Rechercher un plat, une boisson…"
+              aria-label="Rechercher dans la carte"
               className="field pl-12 pr-12"
               enterKeyHint="search"
             />
@@ -83,7 +84,7 @@ export function Menu() {
               <button
                 type="button"
                 onClick={() => setQuery("")}
-                className="absolute right-2 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-full text-muted hover:bg-sand"
+                className="absolute right-2 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded text-muted hover:bg-sand"
                 aria-label="Effacer la recherche"
               >
                 <X size={18} />
@@ -99,40 +100,34 @@ export function Menu() {
       </div>
 
       {!searching && (
-        <div className="sticky top-16 z-30 mt-6 border-y border-line/80 bg-cream/95 backdrop-blur-md lg:top-[4.75rem]">
-          <div
-            role="group"
-            aria-label="Filtrer par catégorie"
-            className="no-scrollbar mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8"
-          >
-            {[{ id: ALL, name: "Tout", n: products.length }, ...categories.map((c) => ({ id: c.id, name: c.name, n: products.filter((p) => p.categoryId === c.id).length }))].map(
-              (chip) => (
-                <button
-                  key={chip.id}
-                  type="button"
-                  aria-pressed={filter === chip.id}
-                  onClick={() => chooseFilter(chip.id)}
-                  className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[0.95rem] font-bold transition ${
-                    filter === chip.id ? "bg-ink text-cream" : "bg-white text-ink ring-1 ring-line hover:bg-sand"
-                  }`}
-                >
-                  {chip.name}
-                  <span className={`text-xs font-semibold ${filter === chip.id ? "text-cream/70" : "text-muted"}`}>{chip.n}</span>
-                </button>
-              ),
-            )}
+        <div className="sticky top-16 z-30 mt-6 border-y border-line bg-cream/95 backdrop-blur-md lg:top-20">
+          <div role="group" aria-label="Filtrer par catégorie" className="no-scrollbar mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8">
+            {chips.map((chip) => (
+              <button
+                key={chip.id}
+                type="button"
+                aria-pressed={filter === chip.id}
+                onClick={() => chooseFilter(chip.id)}
+                className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg border px-4 text-[0.95rem] font-semibold transition ${
+                  filter === chip.id ? "border-green bg-green text-cream" : "border-line bg-[#fffdf8] text-ink hover:border-ink/40"
+                }`}
+              >
+                {chip.name}
+                <span className={`text-xs font-medium ${filter === chip.id ? "text-cream/70" : "text-muted"}`}>{chip.n}</span>
+              </button>
+            ))}
           </div>
         </div>
       )}
 
-      <div id="menu-results" className="mx-auto max-w-7xl px-4 pb-24 pt-8 sm:px-6 lg:px-8">
+      <div id="carte-resultats" className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8">
         {searching ? (
           <div role="region" aria-live="polite" aria-label="Résultats de la recherche">
-            <p className="mb-5 text-lg font-bold">
+            <p className="mb-5 text-lg font-semibold">
               {results.length} {plural(results.length, "résultat", "résultats")} pour « {query.trim()} »
             </p>
             {results.length > 0 ? (
-              <ul className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 xl:grid-cols-4">
+              <ul className={GRID}>
                 {results.map((p) => (
                   <li key={p.id}>
                     <ProductCard product={p} />
@@ -140,30 +135,29 @@ export function Menu() {
                 ))}
               </ul>
             ) : (
-              <div className="flex flex-col items-center gap-3 rounded-card bg-white px-6 py-12 text-center shadow-card">
-                <ArtSvg art={categories[0].art} className="h-32 w-auto opacity-90" />
-                <p className="font-display text-2xl font-bold">Rien ne correspond…</p>
-                <p className="text-muted">Essaie « thé », « poulet » ou « mangue ».</p>
-                <button type="button" className="btn btn-ink mt-2" onClick={() => setQuery("")}>
+              <div className="rounded-lg border border-line bg-[#fffdf8] px-6 py-12 text-center">
+                <p className="font-display text-2xl">Aucun résultat</p>
+                <p className="mt-1 text-muted">Essayez un autre mot, ou parcourez toute la carte.</p>
+                <button type="button" className="btn btn-green mt-5" onClick={() => setQuery("")}>
                   Voir toute la carte
                 </button>
               </div>
             )}
           </div>
         ) : (
-          <div key={filter} className="animate-rise space-y-14">
+          <div key={filter} className="animate-rise space-y-16">
             {visibleCategories.map((c) => {
               const items = products.filter((p) => p.categoryId === c.id);
               if (items.length === 0) return null;
               return (
                 <section key={c.id} id={`cat-${c.id}`} aria-labelledby={`title-${c.id}`}>
-                  <div className="mb-6 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                    <h3 id={`title-${c.id}`} className="font-display text-3xl font-bold sm:text-4xl">
+                  <div className="mb-7 flex flex-wrap items-baseline gap-x-5 gap-y-1 border-b border-line pb-4">
+                    <h3 id={`title-${c.id}`} className="font-display text-3xl font-medium sm:text-4xl">
                       {c.name}
                     </h3>
                     <p className="text-muted">{c.tagline}</p>
                   </div>
-                  <ul className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 xl:grid-cols-4">
+                  <ul className={GRID}>
                     {items.map((p) => (
                       <li key={p.id}>
                         <ProductCard product={p} />
