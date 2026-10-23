@@ -45,7 +45,8 @@ function toStoredOrder(row: Row): StoredOrder {
 /** Vues du tableau de bord. */
 export type OrderView = "active" | "done" | "cancelled" | "all";
 
-export async function listOrders(view: OrderView, limit = 200): Promise<StoredOrder[]> {
+/** `since` : ne garde que les commandes passées à partir de cet instant (historique « aujourd'hui », « 7 jours »…). */
+export async function listOrders(view: OrderView, limit = 200, since?: Date): Promise<StoredOrder[]> {
   const db = await getDb();
   const where = {
     active: "status IN ('new', 'preparing', 'ready')",
@@ -58,10 +59,30 @@ export async function listOrders(view: OrderView, limit = 200): Promise<StoredOr
     view === "active"
       ? "CASE status WHEN 'new' THEN 0 WHEN 'preparing' THEN 1 ELSE 2 END, created_at ASC"
       : "created_at DESC";
-  const rows = await db.query(`SELECT data, status, updated_at FROM orders WHERE ${where} ORDER BY ${order} LIMIT $1`, [
-    Math.max(1, Math.min(500, Math.floor(limit))),
-  ]);
+  const params: unknown[] = [Math.max(1, Math.min(500, Math.floor(limit)))];
+  let sinceClause = "";
+  if (since) {
+    params.push(since.toISOString());
+    sinceClause = " AND created_at >= $2::timestamptz";
+  }
+  const rows = await db.query(`SELECT data, status, updated_at FROM orders WHERE ${where}${sinceClause} ORDER BY ${order} LIMIT $1`, params);
   return rows.map(toStoredOrder);
+}
+
+export interface PeriodStats {
+  orders: number;
+  /** Montant total des commandes (hors annulées), en devise du site. */
+  total: number;
+}
+
+/** Commandes passées depuis `since` (hors annulées) : nombre et montant. */
+export async function statsSince(since: Date): Promise<PeriodStats> {
+  const db = await getDb();
+  const [row] = await db.query(
+    "SELECT COUNT(*)::int AS n, COALESCE(SUM(total), 0)::float8 AS total FROM orders WHERE created_at >= $1::timestamptz AND status <> 'cancelled'",
+    [since.toISOString()],
+  );
+  return { orders: Number(row?.n ?? 0), total: Math.round(Number(row?.total ?? 0) * 100) / 100 };
 }
 
 export async function countByStatus(): Promise<Record<OrderStatus, number>> {

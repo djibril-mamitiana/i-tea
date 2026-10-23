@@ -2,13 +2,13 @@
 
 import { Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { categories, products } from "@/data/menu";
 import { plural } from "@/lib/format";
 import { ModeToggle } from "../cart/ModeToggle";
 import { CATEGORY_EVENT } from "../CategoryLink";
 import { OpenStatus } from "../OpenStatus";
 import { ProductCard } from "../ProductCard";
 import { ArtSvg } from "../ProductArt";
+import { useCatalog } from "../shop/ShopProvider";
 import { SectionHeading } from "./SectionHeading";
 
 const normalize = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim();
@@ -16,6 +16,7 @@ const ALL = "all";
 
 /** Menu complet : filtres de catégories, recherche instantanée, grille de produits. */
 export function Menu() {
+  const { products, categories } = useCatalog();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<string>(ALL);
   const searching = query.trim().length > 0;
@@ -27,7 +28,7 @@ export function Menu() {
       const cat = categories.find((c) => c.id === p.categoryId)?.name ?? "";
       return normalize(`${p.name} ${p.description} ${cat}`).includes(q);
     });
-  }, [query]);
+  }, [query, products, categories]);
 
   const scrollToResults = () => {
     requestAnimationFrame(() => document.getElementById("menu-results")?.scrollIntoView({ behavior: "smooth", block: "start" }));
@@ -54,7 +55,7 @@ export function Menu() {
       window.removeEventListener(CATEGORY_EVENT, onEvent);
       window.removeEventListener("hashchange", fromHash);
     };
-  }, []);
+  }, [categories]);
 
   const chooseFilter = (id: string) => {
     setFilter(id);
@@ -141,7 +142,7 @@ export function Menu() {
               </ul>
             ) : (
               <div className="flex flex-col items-center gap-3 rounded-card bg-white px-6 py-12 text-center shadow-card">
-                <ArtSvg art={categories[0].art} className="h-32 w-auto opacity-90" />
+                {categories[0] && <ArtSvg art={categories[0].art} className="h-32 w-auto opacity-90" />}
                 <p className="font-display text-2xl font-bold">Rien ne correspond…</p>
                 <p className="text-muted">Essaie « poulet », « matcha » ou « nems ».</p>
                 <button type="button" className="btn btn-ink mt-2" onClick={() => setQuery("")}>

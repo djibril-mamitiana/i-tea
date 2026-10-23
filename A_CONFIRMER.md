@@ -37,6 +37,11 @@ se contredisent parfois, et certains choix de fonctionnement ne figurent nulle p
 8. **Réseaux sociaux.** La carte de fidélité montre les icônes Facebook et Instagram sans nom de compte : à fournir.
 9. **Mentions légales et politique de confidentialité** : textes modèles à compléter (raison sociale, SIRET, hébergeur, responsable de traitement).
 
+## 2 bis. Plats à retirer
+
+Le catalogue du site reprend la carte papier ligne par ligne (73 plats). Si certains plats de la carte ne sont plus servis, retirez-les vous-même dans
+l'admin, onglet **Carte** (« Retiré du site » ou « En rupture »), ou donnez-moi leur liste pour les supprimer définitivement du code.
+
 ## 3. Coordonnées confirmées
 
 Adresse 7 rue du Général Leclerc, 91440 Bures-sur-Yvette ; téléphones 07 67 68 10 91 et 01 86 04 51 70 ; e-mail `itearestaurant@gmail.com`.

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { buildOrder, parseOrderRequest } from "@/lib/order-validation";
 import { notifyRestaurant } from "@/lib/server/notify";
 import { listOffers } from "@/lib/server/offers-store";
+import { getMenuStatus, getOrderingState } from "@/lib/server/shop-store";
+import { PAUSE_DEFAULT_TEXT } from "@/lib/shop";
 import { newOrderNumber, OrderNumberTakenError, saveOrder } from "@/lib/server/orders-store";
 import type { OrderApiError } from "@/lib/types";
 
@@ -53,17 +55,24 @@ export async function POST(request: Request) {
   if (!parsed || parsed.website) return error(400, { error: "Requête invalide." });
 
   const now = new Date();
-  // Les cadeaux d'offres sont vérifiés contre les offres du serveur (jamais contre ce que dit le navigateur).
+  // L'état de la boutique vient de la base, jamais du navigateur : pause des commandes, plats en rupture ou retirés,
+  // et offres (pour vérifier les cadeaux demandés).
   let offers: Awaited<ReturnType<typeof listOffers>> = [];
-  if (parsed.rewards?.length) {
-    try {
-      offers = await listOffers();
-    } catch (err) {
-      console.error("[orders] lecture des offres impossible :", err);
-      return error(503, { error: "Les commandes en ligne sont momentanément indisponibles. Contacte directement le restaurant." });
-    }
+  let menuStatus: Awaited<ReturnType<typeof getMenuStatus>> = {};
+  try {
+    const [ordering, status, liveOffers] = await Promise.all([
+      getOrderingState(),
+      getMenuStatus(),
+      parsed.rewards?.length ? listOffers() : Promise.resolve([]),
+    ]);
+    if (ordering.paused) return error(503, { error: ordering.message || PAUSE_DEFAULT_TEXT, code: "orders_paused" });
+    menuStatus = status;
+    offers = liveOffers;
+  } catch (err) {
+    console.error("[orders] lecture de l'état de la boutique impossible :", err);
+    return error(503, { error: "Les commandes en ligne sont momentanément indisponibles. Contacte directement le restaurant." });
   }
-  const result = buildOrder(parsed, newOrderNumber(now), now, offers);
+  const result = buildOrder(parsed, newOrderNumber(now), now, offers, menuStatus);
   if (!result.ok) return error(result.status, result.error);
 
   // Numéro déjà pris (très improbable) : on en tire un autre, 3 essais maximum.

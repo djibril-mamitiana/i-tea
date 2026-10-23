@@ -4,9 +4,10 @@ import { ArrowRight, Check, Gift, Pencil, Plus, ShoppingBag, Trash2, X } from "l
 import Link from "next/link";
 import { useEffect } from "react";
 import { site } from "@/config/site";
-import { products } from "@/data/menu";
 import { formatPrice, plural } from "@/lib/format";
+import { PAUSE_DEFAULT_TEXT } from "@/lib/shop";
 import { ProductVisual } from "../ProductVisual";
+import { useCatalog } from "../shop/ShopProvider";
 import { Sheet } from "../ui/Sheet";
 import { Stepper } from "../ui/Stepper";
 import { useCart } from "./CartProvider";
@@ -21,10 +22,11 @@ export function CartDrawer() {
     if (open) void refresh();
   }, [open, refresh]);
 
-  const { cartOpen, closeCart, lines, count, totals, mode, setQty, openProduct, quickAdd, rewardLines, removeReward } = useCart();
+  const { cartOpen, closeCart, lines, count, totals, mode, setQty, openProduct, quickAdd, rewardLines, removeReward, orderingPaused, orderingMessage } = useCart();
+  const { products, isAvailable } = useCatalog();
 
   const inCart = new Set(lines.map((l) => l.line.productId));
-  const suggestions = products.filter((p) => p.upsell && p.available && !inCart.has(p.id)).slice(0, 3);
+  const suggestions = products.filter((p) => p.upsell && p.available && isAvailable(p.id) && !inCart.has(p.id)).slice(0, 3);
   const isDelivery = mode === "delivery";
   const blocked = totals.minOrderMissing > 0;
   const { freeFrom } = site.ordering.delivery;
@@ -188,7 +190,13 @@ export function CartDrawer() {
                 </p>
               )}
 
-              {blocked ? (
+              {orderingPaused && (
+                <p className="mt-3 rounded-xl bg-lemon/40 px-3 py-2 text-sm font-semibold" role="status">
+                  {orderingMessage || PAUSE_DEFAULT_TEXT}
+                </p>
+              )}
+
+              {blocked || orderingPaused ? (
                 <button type="button" className="btn btn-accent btn-lg mt-3 w-full" disabled>
                   Commander
                 </button>

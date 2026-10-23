@@ -1,9 +1,10 @@
 "use client";
 
-import { Bike, LoaderCircle, MapPin, Phone, StickyNote, Store } from "lucide-react";
+import { Bike, Hourglass, LoaderCircle, MapPin, Phone, Printer, StickyNote, Store } from "lucide-react";
 import { site } from "@/config/site";
 import { formatPrice } from "@/lib/format";
 import { advanceLabel, isActive, nextStatus, ORDER_STATUSES, STATUS_LABEL, type OrderStatus } from "@/lib/order-status";
+import { printTicket } from "@/lib/ticket";
 import type { StoredOrder } from "@/lib/types";
 
 const STATUS_STYLE: Record<OrderStatus, string> = {
@@ -21,6 +22,13 @@ export function formatOrderTime(iso: string): string {
   const date = new Date(iso);
   const sameDay = dayFormat.format(date) === dayFormat.format(new Date());
   return sameDay ? timeFormat.format(date) : `${dayFormat.format(date)} · ${timeFormat.format(date)}`;
+}
+
+/** « 12 min », « 2 h 05 » : lisible d'un coup d'œil quand une commande attend depuis longtemps. */
+function duration(minutes: number): string {
+  if (minutes < 60) return `${minutes} min`;
+  const h = Math.floor(minutes / 60);
+  return `${h} h ${String(minutes % 60).padStart(2, "0")}`;
 }
 
 export function relativeTime(iso: string, now: number): string {
@@ -49,6 +57,17 @@ export function OrderCard({
   const relative = relativeTime(order.createdAt, now);
   const ModeIcon = isDelivery ? Bike : Store;
 
+  // Durée d'attente : une commande oubliée doit se voir. Nouvelle depuis sa création, sinon depuis son dernier changement.
+  const since = now ? Math.floor((now - new Date(order.status === "new" ? order.createdAt : order.updatedAt).getTime()) / 60_000) : 0;
+  const waiting =
+    order.status === "new" && since >= 1
+      ? { text: `Attend depuis ${duration(since)}`, tone: since >= 10 ? "bg-danger text-white" : since >= 5 ? "bg-lemon text-ink" : "bg-sand text-ink" }
+      : order.status === "preparing" && since >= 1
+        ? { text: `En préparation depuis ${duration(since)}`, tone: since >= 25 ? "bg-lemon text-ink" : "bg-sand text-ink" }
+        : order.status === "ready" && since >= 1
+          ? { text: `Prête depuis ${duration(since)}`, tone: since >= 15 ? "bg-lemon text-ink" : "bg-sand text-ink" }
+          : null;
+
   return (
     <article
       className={`flex w-full flex-col gap-4 rounded-card bg-white p-5 shadow-card ${order.status === "new" ? "ring-2 ring-accent" : ""}`}
@@ -66,6 +85,13 @@ export function OrderCard({
           {STATUS_LABEL[order.status]}
         </span>
       </header>
+
+      {waiting && (
+        <p className={`flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-sm font-bold ${waiting.tone}`}>
+          <Hourglass size={14} aria-hidden="true" />
+          {waiting.text}
+        </p>
+      )}
 
       <div className="space-y-1.5 text-[0.95rem]">
         <p className="flex items-center gap-2 font-bold">
@@ -140,6 +166,10 @@ export function OrderCard({
             Annuler
           </button>
         )}
+        <button type="button" className="btn min-h-12 bg-sand px-4 text-ink hover:bg-line" onClick={() => printTicket(order)} aria-label={`Imprimer le ticket de la commande ${order.number}`}>
+          <Printer size={18} aria-hidden="true" />
+          Ticket
+        </button>
         <label className="flex w-full items-center gap-2 text-sm text-muted">
           <span>Corriger le statut</span>
           <select

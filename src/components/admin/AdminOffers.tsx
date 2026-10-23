@@ -1,14 +1,13 @@
 "use client";
 
-import { CircleAlert, Gift, LoaderCircle, LogOut, Pencil, Plus, Trash2 } from "lucide-react";
+import { CircleAlert, Gift, LoaderCircle, Pencil, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { site } from "@/config/site";
 import { categories, products } from "@/data/menu";
 import { todayIso, type Offer, type OfferKind } from "@/lib/offers";
 import type { OrderMode } from "@/lib/types";
-import { Logo } from "../Logo";
-import { AdminNav } from "./AdminNav";
+import { AdminShell } from "./AdminShell";
 
 /** Une offre en cours de saisie : textes et listes sous une forme simple à éditer. */
 interface Draft {
@@ -170,25 +169,8 @@ export function AdminOffers() {
     else await load();
   }
 
-  async function logout() {
-    await fetch("/api/admin/logout", { method: "POST" }).catch(() => null);
-    router.refresh();
-  }
-
   return (
-    <div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6 lg:px-8">
-      <header className="flex flex-wrap items-center justify-between gap-3 py-5">
-        <div className="flex items-center gap-4">
-          <Logo />
-          <span className="rounded-full bg-ink px-3 py-1 text-xs font-bold uppercase tracking-wider text-cream">Admin</span>
-        </div>
-        <button type="button" className="btn min-h-11 bg-ink px-4 text-sm text-cream hover:bg-ink-2" onClick={logout}>
-          <LogOut size={18} aria-hidden="true" />
-          Déconnexion
-        </button>
-      </header>
-
-      <AdminNav />
+    <AdminShell width="max-w-5xl">
       <div className="mt-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-3xl font-extrabold sm:text-4xl">Offres {site.name}</h1>
@@ -288,7 +270,7 @@ export function AdminOffers() {
           </ul>
         )}
       </section>
-    </div>
+    </AdminShell>
   );
 }
 

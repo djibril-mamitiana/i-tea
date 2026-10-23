@@ -3,16 +3,17 @@
 import { Menu as MenuIcon, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { categories } from "@/data/menu";
 import { formatPrice } from "@/lib/format";
 import { useCart } from "./cart/CartProvider";
 import { CategoryLink } from "./CategoryLink";
 import { Logo } from "./Logo";
 import { MobileMenu } from "./MobileMenu";
+import { useCatalog } from "./shop/ShopProvider";
 
 /** Navigation principale : collante, translucide, avec ombre dès que la page défile. */
 export function Header() {
   const { count, totals, openCart, hydrated, bump } = useCart();
+  const { categories } = useCatalog();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const shown = hydrated ? count : 0;

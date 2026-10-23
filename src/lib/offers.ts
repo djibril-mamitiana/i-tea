@@ -1,5 +1,6 @@
 import { site } from "../config/site.ts";
 import { getProduct, products } from "../data/menu.ts";
+import { stateOf, unavailableMessage, type MenuStatus } from "./shop.ts";
 import type { ConfirmedOrder, OrderMode, RewardSelection } from "./types.ts";
 
 /**
@@ -155,8 +156,10 @@ export function validateRewards(args: {
   lines: CartQty[];
   mode: OrderMode;
   now: Date;
+  /** Plats en rupture ou retirés : un cadeau lié à un tel plat est refusé. */
+  menuStatus?: MenuStatus;
 }): RewardCheck {
-  const { offers, selections, lines, mode, now } = args;
+  const { offers, selections, lines, mode, now, menuStatus = {} } = args;
   const live = liveOffers(offers, now);
   const used = new Map<string, number>();
   const items: ConfirmedOrder["items"] = [];
@@ -173,6 +176,10 @@ export function validateRewards(args: {
       if (!choice) return { ok: false, error: `Choisis ${alt.choiceLabel ? `ton ${alt.choiceLabel.toLowerCase()}` : "une option"} pour « ${alt.label} ».` };
     } else if (sel.choiceId) {
       return { ok: false, error: `Le cadeau « ${alt.label} » ne comporte pas de choix.` };
+    }
+
+    if (alt.productId && stateOf(menuStatus, alt.productId) !== "available") {
+      return { ok: false, error: unavailableMessage(alt.label, stateOf(menuStatus, alt.productId)) };
     }
 
     const count = (used.get(offer.id) ?? 0) + 1;

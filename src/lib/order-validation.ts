@@ -1,6 +1,7 @@
 import { activeModes, activePayments, site } from "../config/site.ts";
 import { getProduct } from "../data/menu.ts";
 import { sanitizeRewards, validateRewards, type Offer } from "./offers.ts";
+import { stateOf, unavailableMessage, type MenuStatus } from "./shop.ts";
 import { computeTotals, lineId, optionLabels, roundMoney, unitPrice, validateSelections } from "./pricing.ts";
 import type { ConfirmedOrder, OrderApiError, OrderMode, OrderRequest, Selections } from "./types.ts";
 
@@ -76,7 +77,7 @@ export type BuildResult = { ok: true; order: ConfirmedOrder } | { ok: false; sta
  * Aucun prix venant du navigateur n'est utilisé. `offers` : les offres connues du serveur (celles en vigueur
  * sont retenues) ; les cadeaux demandés par le client sont vérifiés contre elles et contre le panier réel.
  */
-export function buildOrder(request: OrderRequest, number: string, now: Date, offers: Offer[] = []): BuildResult {
+export function buildOrder(request: OrderRequest, number: string, now: Date, offers: Offer[] = [], menuStatus: MenuStatus = {}): BuildResult {
   const fail = (status: number, error: OrderApiError): BuildResult => ({ ok: false, status, error });
 
   if (!activeModes().includes(request.mode)) {
@@ -103,8 +104,9 @@ export function buildOrder(request: OrderRequest, number: string, now: Date, off
       issues.push({ productId: item.productId, message: "Ce produit n'existe plus." });
       continue;
     }
-    if (!product.available) {
-      issues.push({ productId: product.id, message: `« ${product.name} » n'est plus disponible.` });
+    const state = stateOf(menuStatus, product.id);
+    if (!product.available || state !== "available") {
+      issues.push({ productId: product.id, message: unavailableMessage(product.name, product.available ? state : "unavailable") });
       continue;
     }
     if (!Number.isInteger(item.qty) || item.qty < 1 || item.qty > site.ordering.maxItemQty) {
@@ -146,6 +148,7 @@ export function buildOrder(request: OrderRequest, number: string, now: Date, off
       lines: items.map((i) => ({ productId: i.productId, qty: i.qty })),
       mode: request.mode,
       now,
+      menuStatus,
     });
     if (!check.ok) return fail(409, { error: check.error, code: "offers_changed" });
     rewardItems = check.items;

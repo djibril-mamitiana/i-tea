@@ -1,8 +1,10 @@
+"use client";
+
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
-import { categories, productsByCategory } from "@/data/menu";
 import { CategoryLink } from "../CategoryLink";
 import { ArtSvg } from "../ProductArt";
+import { useCatalog } from "../shop/ShopProvider";
 import { Reveal } from "../ui/Reveal";
 import { SectionHeading } from "./SectionHeading";
 
@@ -26,6 +28,7 @@ const LAYOUT = [
 
 /** Raccourcis visuels vers chaque catégorie, générés depuis src/data/menu.ts. */
 export function Categories() {
+  const { categories, byCategory } = useCatalog();
   return (
     <section id="categories" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24" aria-labelledby="categories-title">
       <Reveal>
@@ -34,7 +37,7 @@ export function Categories() {
 
       <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
         {categories.map((c, i) => {
-          const n = productsByCategory(c.id).length;
+          const n = byCategory(c.id).length;
           const tall = i === TALL;
           const wide = WIDE.includes(i);
           return (

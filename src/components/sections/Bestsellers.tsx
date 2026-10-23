@@ -1,10 +1,13 @@
-import { products } from "@/data/menu";
+"use client";
+
 import { FeaturedCard } from "../FeaturedCard";
+import { useCatalog } from "../shop/ShopProvider";
 import { Reveal } from "../ui/Reveal";
 import { SectionHeading } from "./SectionHeading";
 
 export function Bestsellers() {
-  const favorites = products.filter((p) => p.popular && p.available);
+  const { products, isAvailable } = useCatalog();
+  const favorites = products.filter((p) => p.popular && p.available && isAvailable(p.id));
   if (favorites.length === 0) return null;
 
   return (

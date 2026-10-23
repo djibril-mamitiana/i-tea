@@ -9,6 +9,7 @@ import { ProductVisual } from "@/components/ProductVisual";
 import { activeModes, activePayments, site } from "@/config/site";
 import { formatPrice } from "@/lib/format";
 import { validateCustomer } from "@/lib/order-validation";
+import { PAUSE_DEFAULT_TEXT } from "@/lib/shop";
 import type { ConfirmedOrder, OrderApiError, OrderMode } from "@/lib/types";
 
 const CUSTOMER_KEY = "itea.customer.v1";
@@ -30,7 +31,7 @@ const readSavedCustomer = () => {
 
 export function CheckoutClient() {
   const router = useRouter();
-  const { hydrated, lines, count, totals, mode, setMode, clear, openCart, removeItem, rewards, rewardLines, refreshOffers } = useCart();
+  const { hydrated, lines, count, totals, mode, setMode, clear, openCart, removeItem, rewards, rewardLines, refreshOffers, orderingPaused, orderingMessage } = useCart();
   const payments = activePayments();
 
   // Coordonnées mémorisées sur cet appareil (jamais envoyées ailleurs qu'à la commande).
@@ -170,7 +171,7 @@ export function CheckoutClient() {
   }
 
   const submitting = status === "loading";
-  const blocked = totals.minOrderMissing > 0;
+  const blocked = totals.minOrderMissing > 0 || orderingPaused;
   const ctaLabel = submitting ? "Envoi en cours…" : `Confirmer la commande · ${formatPrice(totals.total)}`;
 
   return (
@@ -183,6 +184,11 @@ export function CheckoutClient() {
 
       <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_24rem]">
         <form id="checkout-form" onSubmit={onSubmit} noValidate className="space-y-8">
+          {orderingPaused && (
+            <div role="status" className="rounded-2xl border-2 border-ink/20 bg-lemon/40 p-4 font-bold">
+              {orderingMessage || PAUSE_DEFAULT_TEXT} Tu pourras commander dès la reprise.
+            </div>
+          )}
           {banner && (
             <div ref={bannerRef} role="alert" className="rounded-2xl border-2 border-danger/30 bg-danger/5 p-4 text-danger">
               <p className="flex items-start gap-2 font-bold">

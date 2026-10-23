@@ -7,6 +7,8 @@ import { DemoBanner } from "@/components/DemoBanner";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { OffersProvider } from "@/components/offers/OffersProvider";
+import { PauseBanner } from "@/components/PauseBanner";
+import { ShopProvider } from "@/components/shop/ShopProvider";
 
 /** Habillage du site public (panier, en-tête, pied de page). L'admin n'en fait pas partie. */
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -18,18 +20,21 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       >
         Aller au contenu
       </a>
-      <OffersProvider>
-        <CartProvider>
-          <DemoBanner />
-          <Header />
-          <main id="contenu">{children}</main>
-          <Footer />
-          <ProductDialog />
-          <CartDrawer />
-          <Toast />
-          <MobileCartBar />
-        </CartProvider>
-      </OffersProvider>
+      <ShopProvider>
+        <OffersProvider>
+          <CartProvider>
+            <DemoBanner />
+            <PauseBanner />
+            <Header />
+            <main id="contenu">{children}</main>
+            <Footer />
+            <ProductDialog />
+            <CartDrawer />
+            <Toast />
+            <MobileCartBar />
+          </CartProvider>
+        </OffersProvider>
+      </ShopProvider>
     </>
   );
 }

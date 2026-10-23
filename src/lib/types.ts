@@ -186,5 +186,5 @@ export type OrderApiError = {
   /** Lignes devenues indisponibles ou dont le prix a changé. */
   issues?: { productId: string; message: string }[];
   /** « offers_changed » : une offre n'est plus valable ; le client doit actualiser ses offres. */
-  code?: "offers_changed";
+  code?: "offers_changed" | "orders_paused";
 };

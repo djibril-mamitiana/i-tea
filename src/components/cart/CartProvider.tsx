@@ -7,7 +7,9 @@ import { cartReducer, sanitizeLines } from "@/lib/cart-state";
 import { liveOffers, offerProgress, reconcileRewards, rewardItem, sanitizeRewards, type OfferProgress } from "@/lib/offers";
 import { computeTotals, priceLine } from "@/lib/pricing";
 import type { CartLine, ConfirmedOrder, OrderMode, PricedLine, RewardSelection, Selections, Totals } from "@/lib/types";
+import { stateOf, unavailableMessage } from "@/lib/shop";
 import { useOffers } from "../offers/OffersProvider";
+import { useShop } from "../shop/ShopProvider";
 
 const STORAGE_KEY = "itea.cart.v1";
 
@@ -37,6 +39,9 @@ interface CartContextValue {
   claimReward: (selection: RewardSelection) => void;
   removeReward: (index: number) => void;
   refreshOffers: () => Promise<void>;
+  /** Pause des commandes en ligne décidée dans l'admin. */
+  orderingPaused: boolean;
+  orderingMessage: string;
   addItem: (productId: string, selections: Selections, qty?: number) => void;
   setQty: (id: string, qty: number) => void;
   removeItem: (id: string) => void;
@@ -66,7 +71,13 @@ export function useCart(): CartContextValue {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const { offers, status: offersStatus, refresh } = useOffers();
+  const { offers: allOffers, status: offersStatus, refresh } = useOffers();
+  const { menu, ordering, loaded: shopLoaded } = useShop();
+  // Un cadeau lié à un plat en rupture ou retiré n'est plus proposé.
+  const offers = useMemo(
+    () => allOffers.map((o) => ({ ...o, alternatives: o.alternatives.filter((a) => !a.productId || stateOf(menu, a.productId) === "available") })),
+    [allOffers, menu],
+  );
   const [state, dispatch] = useReducer(cartReducer, {
     lines: [],
     rewards: [],
@@ -135,6 +146,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [lines, state.mode],
   );
 
+  // Un plat devenu indisponible (rupture ou retrait décidés dans l'admin) quitte le panier, avec un message.
+  useEffect(() => {
+    if (!state.hydrated || !shopLoaded) return;
+    const gone = state.lines.filter((l) => stateOf(menu, l.productId) !== "available");
+    if (gone.length === 0) return;
+    for (const l of gone) dispatch({ type: "remove", id: l.id });
+    const names = gone.map((l) => getProduct(l.productId)?.name ?? "Un plat");
+    const message = `${names.join(", ")} retiré${gone.length > 1 ? "s" : ""} de ton panier : plus disponible`;
+    queueMicrotask(() => setToast({ id: Date.now(), message }));
+  }, [state.hydrated, state.lines, shopLoaded, menu]);
+
   // Offres : un cadeau ne reste dans le panier que tant que l'offre est valable et que les achats le justifient.
   const cartQty = useMemo(() => state.lines.map((l) => ({ productId: l.productId, qty: l.qty })), [state.lines]);
   useEffect(() => {
@@ -170,22 +192,35 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(t);
   }, [toast]);
 
-  const addItem = useCallback((productId: string, selections: Selections, qty = 1) => {
-    const product = getProduct(productId);
-    if (!product || !product.available) return;
-    dispatch({ type: "add", productId, selections, qty });
-    setBump((b) => b + 1);
-    setToast({ id: Date.now(), message: `${product.name} ajouté au panier` });
-  }, []);
+  const addItem = useCallback(
+    (productId: string, selections: Selections, qty = 1) => {
+      const product = getProduct(productId);
+      if (!product || !product.available) return;
+      const state = stateOf(menu, productId);
+      if (state !== "available") {
+        setToast({ id: Date.now(), message: unavailableMessage(product.name, state) });
+        return;
+      }
+      dispatch({ type: "add", productId, selections, qty });
+      setBump((b) => b + 1);
+      setToast({ id: Date.now(), message: `${product.name} ajouté au panier` });
+    },
+    [menu],
+  );
 
   const quickAdd = useCallback(
     (productId: string) => {
       const product = getProduct(productId);
       if (!product || !product.available) return;
+      const state = stateOf(menu, productId);
+      if (state !== "available") {
+        setToast({ id: Date.now(), message: unavailableMessage(product.name, state) });
+        return;
+      }
       if (product.groups.length === 0) addItem(productId, {}, 1);
       else setDialog({ productId });
     },
-    [addItem],
+    [addItem, menu],
   );
 
   const value: CartContextValue = {
@@ -205,6 +240,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     },
     removeReward: (index) => dispatch({ type: "removeReward", index }),
     refreshOffers: () => refresh(true),
+    orderingPaused: ordering.paused,
+    orderingMessage: ordering.message,
     addItem,
     setQty: (id, qty) => dispatch({ type: "setQty", id, qty }),
     removeItem: (id) => dispatch({ type: "remove", id }),

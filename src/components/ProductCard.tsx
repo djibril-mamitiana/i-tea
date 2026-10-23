@@ -4,11 +4,14 @@ import { Plus, SlidersHorizontal } from "lucide-react";
 import { formatPrice } from "@/lib/format";
 import type { Product } from "@/lib/types";
 import { useCart } from "./cart/CartProvider";
+import { useCatalog } from "./shop/ShopProvider";
 import { ProductVisual } from "./ProductVisual";
 import { Stepper } from "./ui/Stepper";
 
 export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
   const { quickAdd, qtyOfProduct, lines, setQty, hydrated } = useCart();
+  const { isAvailable } = useCatalog();
+  const available = product.available && isAvailable(product.id);
   const customizable = product.groups.length > 0;
   const inCart = hydrated ? qtyOfProduct(product.id) : 0;
   const simpleLine = !customizable ? lines.find((l) => l.line.productId === product.id) : undefined;
@@ -16,25 +19,25 @@ export function ProductCard({ product, priority = false }: { product: Product; p
   return (
     <article
       className={`group flex h-full flex-col overflow-hidden rounded-card bg-white shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-pop ${
-        product.available ? "" : "opacity-70"
+        available ? "" : "opacity-70"
       }`}
     >
       <div className="relative">
         <button
           type="button"
           onClick={() => quickAdd(product.id)}
-          disabled={!product.available}
+          disabled={!available}
           className="block w-full text-left"
-          aria-label={product.available ? `${customizable ? "Personnaliser" : "Ajouter"} ${product.name}` : `${product.name} — indisponible`}
+          aria-label={available ? `${customizable ? "Personnaliser" : "Ajouter"} ${product.name}` : `${product.name} — indisponible`}
         >
           <ProductVisual item={product} className="aspect-square w-full" priority={priority} />
         </button>
-        {product.badge && product.available && (
+        {product.badge && available && (
           <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-ink px-3 py-1 text-xs font-bold uppercase tracking-wide text-cream">
             {product.badge}
           </span>
         )}
-        {!product.available && (
+        {!available && (
           <span className="pointer-events-none absolute inset-x-0 bottom-3 mx-auto w-fit rounded-full bg-ink px-4 py-1.5 text-sm font-bold text-cream">
             Indisponible
           </span>
@@ -56,7 +59,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
         <div className="mt-auto flex flex-col gap-3 pt-3">
           <p className="font-display text-xl font-extrabold">{formatPrice(product.price)}</p>
 
-          {!product.available ? (
+          {!available ? (
             <button type="button" className="btn btn-ink w-full" disabled>
               Indisponible
             </button>

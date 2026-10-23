@@ -3,15 +3,16 @@
 import { ArrowRight, X } from "lucide-react";
 import Link from "next/link";
 import { activePayments, site } from "@/config/site";
-import { categories, productsByCategory } from "@/data/menu";
 import { CategoryLink } from "./CategoryLink";
 import { Logo } from "./Logo";
 import { OpenStatus } from "./OpenStatus";
+import { useCatalog } from "./shop/ShopProvider";
 import { Sheet } from "./ui/Sheet";
 
 /** Menu de navigation compact pour téléphone : grandes cibles, accès direct à la commande. */
 export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const payment = activePayments()[0];
+  const { categories, byCategory } = useCatalog();
   return (
     <Sheet open={open} onClose={onClose} variant="menu" label="Menu de navigation">
       <div className="sheet-panel max-h-[92dvh] w-full overflow-y-auto rounded-b-[2rem] bg-cream shadow-pop">
@@ -38,7 +39,7 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
                 >
                   <span>{c.name}</span>
                   <span className="flex items-center gap-2 text-sm font-semibold text-muted">
-                    {productsByCategory(c.id).length}
+                    {byCategory(c.id).length}
                     <ArrowRight size={18} aria-hidden="true" />
                   </span>
                 </CategoryLink>

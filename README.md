@@ -110,6 +110,22 @@ Les prix sont recalculés **côté serveur** à partir de ce même fichier : le 
 | Suivi de commande côté client, gestion de la carte depuis l'admin | ❌ non inclus |
 | Codes promo / remises | ❌ non implémentés (aucune fausse promotion n'est affichée) |
 
+## Carte et pause des commandes (admin)
+
+**Carte (`/admin/carte`)** : l'équipe décide, plat par plat et sans toucher au code, de :
+- laisser le plat **disponible** ;
+- le mettre **en rupture** : il reste visible mais grisé (« Indisponible ») et ne peut plus être commandé ;
+- le **retirer du site** : il disparaît du menu, de la sélection et des compteurs, et ne peut plus être commandé.
+
+Le changement est immédiat. Il est aussi appliqué au panier des clients (un plat devenu indisponible en sort avec un message) et **vérifié par le
+serveur à chaque commande**. Un cadeau d'offre lié à un plat en rupture n'est plus proposé. Les noms et les prix restent dans `src/data/menu.ts`.
+
+**Pause (bouton « Commandes ouvertes / en pause » en haut de l'admin)** : un clic pour suspendre les commandes en ligne (cuisine débordée,
+fermeture…), avec un message facultatif pour les clients (« Reprise des commandes à 18h30 »). Pendant la pause, un bandeau s'affiche sur le site, le
+bouton de commande est désactivé et le serveur refuse les commandes. Un clic pour rouvrir.
+
+Tables `menu_status` et `app_meta` (créées automatiquement). API : `GET /api/shop` (publique), `/api/admin/menu` et `/api/admin/shop` (admin).
+
 ## Offres (`/admin/offres`)
 
 Les offres se créent et se modifient dans l'espace admin, onglet **Offres**, sans toucher au code. Deux types :
@@ -135,6 +151,10 @@ API : `GET /api/offers` (offres en vigueur, publique) ; `/api/admin/offers` et `
 créées automatiquement comme les autres.
 
 ## Espace admin (`/admin`)
+
+Trois onglets : **Commandes**, **Carte**, **Offres**. Tableau de bord des commandes : nouvelles commandes, nombre et montant du jour, recherche (numéro,
+client, téléphone, plat), filtre à emporter / livraison, historique par période (aujourd'hui, 7 jours, 30 jours), durée d'attente en couleur
+(une commande oubliée se voit) et **ticket imprimable** (imprimante à tickets 80 mm ou feuille A4).
 
 Réservé au restaurant : liste des commandes qui se met à jour toute seule (toutes les 15 s), alerte sonore
 et titre d'onglet « (2) Nouvelles commandes », fiche complète (client, téléphone cliquable, adresse, notes,

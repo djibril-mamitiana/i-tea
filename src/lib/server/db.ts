@@ -66,8 +66,16 @@ const SCHEMA: Statement[] = [
       data       JSONB NOT NULL
     )`,
   },
-  // Petits repères internes (ex. « les offres de départ ont été créées »).
+  // Petits repères internes (ex. « les offres de départ ont été créées », pause des commandes).
   { text: "CREATE TABLE IF NOT EXISTS app_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)" },
+  // Plats en rupture ou retirés du site (un plat absent de cette table est disponible).
+  {
+    text: `CREATE TABLE IF NOT EXISTS menu_status (
+      product_id TEXT PRIMARY KEY,
+      state      TEXT NOT NULL CHECK (state IN ('unavailable', 'hidden')),
+      updated_at TIMESTAMPTZ NOT NULL
+    )`,
+  },
 ];
 
 type Source = { kind: "postgres"; url: string } | { kind: "pglite"; dir: string };
@@ -123,10 +131,10 @@ async function init(): Promise<Db> {
     const db = await connect(resolveSource());
     // Une requête légère suffit à constater que le schéma est déjà en place.
     const [present] = await db.query(
-      "SELECT to_regclass('orders') AS orders, to_regclass('admin_login_attempts') AS attempts, to_regclass('offers') AS offers, to_regclass('app_meta') AS meta",
+      "SELECT to_regclass('orders') AS orders, to_regclass('admin_login_attempts') AS attempts, to_regclass('offers') AS offers, to_regclass('app_meta') AS meta, to_regclass('menu_status') AS menu",
     );
     // Les instructions de SCHEMA sont idempotentes : une base plus ancienne reçoit simplement les tables manquantes.
-    if (!present?.orders || !present?.attempts || !present?.offers || !present?.meta) await db.batch(SCHEMA);
+    if (!present?.orders || !present?.attempts || !present?.offers || !present?.meta || !present?.menu) await db.batch(SCHEMA);
     return db;
   } catch (err) {
     if (err instanceof DatabaseUnavailableError) throw err;
