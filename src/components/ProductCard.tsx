@@ -33,7 +33,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
           <ProductVisual item={product} className="aspect-square w-full" priority={priority} />
         </button>
         {product.badge && available && (
-          <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-ink px-3 py-1 text-xs font-bold uppercase tracking-wide text-cream">
+          <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-pink px-3 py-1 text-xs font-bold uppercase tracking-wide text-ink">
             {product.badge}
           </span>
         )}
@@ -53,11 +53,11 @@ export function ProductCard({ product, priority = false }: { product: Product; p
       </div>
 
       <div className="flex flex-1 flex-col gap-1 p-4">
-        <h3 className="text-lg font-bold leading-tight">{product.name}</h3>
+        <h3 className="text-lg font-bold leading-tight text-leaf">{product.name}</h3>
         {product.description && <p className="line-clamp-2 text-sm leading-snug text-muted">{product.description}</p>}
 
         <div className="mt-auto flex flex-col gap-3 pt-3">
-          <p className="font-display text-xl font-extrabold">{formatPrice(product.price)}</p>
+          <p className="font-display text-xl font-extrabold text-accent-text">{formatPrice(product.price)}</p>
 
           {!available ? (
             <button type="button" className="btn btn-ink w-full" disabled>

@@ -6,6 +6,7 @@ import { getProduct } from "@/data/menu";
 import { formatPrice } from "@/lib/format";
 import type { Offer } from "@/lib/offers";
 import type { Product } from "@/lib/types";
+import { Sakura } from "../art/Brand";
 import { CategoryLink } from "../CategoryLink";
 import { useOffers } from "../offers/OffersProvider";
 import { ProductVisual } from "../ProductVisual";
@@ -60,8 +61,11 @@ export function Offers() {
   const heroNotes = hero ? [periodNote(hero), modesNote(hero)].filter(Boolean) : [];
 
   return (
-    <section id="offre" className="relative overflow-hidden bg-ink py-16 text-cream lg:py-24" aria-labelledby="offers-title">
-      <div className="absolute -left-32 top-10 size-96 rounded-full bg-ink-2/70" aria-hidden="true" />
+    <section id="offre" className="bg-seigaiha-light relative overflow-hidden bg-forest py-16 text-cream lg:py-24" aria-labelledby="offers-title">
+      <div className="absolute -left-32 top-10 size-96 rounded-full bg-forest-2/70" aria-hidden="true" />
+      <Sakura size={72} rotate={-14} className="pointer-events-none absolute right-[6%] top-8 hidden opacity-90 sm:block" />
+      <Sakura size={44} rotate={20} className="pointer-events-none absolute right-[16%] top-24 hidden opacity-80 sm:block" />
+      <Sakura size={56} rotate={8} className="pointer-events-none absolute bottom-10 left-[3%] hidden opacity-70 lg:block" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {hero && (
           <div className={`grid items-center gap-10 ${tiles.length ? "lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-16" : ""}`}>

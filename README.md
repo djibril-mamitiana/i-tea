@@ -71,13 +71,20 @@ Les prix sont recalculés **côté serveur** à partir de ce même fichier : le 
 
 ## Identité visuelle et photos
 
-- **Palette** (dans `src/app/globals.css`, bloc `@theme`) : brun profond `#302019`, crème `#FFF8EF`, caramel `#C58A50`
-  (actions), vert matcha `#78966A`, rose fruité `#F1A6B6`. Le caramel est assombri (`accent-text`) pour le texte, afin de
-  garder un contraste suffisant.
+- **Palette** (dans `src/app/globals.css`, bloc `@theme`), mesurée sur le logo et les affiches : noir pinceau du logo `ink`
+  `#231d18`, vert des feuilles `leaf` `#2f5a2b` (titres, boutons sombres) et `forest` `#1f3b23` (bandeaux sombres, pied de page),
+  rose des fleurs de cerisier `pink` `#f4799f` / `blossom` `#f6c3d0` (pastilles, accents), orange des prix et des titres
+  d'affiche `accent` `#e0802b` (boutons) et `orange` `#c8651a` (grands titres), beige doré `gold` `#dbb68f` (anneau du logo),
+  fond papier crème `cream` `#fbf3e2` / `sand` `#f3e5c8`. L'orange est assombri pour le texte courant (`accent-text`
+  `#a45010`). Toutes les paires texte/fond ont été contrôlées : ≥ 4,5:1 pour le texte, ≥ 3:1 pour les grands titres.
+- **Motifs** (`src/components/art/Brand.tsx`, `globals.css`) : fleur de cerisier `Sakura`, branche `SakuraBranch` et paire de
+  feuilles `LeafPair` dessinées d'après le logo ; vagues japonaises `bg-seigaiha` / `bg-seigaiha-light` des affiches ; trait de
+  pinceau rose `brush-pink` sous le dernier mot du titre.
 - **Logo** : le logo rond d'I Tea (`public/brand/logo.webp`, généré depuis le fichier fourni) sert dans l'en-tête, le pied de page,
   l'icône du navigateur (`src/app/icon.png`, `apple-icon.png`) et l'image de partage (`opengraph-image.jpg`).
-- **Typographie** : titres en *Fraunces* (avec le sous-ensemble vietnamien, pour « phở »), texte en *DM Sans* ; *Be Vietnam Pro* ne
-  sert que de repli pour les caractères vietnamiens. Classes utilitaires : `display-xl`, `display-lg`, `display-em`, `eyebrow`.
+- **Typographie** : titres en *Playfair Display* (celle des affiches ; sous-ensemble vietnamien inclus, pour « phở »), texte en
+  *DM Sans* ; *Be Vietnam Pro* ne sert que de repli pour les caractères vietnamiens. Classes utilitaires : `display-xl`,
+  `display-lg`, `display-em` (italique), `eyebrow`.
 - **Visuels** : les photos de plats viennent des affiches d'I Tea. Les produits sans photo, le hero et les catégories utilisent des
   **illustrations vectorielles originales** (gobelets, bols, rouleaux, taiyaki…), qui ne prétendent pas être des photos. La photo de
   la salle (`public/media/resto.jpg`) illustre la section « L'univers I Tea » : à vérifier (voir `A_CONFIRMER.md`). Tout se remplace :

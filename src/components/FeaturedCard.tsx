@@ -38,7 +38,7 @@ export function FeaturedCard({ product, priority = false }: { product: Product; 
           )}
         </div>
         {product.badge && (
-          <span className="absolute left-1/2 top-4 -translate-x-1/2 rounded-full bg-ink px-3.5 py-1 text-xs font-bold uppercase tracking-[0.12em] text-cream shadow">
+          <span className="absolute left-1/2 top-4 -translate-x-1/2 rounded-full bg-pink px-3.5 py-1 text-xs font-bold uppercase tracking-[0.12em] text-ink shadow">
             {product.badge}
           </span>
         )}
@@ -53,10 +53,10 @@ export function FeaturedCard({ product, priority = false }: { product: Product; 
       </button>
 
       <div className="flex flex-1 flex-col px-1 pt-5">
-        <h3 className="font-display text-2xl font-bold leading-tight">{product.name}</h3>
+        <h3 className="font-display text-2xl font-bold leading-tight text-leaf">{product.name}</h3>
         {product.description && <p className="mt-1.5 line-clamp-2 text-muted">{product.description}</p>}
         <div className="mt-auto flex items-center justify-between gap-3 pt-5">
-          <p className="font-display text-2xl font-bold">{formatPrice(product.price)}</p>
+          <p className="font-display text-2xl font-bold text-accent-text">{formatPrice(product.price)}</p>
           <button type="button" className="btn btn-accent" onClick={() => quickAdd(product.id)}>
             {customizable ? <SlidersHorizontal size={18} aria-hidden="true" /> : <Plus size={18} aria-hidden="true" />}
             {customizable ? "Personnaliser" : "Ajouter"}

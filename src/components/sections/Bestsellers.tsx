@@ -11,13 +11,13 @@ export function Bestsellers() {
   if (favorites.length === 0) return null;
 
   return (
-    <section id="selection" className="bg-sand py-16 lg:py-24" aria-labelledby="fav-title">
+    <section id="selection" className="bg-seigaiha bg-sand py-16 lg:py-24" aria-labelledby="fav-title">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
           <SectionHeading
             id="fav-title"
             eyebrow="À goûter"
-            title={<>Notre <span className="display-em text-accent-text">sélection</span></>}
+            title={<>Notre <span className="display-em text-orange">sélection</span></>}
           >
             Quelques plats et boissons de la carte, pour commencer. Un tap, et c&apos;est dans ton panier.
           </SectionHeading>

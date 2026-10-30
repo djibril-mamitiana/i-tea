@@ -65,7 +65,7 @@ export function ConfirmationClient() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-24 pt-10 sm:px-6">
-      <div className="rounded-card bg-ink p-8 text-center text-cream shadow-pop sm:p-12">
+      <div className="rounded-card bg-forest bg-seigaiha-light p-8 text-center text-cream shadow-pop sm:p-12">
         <span className="mx-auto grid size-16 place-items-center rounded-full bg-matcha text-ink">
           <Check size={34} strokeWidth={3.5} aria-hidden="true" />
         </span>

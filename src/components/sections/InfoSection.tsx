@@ -31,7 +31,7 @@ export function InfoSection() {
   return (
     <section id="infos" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24" aria-labelledby="infos-title">
       <Reveal>
-        <SectionHeading id="infos-title" eyebrow="Infos pratiques" title={<>Venir, <span className="display-em text-accent-text">commander</span>, se faire livrer</>} />
+        <SectionHeading id="infos-title" eyebrow="Infos pratiques" title={<>Venir, <span className="display-em text-orange">commander</span>, se faire livrer</>} />
       </Reveal>
 
       <div className="mt-10 grid gap-5 lg:grid-cols-3">

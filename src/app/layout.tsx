@@ -1,14 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Be_Vietnam_Pro, DM_Sans, Fraunces } from "next/font/google";
+import { Be_Vietnam_Pro, DM_Sans, Playfair_Display } from "next/font/google";
 import { site } from "@/config/site";
 import "./globals.css";
 
-// Fraunces : serif variable expressif, adouci (axe SOFT) pour un ton gourmand et premium.
-const display = Fraunces({
-  // « vietnamien » : la carte contient « phở » et d'autres noms vietnamiens.
+// Playfair Display : le serif élégant des titres des affiches d'I Tea (avec le vietnamien : « phở »).
+const display = Playfair_Display({
   subsets: ["latin", "vietnamese"],
-  variable: "--font-fraunces",
-  axes: ["SOFT", "opsz"],
+  variable: "--font-playfair",
   style: ["normal", "italic"],
   display: "swap",
 });
@@ -48,7 +46,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#302019",
+  themeColor: "#1f3b23",
 };
 
 /** Racine minimale : polices et styles. Le site public et l'admin ont chacun leur layout. */

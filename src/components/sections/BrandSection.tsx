@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/config/site";
+import { LeafPair, Sakura } from "../art/Brand";
 import { Reveal } from "../ui/Reveal";
 import { SectionHeading } from "./SectionHeading";
 
@@ -20,7 +21,9 @@ export function BrandSection() {
         <Reveal className="relative mx-auto w-full max-w-md lg:max-w-none">
           {site.media.brand ? (
             <>
-              <div className="relative aspect-[6/7] overflow-hidden rounded-t-[999px] rounded-b-[2.5rem] shadow-pop">
+              {/* Fin contour vert décalé : l'écho du cercle vert qui entoure le logo */}
+              <div className="absolute -inset-3 rounded-t-[999px] rounded-b-[2.9rem] border-2 border-leaf/30" aria-hidden="true" />
+              <div className="relative aspect-[6/7] overflow-hidden rounded-t-[999px] rounded-b-[2.5rem] shadow-pop ring-4 ring-gold/70">
                 <Image src={site.media.brand} alt="La salle d'I Tea" fill sizes="(min-width: 1024px) 40vw, 90vw" className="object-cover" />
               </div>
               <Image
@@ -28,8 +31,12 @@ export function BrandSection() {
                 alt={`Logo ${site.name}`}
                 width={240}
                 height={240}
-                className="absolute -bottom-4 -left-2 size-28 rounded-full shadow-pop ring-4 ring-cream sm:-left-4 sm:size-32"
+                className="absolute -bottom-4 -left-2 size-28 rounded-full shadow-pop ring-4 ring-cream outline outline-2 outline-offset-4 outline-gold sm:-left-4 sm:size-32"
               />
+              <Sakura size={36} rotate={-12} className="pointer-events-none absolute -bottom-9 left-1 z-10 sm:left-0" />
+              <Sakura size={44} rotate={24} className="pointer-events-none absolute -bottom-11 left-16 z-10 sm:left-20" />
+              <Sakura size={30} rotate={8} className="pointer-events-none absolute -bottom-7 left-32 z-10 sm:left-40" />
+              <LeafPair className="pointer-events-none absolute -right-5 top-10 hidden h-24 text-leaf sm:block" />
             </>
           ) : (
             <div className="relative aspect-[6/7] overflow-hidden rounded-t-[999px] rounded-b-[2.5rem] bg-pink-soft">
@@ -55,7 +62,7 @@ export function BrandSection() {
             <SectionHeading
               id="brand-title"
               eyebrow="L'univers I Tea"
-              title={<>Faits maison, <span className="display-em text-accent-text">avec des produits frais.</span></>}
+              title={<>Faits maison, <span className="display-em text-orange">avec des produits frais.</span></>}
             >
               La carte d&apos;I Tea réunit de la cuisine vietnamienne, des bubble teas, du matcha, des cafés et des
               gourmandises. {site.highlights.halal}.

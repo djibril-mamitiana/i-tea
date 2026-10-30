@@ -2,6 +2,7 @@ import { ArrowRight, BadgeCheck, Bike, Leaf } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/config/site";
+import { LeafPair, SakuraBranch } from "../art/Brand";
 import { HeroScene } from "../art/Scenes";
 
 /** Collage de trois vraies photos : une grande arche, une arche haute et un médaillon, avec le logo en repère. */
@@ -38,13 +39,19 @@ export function Hero() {
 
   return (
     <section className="relative overflow-hidden" aria-labelledby="hero-title">
-      {/* grand disque de fond, décalé : il donne de la profondeur sans charger la page */}
-      <div className="absolute -right-32 -top-24 -z-10 size-[26rem] rounded-full bg-caramel-soft/70 lg:-right-40 lg:-top-40 lg:size-[44rem]" aria-hidden="true" />
+      {/* Fond du logo : un voile rose qui se fond dans le papier crème, les vagues des affiches, le halo doré et le fin cercle vert */}
+      <div
+        className="absolute inset-0 -z-30 bg-[radial-gradient(52rem_38rem_at_88%_6%,rgb(251_221_230/0.9),transparent_65%),radial-gradient(40rem_28rem_at_0%_100%,rgb(241_221_184/0.55),transparent_70%)]"
+        aria-hidden="true"
+      />
+      <div className="bg-seigaiha absolute inset-0 -z-20 opacity-60 [mask-image:linear-gradient(to_bottom,#000,transparent_80%)]" aria-hidden="true" />
+      <div className="absolute -right-32 -top-24 -z-10 size-[26rem] rounded-full bg-caramel-soft/60 lg:-right-40 lg:-top-40 lg:size-[44rem]" aria-hidden="true" />
+      <div className="absolute -right-24 top-8 -z-10 hidden size-[30rem] rounded-full border-2 border-leaf/25 lg:block" aria-hidden="true" />
 
       <div className="mx-auto grid max-w-7xl items-center gap-2 px-4 pb-10 pt-6 sm:px-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-6 lg:px-8 lg:pb-20 lg:pt-8">
         <div className="animate-rise">
-          <p className="eyebrow flex items-center gap-2">
-            <span className="h-px w-8 shrink-0 bg-accent" aria-hidden="true" />
+          <p className="eyebrow flex items-center gap-2.5">
+            <LeafPair className="h-7 w-3.5 shrink-0 text-leaf" />
             {site.descriptor}
           </p>
           <h1 id="hero-title" className="display-xl mt-5">
@@ -52,7 +59,7 @@ export function Hero() {
             <br />
             Ton thé.
             <br />
-            <span className="display-em text-accent-text">Ton moment.</span>
+            <span className="display-em brush-pink text-orange">Ton moment.</span>
           </h1>
           <p className="mt-6 max-w-md text-lg leading-relaxed text-muted">
             Cuisine vietnamienne, bubble teas, matcha, cafés et gourmandises, faits maison avec des produits frais.
@@ -71,15 +78,15 @@ export function Hero() {
 
           <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-ink/80">
             <li className="inline-flex items-center gap-2">
-              <BadgeCheck size={18} className="text-accent-text" aria-hidden="true" />
+              <BadgeCheck size={18} className="text-leaf" aria-hidden="true" />
               {site.highlights.halal}
             </li>
             <li className="inline-flex items-center gap-2">
-              <Leaf size={18} className="text-accent-text" aria-hidden="true" />
+              <Leaf size={18} className="text-leaf" aria-hidden="true" />
               {site.highlights.homemade}
             </li>
             <li className="inline-flex items-center gap-2">
-              <Bike size={18} className="text-accent-text" aria-hidden="true" />
+              <Bike size={18} className="text-leaf" aria-hidden="true" />
               {serviceLabel}
             </li>
           </ul>
@@ -87,6 +94,8 @@ export function Hero() {
 
         {/* Visuel : la photo fournie dans site.media.hero, sinon l'illustration de démonstration */}
         <div className="relative mx-auto w-full max-w-2xl lg:max-w-none lg:-mr-4">
+          <SakuraBranch className="pointer-events-none absolute -right-3 -top-8 z-10 w-40 sm:-right-6 sm:-top-16 sm:w-60 lg:-right-10 lg:-top-20 lg:w-72" />
+          <LeafPair className="pointer-events-none absolute -left-5 bottom-4 z-10 hidden h-28 text-leaf sm:block" />
           {site.media.hero ? (
             <div className="relative aspect-[6/5] overflow-hidden rounded-t-[999px] rounded-b-[2.5rem] shadow-pop">
               <Image src={site.media.hero} alt="Plats et boissons I Tea" fill priority sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover" />

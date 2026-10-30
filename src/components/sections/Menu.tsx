@@ -68,7 +68,7 @@ export function Menu() {
     <section id="menu" aria-labelledby="menu-title">
       <div className="mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8 lg:pt-24">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <SectionHeading id="menu-title" eyebrow="Commander" title={<>Toute la <span className="display-em text-accent-text">carte</span></>} />
+          <SectionHeading id="menu-title" eyebrow="Commander" title={<>Toute la <span className="display-em text-orange">carte</span></>} />
           <div className="relative w-full md:max-w-sm">
             <Search size={20} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
             <input
@@ -114,7 +114,7 @@ export function Menu() {
                   aria-pressed={filter === chip.id}
                   onClick={() => chooseFilter(chip.id)}
                   className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[0.95rem] font-bold transition ${
-                    filter === chip.id ? "bg-ink text-cream" : "bg-white text-ink ring-1 ring-line hover:bg-sand"
+                    filter === chip.id ? "bg-leaf text-cream" : "bg-white text-ink ring-1 ring-line hover:bg-sand"
                   }`}
                 >
                   {chip.name}

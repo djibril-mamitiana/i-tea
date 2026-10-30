@@ -27,6 +27,7 @@ export function formatOrderTime(iso: string): string {
 /** « 12 min », « 2 h 05 » : lisible d'un coup d'œil quand une commande attend depuis longtemps. */
 function duration(minutes: number): string {
   if (minutes < 60) return `${minutes} min`;
+  if (minutes >= 24 * 60) return `${Math.floor(minutes / (24 * 60))} j`;
   const h = Math.floor(minutes / 60);
   return `${h} h ${String(minutes % 60).padStart(2, "0")}`;
 }

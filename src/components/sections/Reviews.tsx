@@ -12,10 +12,10 @@ export function Reviews() {
   if (items.length === 0 && !site.demoMode) return null;
 
   return (
-    <section className="bg-sand py-16 lg:py-24" aria-labelledby="reviews-title">
+    <section className="bg-seigaiha bg-sand py-16 lg:py-24" aria-labelledby="reviews-title">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
-          <SectionHeading id="reviews-title" eyebrow="Ils en parlent" title={<>Ce que disent <span className="display-em text-accent-text">nos clients</span></>} />
+          <SectionHeading id="reviews-title" eyebrow="Ils en parlent" title={<>Ce que disent <span className="display-em text-orange">nos clients</span></>} />
         </Reveal>
 
         {items.length > 0 ? (

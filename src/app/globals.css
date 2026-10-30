@@ -1,47 +1,56 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
-   I Tea — design system
-   ink     : brun profond (structure, texte, sections sombres)
-   cream   : crème chaude (fond du site)
-   caramel : actions principales (boutons « Commander », « Ajouter »)
-   matcha  : vert tendre, pour les repères positifs et les accents frais
-   pink    : rose fruité, pour la gourmandise et les fonds de cartes
-   Les couleurs « soft » sont des fonds de cartes ; « accent-text » est
-   le caramel assombri pour le texte (contraste ≥ 4,5 sur la crème).
+   I Tea — design system, tiré du logo et des affiches du restaurant
+   ink     : l'encre du pinceau (texte, accents sombres)
+   cream   : le papier crème des affiches (fond du site) ; sand : papier plus profond
+   leaf    : le vert des feuilles du logo (titres, boutons sombres) ; forest : sa version profonde (sections sombres)
+   accent  : l'orange des prix et des titres des affiches (actions) ; orange : le même, pour les grands titres
+   pink    : le rose des pastilles et des fleurs de cerisier (étiquettes, accents)
+   gold    : le halo doré qui entoure le logo
+   Les couleurs « soft » sont des fonds de cartes ; « accent-text » est l'orange assombri pour le texte
+   courant (contraste ≥ 4,5 sur le papier).
    ------------------------------------------------------------------ */
 @theme {
-  --color-ink: #302019;
-  --color-ink-2: #43302a;
-  --color-ink-3: #5c443a;
-  --color-cream: #fff8ef;
-  --color-sand: #f7ebdd;
-  --color-line: #ebdccb;
-  --color-muted: #6a564b;
+  --color-ink: #231d18;
+  --color-ink-2: #382e26;
+  --color-ink-3: #54463b;
+  --color-cream: #fbf3e2;
+  --color-sand: #f3e5c8;
+  --color-line: #e4d2ae;
+  --color-muted: #675848;
 
-  --color-accent: #c58a50;
-  --color-accent-deep: #b3763b;
-  --color-accent-text: #8a5726;
-  --color-caramel-soft: #f3dfc6;
+  --color-accent: #e0802b;
+  --color-accent-deep: #c96d1c;
+  --color-accent-text: #a45010;
+  --color-orange: #c8651a;
+  --color-caramel-soft: #f1ddb8;
+  --color-gold: #dbb68f;
 
-  --color-matcha: #78966a;
-  --color-matcha-soft: #dde8d3;
-  --color-pink: #f1a6b6;
-  --color-pink-soft: #fbdce3;
+  --color-leaf: #2f5a2b;
+  --color-leaf-2: #3f6e39;
+  --color-forest: #1f3b23;
+  --color-forest-2: #2b4d2f;
+  --color-matcha: #7aa468;
+  --color-matcha-soft: #e2ebd3;
+
+  --color-pink: #f4799f;
+  --color-pink-soft: #fbdde6;
+  --color-blossom: #f6c3d0;
 
   /* Alias historiques : toutes les couleurs du site viennent de cette palette. */
-  --color-peach: #f3c9a5;
-  --color-lemon: #f5e2bd;
+  --color-peach: #f6c3d0;
+  --color-lemon: #f3e2bc;
   --color-berry: #d0586f;
   --color-taro: #d9c7f5;
   --color-danger: #b42318;
 
-  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
   --font-sans: var(--font-dm-sans), var(--font-vietnamese), "Segoe UI", system-ui, sans-serif;
 
   --radius-card: 1.75rem;
-  --shadow-card: 0 1px 0 rgb(48 32 25 / 0.04), 0 14px 34px -18px rgb(48 32 25 / 0.32);
-  --shadow-pop: 0 28px 64px -24px rgb(48 32 25 / 0.5);
+  --shadow-card: 0 1px 0 rgb(35 29 24 / 0.04), 0 14px 34px -18px rgb(70 48 24 / 0.32);
+  --shadow-pop: 0 28px 64px -24px rgb(40 36 20 / 0.5);
 
   --animate-float: float 7s ease-in-out infinite;
   --animate-float-slow: float 11s ease-in-out infinite;
@@ -84,20 +93,20 @@ body.scroll-locked {
   overflow: hidden;
 }
 
-/* Titres : serif expressif et arrondi (Fraunces), adouci pour coller à l'univers gourmand. */
+/* Titres : Playfair Display, le serif élégant des titres des affiches ; chiffres alignés pour les prix. */
 h1, h2, h3, .font-display {
   font-family: var(--font-display);
-  font-variation-settings: "SOFT" 100;
-  letter-spacing: -0.015em;
+  font-variant-numeric: lining-nums;
+  letter-spacing: -0.01em;
 }
 
 ::selection {
-  background: var(--color-pink);
+  background: var(--color-blossom);
   color: var(--color-ink);
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-ink);
+  outline: 3px solid var(--color-leaf);
   outline-offset: 2px;
   border-radius: 0.5rem;
 }
@@ -107,19 +116,19 @@ h1, h2, h3, .font-display {
 /* ---------- Typographie éditoriale ---------- */
 .display-xl {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(3.1rem, 9.2vw, 6.6rem);
-  line-height: 0.94;
-  letter-spacing: -0.035em;
+  font-weight: 800;
+  font-size: clamp(2.7rem, 6.2vw, 4.7rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
 }
 .display-lg {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(2.1rem, 5.2vw, 3.9rem);
-  line-height: 1.02;
-  letter-spacing: -0.03em;
+  font-weight: 800;
+  font-size: clamp(2rem, 4.8vw, 3.6rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
 }
-.display-em { font-style: italic; font-weight: 600; }
+.display-em { font-style: italic; font-weight: 700; }
 .eyebrow {
   font-size: 0.78rem;
   font-weight: 800;
@@ -151,12 +160,13 @@ h1, h2, h3, .font-display {
 .btn-accent {
   background: var(--color-accent);
   color: var(--color-ink);
-  box-shadow: 0 10px 24px -12px rgb(138 87 38 / 0.8);
+  box-shadow: 0 10px 24px -12px rgb(170 80 10 / 0.8);
 }
-.btn-accent:hover:not(:disabled) { background: var(--color-accent-deep); box-shadow: 0 14px 28px -12px rgb(138 87 38 / 0.9); }
+.btn-accent:hover:not(:disabled) { background: var(--color-accent-deep); box-shadow: 0 14px 28px -12px rgb(170 80 10 / 0.9); }
 
-.btn-ink { background: var(--color-ink); color: var(--color-cream); }
-.btn-ink:hover:not(:disabled) { background: var(--color-ink-2); }
+/* Bouton sombre : le vert des feuilles du logo. */
+.btn-ink { background: var(--color-leaf); color: var(--color-cream); }
+.btn-ink:hover:not(:disabled) { background: var(--color-leaf-2); }
 
 /* Sur fond sombre */
 .btn-cream { background: var(--color-cream); color: var(--color-ink); }
@@ -167,7 +177,7 @@ h1, h2, h3, .font-display {
   color: inherit;
   box-shadow: inset 0 0 0 2px currentColor;
 }
-.btn-ghost:hover:not(:disabled) { background: rgb(48 32 25 / 0.06); }
+.btn-ghost:hover:not(:disabled) { background: rgb(47 90 43 / 0.08); }
 .on-dark .btn-ghost:hover:not(:disabled), .btn-ghost.on-dark:hover:not(:disabled) { background: rgb(255 255 255 / 0.12); }
 
 .btn-lg { min-height: 3.5rem; padding: 0 2rem; font-size: 1.0625rem; }
@@ -184,9 +194,9 @@ h1, h2, h3, .font-display {
   font-size: 1rem; /* 16px : évite le zoom automatique d'iOS */
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.field::placeholder { color: #86746a; }
-.field:hover { border-color: #dcc9b2; }
-.field:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 0 0 4px rgb(48 32 25 / 0.12); }
+.field::placeholder { color: #85745f; }
+.field:hover { border-color: #d6bf93; }
+.field:focus { outline: none; border-color: var(--color-leaf); box-shadow: 0 0 0 4px rgb(47 90 43 / 0.16); }
 .field[aria-invalid="true"] { border-color: var(--color-danger); }
 }
 
@@ -204,7 +214,7 @@ dialog.sheet {
   overflow: hidden;
 }
 dialog.sheet::backdrop {
-  background: rgb(36 22 16 / 0.62);
+  background: rgb(22 32 20 / 0.62);
   backdrop-filter: blur(3px);
 }
 dialog.sheet[open]::backdrop { animation: fade-in 0.2s ease both; }
@@ -220,6 +230,22 @@ dialog.sheet.from-top[open] .sheet-panel { animation: sheet-down 0.3s cubic-bezi
 @keyframes sheet-left { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes sheet-down { from { transform: translateY(-24px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes pop-in { from { transform: scale(0.96) translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ---------- Motifs de la marque ---------- */
+/* Vagues japonaises (seigaiha) du papier des affiches : très discrètes, uniquement décoratives. */
+.bg-seigaiha {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='28' viewBox='0 0 56 28'%3E%3Cdefs%3E%3Cg id='w' fill='none' stroke='%23b08d55' stroke-opacity='.2' stroke-width='1'%3E%3Ccircle r='28'/%3E%3Ccircle r='21'/%3E%3Ccircle r='14'/%3E%3Ccircle r='7'/%3E%3C/g%3E%3C/defs%3E%3Cuse href='%23w' x='0' y='28'/%3E%3Cuse href='%23w' x='56' y='28'/%3E%3Cuse href='%23w' x='28' y='14'/%3E%3C/svg%3E");
+  background-size: 56px 28px;
+}
+.bg-seigaiha-light {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='28' viewBox='0 0 56 28'%3E%3Cdefs%3E%3Cg id='w' fill='none' stroke='%23ffffff' stroke-opacity='.07' stroke-width='1'%3E%3Ccircle r='28'/%3E%3Ccircle r='21'/%3E%3Ccircle r='14'/%3E%3Ccircle r='7'/%3E%3C/g%3E%3C/defs%3E%3Cuse href='%23w' x='0' y='28'/%3E%3Cuse href='%23w' x='56' y='28'/%3E%3Cuse href='%23w' x='28' y='14'/%3E%3C/svg%3E");
+  background-size: 56px 28px;
+}
+/* Trait de pinceau rose sous un mot, comme les étiquettes des affiches. */
+.brush-pink {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 16' preserveAspectRatio='none'%3E%3Cpath d='M3 10 C30 4 62 13 100 8 S172 5 197 9' fill='none' stroke='%23f4799f' stroke-opacity='.55' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 0.42em;
+  padding-bottom: 0.08em;
+}
 
 /* ---------- Défilement horizontal discret ---------- */
 .no-scrollbar { scrollbar-width: none; }

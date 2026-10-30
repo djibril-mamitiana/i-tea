@@ -23,11 +23,11 @@ export function ReassuranceBar() {
   ];
 
   return (
-    <section className="bg-ink text-cream" aria-label="Nos engagements de service">
+    <section className="bg-forest bg-seigaiha-light text-cream" aria-label="Nos engagements de service">
       <ul className="mx-auto grid max-w-7xl grid-cols-2 gap-x-5 gap-y-6 px-4 py-7 sm:px-6 lg:grid-cols-4 lg:divide-x lg:divide-white/15 lg:px-8">
         {items.map(({ icon: Icon, title, text }) => (
           <li key={title} className="flex items-start gap-2.5 sm:gap-3 lg:px-6 lg:first:pl-0 lg:last:pr-0">
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white/10 text-accent sm:size-11">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white/10 text-blossom sm:size-11">
               <Icon size={22} aria-hidden="true" />
             </span>
             <div className="min-w-0">

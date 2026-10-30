@@ -3,6 +3,7 @@ import { site } from "@/config/site";
 import { categories } from "@/data/menu";
 import { CategoryLink } from "./CategoryLink";
 import { Logo } from "./Logo";
+import { SakuraBranch } from "./art/Brand";
 import { SocialLinks } from "./SocialLinks";
 
 /** Pied de page sobre : marque, carte, informations. Les détails pratiques sont dans la section « Infos pratiques ». */
@@ -11,8 +12,9 @@ export function Footer() {
   const linkClass = "inline-flex min-h-9 items-center text-cream/80 transition hover:text-cream hover:underline underline-offset-4";
 
   return (
-    <footer className="bg-ink pb-28 pt-16 text-cream md:pb-10">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <footer className="bg-seigaiha-light relative overflow-hidden bg-forest pb-28 pt-16 text-cream md:pb-10">
+      <SakuraBranch className="pointer-events-none absolute -right-8 -top-6 z-0 w-56 opacity-95 sm:w-72 lg:-right-4 lg:w-96" />
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-[1.5fr_1fr_1fr]">
           <div>
             <Logo light className="size-24" />

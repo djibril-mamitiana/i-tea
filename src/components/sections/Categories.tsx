@@ -32,7 +32,7 @@ export function Categories() {
   return (
     <section id="categories" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24" aria-labelledby="categories-title">
       <Reveal>
-        <SectionHeading id="categories-title" eyebrow="La carte" title={<>Qu&apos;est-ce qui te <span className="display-em text-accent-text">ferait plaisir&nbsp;?</span></>} />
+        <SectionHeading id="categories-title" eyebrow="La carte" title={<>Qu&apos;est-ce qui te <span className="display-em text-orange">ferait plaisir&nbsp;?</span></>} />
       </Reveal>
 
       <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
@@ -52,12 +52,12 @@ export function Categories() {
                     <span className="eyebrow">
                       {n} {n > 1 ? "produits" : "produit"}
                     </span>
-                    <span className={`font-display mt-2 text-balance font-bold leading-[1.02] ${tall ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl"}`}>
+                    <span className={`font-display mt-2 text-balance font-bold text-leaf leading-[1.02] ${tall ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl"}`}>
                       {c.shortName ?? c.name}
                     </span>
                     <span className="mt-1.5 text-sm text-ink/70">{c.tagline}</span>
                     <span className="mt-auto inline-flex pt-5">
-                      <span className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-bold text-cream transition group-hover:bg-ink-2">
+                      <span className="inline-flex items-center gap-2 rounded-full bg-leaf px-4 py-2.5 text-sm font-bold text-cream transition group-hover:bg-leaf-2">
                         Découvrir
                         <ArrowUpRight size={16} aria-hidden="true" className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                       </span>
